@@ -222,7 +222,7 @@ function CheckoutPage() {
           quantity: item.qty,
           price: item.retailPrice,
           websiteRole: 'retailer',
-          rhlProductId: item.product.sku,
+          product: item.product._id || item.product.id,
         })),
         deliveryAddress: {
           name: `${selectedAddress.firstName} ${selectedAddress.lastName}`,

@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { ArrowRight, BookOpen, FlaskConical, HeartHandshake, Leaf, Quote, Sparkles, Stethoscope } from "lucide-react";
 
 import { ProductCard } from "@/components/site/ProductCard";
@@ -54,6 +55,37 @@ const testimonials = [
 ];
 
 function Home() {
+  const [heroIndex, setHeroIndex] = useState(0);
+  
+  const heroSlides = [
+    {
+      title: "Pure Wellness",
+      subtitle: "Naturally Yours",
+      text: "Ray's Healthy Living offers organic supplements for your family's health. Safe, natural, and affordable, our vitamins boost vitality. Shop online or in-store today.",
+      bgColor: "from-green-600 to-green-700"
+    },
+    {
+      title: "Nature's Best",
+      subtitle: "for Your Family",
+      text: "Discover Ray's Healthy Living's organic supplements. Crafted for safety and affordability, our natural vitamins enhance family wellness. Shop online or at our stores now.",
+      bgColor: "from-blue-600 to-blue-700"
+    },
+    {
+      title: "Vitality Starts",
+      subtitle: "with Nature",
+      text: "Elevate health with Ray's Healthy Living's organic vitamins. Safe, affordable, and natural, our supplements boost vitality. Shop online or in-store today.",
+      bgColor: "from-amber-600 to-amber-700"
+    }
+  ];
+
+  // Hero slider auto-rotate
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeroIndex((prev) => (prev + 1) % heroSlides.length);
+    }, 5000); // Change slide every 5 seconds
+    return () => clearInterval(interval);
+  }, [heroSlides.length]);
+  
   const featured = products.slice(0, 4);
   const bestSellers = products.filter((p) => p.isBestSeller);
   const newArrivals = products.filter((p) => p.isNewArrival);
@@ -64,39 +96,42 @@ function Home() {
 
   return (
     <>
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-cream">
-        <div className="container-rhl grid items-center gap-10 py-12 md:py-20 lg:grid-cols-2">
-          <div>
-            <p className="eyebrow">Pure wellness, naturally yours</p>
-            <h1 className="heading-1 mt-3 text-balance">
-              Natural wellness products and trusted support for everyday health.
+      {/* HERO SLIDER */}
+      <section className={`relative overflow-hidden bg-gradient-to-r ${heroSlides[heroIndex].bgColor} min-h-[500px] lg:min-h-[600px]`}>
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="container-rhl relative flex items-center py-16 md:py-24 lg:py-32">
+          <div className="max-w-2xl">
+            <p className="text-sm font-semibold uppercase tracking-wider text-white/80">RAY'S HEALTHY LIVING</p>
+            <h1 className="mt-4 text-4xl font-bold md:text-5xl lg:text-6xl text-white">
+              <span className="block">{heroSlides[heroIndex].title}</span>
+              <span className="block text-white/90">{heroSlides[heroIndex].subtitle}</span>
             </h1>
-            <p className="mt-4 max-w-xl text-lg text-muted-foreground">
-              Organic supplements, wildcrafted sea moss, single herbs and essential oils — chosen by a family business
-              that has been advising Maryland shoppers face to face for years.
+            <p className="mt-6 max-w-xl text-lg text-white/90">
+              {heroSlides[heroIndex].text}
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Button asChild size="lg">
-                <Link to="/shop">Shop products</Link>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white">
+                <Link to="/shop">Shop Products</Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link to="/health-concerns">
-                  Explore health concerns <ArrowRight className="h-4 w-4" />
-                </Link>
+              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+                <Link to="/health-concerns">Learn More</Link>
               </Button>
             </div>
-            <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-              <li>NSF GMP certified</li>
-              <li>Certified organic sourcing</li>
-              <li>Non-GMO · Gluten-free options</li>
-            </ul>
           </div>
-          <div className="relative">
-            <div className="w-full rounded-2xl object-cover shadow-lift bg-gradient-to-br from-green-100 to-green-50 h-80 flex items-center justify-center">
-              <p className="text-xl font-semibold text-green-700">Natural Wellness Products</p>
-            </div>
-          </div>
+        </div>
+
+        {/* Slider Dots */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+          {heroSlides.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setHeroIndex(idx)}
+              className={`h-2.5 rounded-full transition-all ${
+                idx === heroIndex ? "w-8 bg-white" : "w-2.5 bg-white/50 hover:bg-white/70"
+              }`}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
         </div>
       </section>
 

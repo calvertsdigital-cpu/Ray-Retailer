@@ -10,6 +10,11 @@ import { Button } from "@/components/ui/button";
 import { categories, products } from "@/data/catalog";
 import { healthConcerns, upcomingConcerns } from "@/data/concerns";
 
+// Import hero slider images
+import HeroSliderImg1 from "@/assets/HeroSliderImg1.jpg";
+import HeroSliderImg2 from "@/assets/HeroSliderImg2.jpg";
+import HeroSliderImg3 from "@/assets/HeroSliderImg3.jpg";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -59,22 +64,22 @@ function Home() {
   
   const heroSlides = [
     {
+      image: HeroSliderImg1,
       title: "Pure Wellness",
       subtitle: "Naturally Yours",
       text: "Ray's Healthy Living offers organic supplements for your family's health. Safe, natural, and affordable, our vitamins boost vitality. Shop online or in-store today.",
-      bgColor: "from-green-600 to-green-700"
     },
     {
+      image: HeroSliderImg2,
       title: "Nature's Best",
       subtitle: "for Your Family",
       text: "Discover Ray's Healthy Living's organic supplements. Crafted for safety and affordability, our natural vitamins enhance family wellness. Shop online or at our stores now.",
-      bgColor: "from-blue-600 to-blue-700"
     },
     {
+      image: HeroSliderImg3,
       title: "Vitality Starts",
       subtitle: "with Nature",
       text: "Elevate health with Ray's Healthy Living's organic vitamins. Safe, affordable, and natural, our supplements boost vitality. Shop online or in-store today.",
-      bgColor: "from-amber-600 to-amber-700"
     }
   ];
 
@@ -97,23 +102,32 @@ function Home() {
   return (
     <>
       {/* HERO SLIDER */}
-      <section className={`relative overflow-hidden bg-gradient-to-r ${heroSlides[heroIndex].bgColor} min-h-[500px] lg:min-h-[600px]`}>
-        <div className="absolute inset-0 bg-black/20" />
+      <section 
+        className="relative overflow-hidden min-h-[500px] lg:min-h-[600px]"
+        style={{
+          backgroundImage: `url(${heroSlides[heroIndex].image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          transition: 'background-image 1s ease-in-out',
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40" />
         <div className="container-rhl relative flex items-center py-16 md:py-24 lg:py-32">
           <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-wider text-white/80">RAY'S HEALTHY LIVING</p>
+            <p className="text-sm font-semibold uppercase tracking-wider text-white/90">RAY'S HEALTHY LIVING</p>
             <h1 className="mt-4 text-4xl font-bold md:text-5xl lg:text-6xl text-white">
               <span className="block">{heroSlides[heroIndex].title}</span>
-              <span className="block text-white/90">{heroSlides[heroIndex].subtitle}</span>
+              <span className="block text-white/95 mt-2">{heroSlides[heroIndex].subtitle}</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg text-white/90">
               {heroSlides[heroIndex].text}
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white">
-                <Link to="/shop">Shop Products</Link>
+              <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold">
+                <Link to="/shop">Shop Products <ArrowRight className="ml-2 h-4 w-4" /></Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 font-semibold">
                 <Link to="/health-concerns">Learn More</Link>
               </Button>
             </div>
@@ -121,7 +135,7 @@ function Home() {
         </div>
 
         {/* Slider Dots */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
           {heroSlides.map((_, idx) => (
             <button
               key={idx}

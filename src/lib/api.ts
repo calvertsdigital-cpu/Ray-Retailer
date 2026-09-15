@@ -136,10 +136,51 @@ export async function fetchCategories(): Promise<any[]> {
 }
 
 /**
+ * Generate a placeholder SVG image as data URI
+ */
+function generatePlaceholderImage(productName: string): string {
+  const initials = productName
+    .split(' ')
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase();
+
+  const colors = ['#16a34a', '#059669', '#047857', '#065f46'];
+  const hashCode = productName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const bgColor = colors[hashCode % colors.length];
+
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+      <rect width="400" height="400" fill="${bgColor}"/>
+      <text 
+        x="200" y="200" 
+        font-size="120" 
+        font-weight="bold" 
+        fill="white" 
+        text-anchor="middle" 
+        dominant-baseline="middle"
+        font-family="Arial, sans-serif"
+      >${initials}</text>
+      <text 
+        x="200" y="320" 
+        font-size="24" 
+        fill="rgba(255,255,255,0.7)" 
+        text-anchor="middle" 
+        font-family="Arial, sans-serif"
+      >Ray's Healthy Living</text>
+    </svg>
+  `.trim();
+
+  return `data:image/svg+xml;base64,${btoa(svg)}`;
+}
+
+/**
  * Convert backend product to frontend product format
  */
 export function convertBackendProduct(bp: BackendProduct): any {
   const price = bp.variants?.[0]?.price || bp.sellPrice || bp.buyPrice || 0;
+  const placeholderImage = generatePlaceholderImage(bp.name);
   
   return {
     id: bp._id,
@@ -164,7 +205,7 @@ export function convertBackendProduct(bp: BackendProduct): any {
       type: 'image',
       kind: 'front-label',
       label: 'Product image',
-      src: '/placeholder-product.jpg',
+      src: placeholderImage,
       alt: bp.name,
       sortOrder: 1,
       published: true,

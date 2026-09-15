@@ -39,6 +39,19 @@ function CartButton() {
 export function Header() {
   const [open, setOpen] = useState(false);
 
+  const subnavItems = [
+    { label: "Irish Moss", to: "/shop" },
+    { label: "CBD", to: "/shop" },
+    { label: "Health Concern", to: "/health-concerns" },
+    { label: "Brands", to: "/brands" },
+    { label: "Categories", to: "/categories" },
+    { label: "Maximum Cardio", to: "/shop" },
+    { label: "Essential Oil", to: "/shop" },
+    { label: "Ray's Vitality", to: "/shop" },
+    { label: "Loose Herbs", to: "/shop" },
+    { label: "Coffee", to: "/shop" },
+  ] as const;
+
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
       <div className="bg-primary-dark text-primary-foreground">
@@ -122,6 +135,22 @@ export function Header() {
               </nav>
             </SheetContent>
           </Sheet>
+        </div>
+      </div>
+
+      {/* Sub-navbar */}
+      <div className="border-t border-border bg-background/50">
+        <div className="container-rhl flex items-center gap-1 overflow-x-auto py-2 lg:gap-2">
+          {subnavItems.map((item) => (
+            <Link
+              key={item.label}
+              to={item.to}
+              className="whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-primary-dark lg:px-4 lg:py-2 lg:text-sm"
+              activeProps={{ className: "text-primary-dark bg-accent" }}
+            >
+              {item.label}
+            </Link>
+          ))}
         </div>
       </div>
     </header>

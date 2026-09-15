@@ -209,29 +209,33 @@ function CheckoutPage() {
     setSubmitting(true);
 
     try {
-      // Prepare order data
+      // Prepare order data - match Order schema exactly
       const orderData = {
-        userId: user?._id,
-        email: user?.email,
-        phone: selectedAddress.phone || user?.phone,
-        shippingAddress: selectedAddress,
+        orderNumber: `RO-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        userEmail: user?.email,
+        userContactNumber: phone || selectedAddress.phone,
+        subtotal: parseFloat(subtotal.toFixed(2)),
+        total: parseFloat(subtotal.toFixed(2)),
         items: items.map((item) => ({
-          productId: item.product.slug,
-          productName: item.product.name,
+          name: item.product.name,
           quantity: item.qty,
-          wholesalePrice: item.wholesalePrice,
-          retailPrice: item.retailPrice,
-          lineTotal: item.retailPrice * item.qty,
+          price: item.retailPrice,
+          websiteRole: 'retailer',
+          rhlProductId: item.product.sku,
         })),
-        pricing: {
-          subtotal: parseFloat(subtotal.toFixed(2)),
-          markupAmount: parseFloat(markupAmount.toFixed(2)),
-          markupPercentage: MARKUP_PERCENTAGE * 100,
-          total: parseFloat(total.toFixed(2)),
-          shippingCost: 0, // Will be added by admin
-          finalTotal: parseFloat(total.toFixed(2)),
+        deliveryAddress: {
+          name: `${selectedAddress.firstName} ${selectedAddress.lastName}`,
+          contactNumber: selectedAddress.phone,
+          email: user?.email,
+          addressLine1: selectedAddress.street,
+          city: selectedAddress.city,
+          state: selectedAddress.state,
+          zipCode: selectedAddress.zip,
+          country: selectedAddress.country || "United States",
         },
-        status: "pending", // Waiting for admin confirmation
+        status: "processing",
+        paymentStatus: "pending",
+        website: "retailer",
       };
 
       // Send to backend

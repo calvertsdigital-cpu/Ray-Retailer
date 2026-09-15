@@ -51,22 +51,23 @@ export function Header() {
       </div>
 
       <div className="container-rhl flex h-18 items-center gap-4 py-3">
-        <Link to="/" className="flex shrink-0 items-center gap-2" aria-label="Ray's Healthy Living home">
-          <img src="/favicon.png" alt="Ray's Healthy Living" className="h-16 w-auto" />
-        </Link>
-
-        <nav aria-label="Main" className="hidden flex-1 items-center justify-center gap-1 lg:flex">
-          {nav.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-primary-dark"
-              activeProps={{ className: "text-primary-dark bg-accent" }}
-              activeOptions={{ exact: item.to === "/" }}
-            >
-              {item.label}
-            </Link>
-          ))}
+        <nav aria-label="Main" className="flex flex-1 items-center justify-start gap-1 lg:gap-4">
+          <Link to="/" className="flex shrink-0 items-center gap-2 mr-4 lg:mr-8" aria-label="Ray's Healthy Living home">
+            <img src="/favicon.png" alt="Ray's Healthy Living" className="h-16 w-auto" />
+          </Link>
+          <div className="hidden lg:flex flex-1 items-center justify-center gap-1">
+            {nav.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-primary-dark"
+                activeProps={{ className: "text-primary-dark bg-accent" }}
+                activeOptions={{ exact: item.to === "/" }}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
         </nav>
 
         <div className="ml-auto flex items-center gap-1">

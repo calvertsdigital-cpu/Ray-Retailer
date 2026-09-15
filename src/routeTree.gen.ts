@@ -14,11 +14,18 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CartRouteImport } from './routes/cart'
+import { Route as CbdRouteImport } from './routes/cbd'
 import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as CoffeeRouteImport } from './routes/coffee'
 import { Route as ConditionOfUseRouteImport } from './routes/condition-of-use'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DisclaimerRouteImport } from './routes/disclaimer'
+import { Route as EssentialOilRouteImport } from './routes/essential-oil'
+import { Route as IrishMossRouteImport } from './routes/irish-moss'
+import { Route as LooseHerbsRouteImport } from './routes/loose-herbs'
+import { Route as MaximumCardioRouteImport } from './routes/maximum-cardio'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RaysVitalityRouteImport } from './routes/rays-vitality'
 import { Route as ShippingReturnsRouteImport } from './routes/shipping-returns'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -57,9 +64,19 @@ const CartRoute = CartRouteImport.update({
   path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CbdRoute = CbdRouteImport.update({
+  id: '/cbd',
+  path: '/cbd',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoffeeRoute = CoffeeRouteImport.update({
+  id: '/coffee',
+  path: '/coffee',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConditionOfUseRoute = ConditionOfUseRouteImport.update({
@@ -77,9 +94,34 @@ const DisclaimerRoute = DisclaimerRouteImport.update({
   path: '/disclaimer',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EssentialOilRoute = EssentialOilRouteImport.update({
+  id: '/essential-oil',
+  path: '/essential-oil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IrishMossRoute = IrishMossRouteImport.update({
+  id: '/irish-moss',
+  path: '/irish-moss',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LooseHerbsRoute = LooseHerbsRouteImport.update({
+  id: '/loose-herbs',
+  path: '/loose-herbs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MaximumCardioRoute = MaximumCardioRouteImport.update({
+  id: '/maximum-cardio',
+  path: '/maximum-cardio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RaysVitalityRoute = RaysVitalityRouteImport.update({
+  id: '/rays-vitality',
+  path: '/rays-vitality',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShippingReturnsRoute = ShippingReturnsRouteImport.update({
@@ -149,11 +191,18 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
   '/cart': typeof CartRoute
+  '/cbd': typeof CbdRoute
   '/checkout': typeof CheckoutRoute
+  '/coffee': typeof CoffeeRoute
   '/condition-of-use': typeof ConditionOfUseRoute
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
+  '/essential-oil': typeof EssentialOilRoute
+  '/irish-moss': typeof IrishMossRoute
+  '/loose-herbs': typeof LooseHerbsRoute
+  '/maximum-cardio': typeof MaximumCardioRoute
   '/privacy': typeof PrivacyRoute
+  '/rays-vitality': typeof RaysVitalityRoute
   '/shipping-returns': typeof ShippingReturnsRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -173,11 +222,18 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
   '/cart': typeof CartRoute
+  '/cbd': typeof CbdRoute
   '/checkout': typeof CheckoutRoute
+  '/coffee': typeof CoffeeRoute
   '/condition-of-use': typeof ConditionOfUseRoute
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
+  '/essential-oil': typeof EssentialOilRoute
+  '/irish-moss': typeof IrishMossRoute
+  '/loose-herbs': typeof LooseHerbsRoute
+  '/maximum-cardio': typeof MaximumCardioRoute
   '/privacy': typeof PrivacyRoute
+  '/rays-vitality': typeof RaysVitalityRoute
   '/shipping-returns': typeof ShippingReturnsRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -198,11 +254,18 @@ export interface FileRoutesById {
   '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
   '/cart': typeof CartRoute
+  '/cbd': typeof CbdRoute
   '/checkout': typeof CheckoutRoute
+  '/coffee': typeof CoffeeRoute
   '/condition-of-use': typeof ConditionOfUseRoute
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
+  '/essential-oil': typeof EssentialOilRoute
+  '/irish-moss': typeof IrishMossRoute
+  '/loose-herbs': typeof LooseHerbsRoute
+  '/maximum-cardio': typeof MaximumCardioRoute
   '/privacy': typeof PrivacyRoute
+  '/rays-vitality': typeof RaysVitalityRoute
   '/shipping-returns': typeof ShippingReturnsRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -224,11 +287,18 @@ export interface FileRouteTypes {
     | '/account'
     | '/admin'
     | '/cart'
+    | '/cbd'
     | '/checkout'
+    | '/coffee'
     | '/condition-of-use'
     | '/contact'
     | '/disclaimer'
+    | '/essential-oil'
+    | '/irish-moss'
+    | '/loose-herbs'
+    | '/maximum-cardio'
     | '/privacy'
+    | '/rays-vitality'
     | '/shipping-returns'
     | '/shop'
     | '/terms'
@@ -248,11 +318,18 @@ export interface FileRouteTypes {
     | '/account'
     | '/admin'
     | '/cart'
+    | '/cbd'
     | '/checkout'
+    | '/coffee'
     | '/condition-of-use'
     | '/contact'
     | '/disclaimer'
+    | '/essential-oil'
+    | '/irish-moss'
+    | '/loose-herbs'
+    | '/maximum-cardio'
     | '/privacy'
+    | '/rays-vitality'
     | '/shipping-returns'
     | '/shop'
     | '/terms'
@@ -272,11 +349,18 @@ export interface FileRouteTypes {
     | '/account'
     | '/admin'
     | '/cart'
+    | '/cbd'
     | '/checkout'
+    | '/coffee'
     | '/condition-of-use'
     | '/contact'
     | '/disclaimer'
+    | '/essential-oil'
+    | '/irish-moss'
+    | '/loose-herbs'
+    | '/maximum-cardio'
     | '/privacy'
+    | '/rays-vitality'
     | '/shipping-returns'
     | '/shop'
     | '/terms'
@@ -297,11 +381,18 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRoute
   AdminRoute: typeof AdminRoute
   CartRoute: typeof CartRoute
+  CbdRoute: typeof CbdRoute
   CheckoutRoute: typeof CheckoutRoute
+  CoffeeRoute: typeof CoffeeRoute
   ConditionOfUseRoute: typeof ConditionOfUseRoute
   ContactRoute: typeof ContactRoute
   DisclaimerRoute: typeof DisclaimerRoute
+  EssentialOilRoute: typeof EssentialOilRoute
+  IrishMossRoute: typeof IrishMossRoute
+  LooseHerbsRoute: typeof LooseHerbsRoute
+  MaximumCardioRoute: typeof MaximumCardioRoute
   PrivacyRoute: typeof PrivacyRoute
+  RaysVitalityRoute: typeof RaysVitalityRoute
   ShippingReturnsRoute: typeof ShippingReturnsRoute
   ShopRoute: typeof ShopRoute
   TermsRoute: typeof TermsRoute
@@ -353,11 +444,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cbd': {
+      id: '/cbd'
+      path: '/cbd'
+      fullPath: '/cbd'
+      preLoaderRoute: typeof CbdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout': {
       id: '/checkout'
       path: '/checkout'
       fullPath: '/checkout'
       preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coffee': {
+      id: '/coffee'
+      path: '/coffee'
+      fullPath: '/coffee'
+      preLoaderRoute: typeof CoffeeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/condition-of-use': {
@@ -381,11 +486,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DisclaimerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/essential-oil': {
+      id: '/essential-oil'
+      path: '/essential-oil'
+      fullPath: '/essential-oil'
+      preLoaderRoute: typeof EssentialOilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/irish-moss': {
+      id: '/irish-moss'
+      path: '/irish-moss'
+      fullPath: '/irish-moss'
+      preLoaderRoute: typeof IrishMossRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/loose-herbs': {
+      id: '/loose-herbs'
+      path: '/loose-herbs'
+      fullPath: '/loose-herbs'
+      preLoaderRoute: typeof LooseHerbsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/maximum-cardio': {
+      id: '/maximum-cardio'
+      path: '/maximum-cardio'
+      fullPath: '/maximum-cardio'
+      preLoaderRoute: typeof MaximumCardioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rays-vitality': {
+      id: '/rays-vitality'
+      path: '/rays-vitality'
+      fullPath: '/rays-vitality'
+      preLoaderRoute: typeof RaysVitalityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shipping-returns': {
@@ -481,11 +621,18 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRoute,
   AdminRoute: AdminRoute,
   CartRoute: CartRoute,
+  CbdRoute: CbdRoute,
   CheckoutRoute: CheckoutRoute,
+  CoffeeRoute: CoffeeRoute,
   ConditionOfUseRoute: ConditionOfUseRoute,
   ContactRoute: ContactRoute,
   DisclaimerRoute: DisclaimerRoute,
+  EssentialOilRoute: EssentialOilRoute,
+  IrishMossRoute: IrishMossRoute,
+  LooseHerbsRoute: LooseHerbsRoute,
+  MaximumCardioRoute: MaximumCardioRoute,
   PrivacyRoute: PrivacyRoute,
+  RaysVitalityRoute: RaysVitalityRoute,
   ShippingReturnsRoute: ShippingReturnsRoute,
   ShopRoute: ShopRoute,
   TermsRoute: TermsRoute,

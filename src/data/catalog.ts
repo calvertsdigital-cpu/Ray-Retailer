@@ -8,11 +8,9 @@ import capsules from "@/assets/product-capsules.jpg";
 import irishMoss from "@/assets/cat-irish-moss.jpg";
 import looseHerbs from "@/assets/cat-loose-herbs.jpg";
 import essentialOil from "@/assets/cat-essential-oil.jpg";
-import bottleAsset from "@/assets/rhl-bottle.jpg.asset.json";
-import guaranteeAsset from "@/assets/rhl-guarantee.jpg.asset.json";
 
-const lifestyle = bottleAsset.url;
-const benefitsGraphic = guaranteeAsset.url;
+const lifestyle = capsules;
+const benefitsGraphic = capsules;
 
 export const categories: Category[] = [
   {

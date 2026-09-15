@@ -36,11 +36,11 @@ export function Header() {
   ] as const;
 
   const topnavItems = [
-    { label: "Home", icon: Home },
-    { label: "About", icon: Info },
-    { label: "Pitchdecks", icon: ShoppingCart },
-    { label: "Blog", icon: Bell },
-    { label: "Contact", icon: Mail },
+    { label: "Home", icon: Home, to: "/" },
+    { label: "About", icon: Info, to: "/about" },
+    { label: "Pitchdecks", icon: ShoppingCart, to: "/shop" },
+    { label: "Blog", icon: Bell, to: "/blog" },
+    { label: "Contact", icon: Mail, to: "/contact" },
   ] as const;
 
   return (
@@ -52,14 +52,15 @@ export function Header() {
             {topnavItems.map((item) => {
               const Icon = item.icon;
               return (
-                <button
+                <Link
                   key={item.label}
+                  to={item.to}
                   className="flex items-center gap-1.5 hover:text-green-100 transition-colors"
                   title={item.label}
                 >
                   <Icon className="h-4 w-4" />
                   <span className="hidden sm:inline text-xs">{item.label}</span>
-                </button>
+                </Link>
               );
             })}
           </div>
@@ -155,14 +156,16 @@ export function Header() {
         </div>
       </div>
 
-      {/* Sub-navbar */}
+      {/* Sub-navbar with main navigation items */}
       <div className="border-b border-gray-200 bg-gray-50">
         <div className="container-rhl flex items-center gap-4 overflow-x-auto py-2.5 lg:gap-6">
-          {subnavItems.map((item) => (
+          {nav.map((item) => (
             <Link
-              key={item.label}
+              key={item.to}
               to={item.to}
               className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-green-600 transition-colors pb-1 border-b-2 border-transparent hover:border-green-600"
+              activeProps={{ className: "text-green-600 border-b-2 border-green-600 font-semibold" }}
+              activeOptions={{ exact: item.to === "/" }}
             >
               {item.label}
             </Link>

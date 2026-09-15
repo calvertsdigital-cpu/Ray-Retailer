@@ -102,10 +102,15 @@ function LoginPage() {
         throw new Error(data.message || "Login failed");
       }
 
-      const { token, user } = data;
+      const { token, _id, name, email, role } = data;
       if (token) {
         localStorage.setItem("userToken", token);
-        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify({
+          _id,
+          name,
+          email,
+          role,
+        }));
         showToast("Login successful!", "success");
         setTimeout(() => navigate({ to: "/account" }), 1500);
       }

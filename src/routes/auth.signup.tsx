@@ -160,10 +160,16 @@ function SignupPage() {
         throw new Error(data.message || "OTP verification failed");
       }
 
-      const { token, user } = data;
+      const { token, _id, name, email, role } = data;
       if (token) {
         localStorage.setItem("userToken", token);
-        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify({
+          _id,
+          name,
+          email,
+          role,
+          phone: formData.phone,
+        }));
         showToast("Email verified successfully!", "success");
         setTimeout(() => navigate({ to: "/account" }), 1500);
       }

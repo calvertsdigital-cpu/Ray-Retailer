@@ -484,19 +484,6 @@ function CheckoutPage() {
               <span>Subtotal ({itemCount} items)</span>
               <span>${subtotal.toFixed(2)}</span>
             </div>
-
-            <div className="flex justify-between text-muted-foreground bg-blue-50 -mx-6 px-6 py-2">
-              <span className="flex items-center gap-2">
-                Retail Markup (20%)
-                <span className="text-xs bg-blue-200 text-blue-800 px-2 py-0.5 rounded">Included</span>
-              </span>
-              <span>${markupAmount.toFixed(2)}</span>
-            </div>
-
-            <div className="flex justify-between text-muted-foreground">
-              <span>Shipping</span>
-              <span className="text-xs text-orange-600 font-medium">Added by admin</span>
-            </div>
           </div>
 
           {/* Final Total */}

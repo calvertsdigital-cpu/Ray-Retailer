@@ -23,16 +23,16 @@ export function Header() {
   const { count, hydrated } = useCart();
 
   const subnavItems = [
-    { label: "IRISH MOSS", to: "/shop" },
-    { label: "CBD", to: "/shop" },
-    { label: "Health Concern", to: "/health-concerns" },
-    { label: "Brands", to: "/brands" },
-    { label: "Categories", to: "/categories" },
-    { label: "Maximum Cardio", to: "/shop" },
-    { label: "Essential Oil", to: "/shop" },
-    { label: "Ray's Vitality", to: "/shop" },
-    { label: "Loose Herbs", to: "/shop" },
-    { label: "Coffee", to: "/shop" },
+    { label: "Irish Moss", to: "/shop", slug: "irish-moss" },
+    { label: "CBD", to: "/shop", slug: "cbd" },
+    { label: "Health Concern", to: "/health-concerns", slug: "health-concerns" },
+    { label: "Brands", to: "/brands", slug: "brands" },
+    { label: "Categories", to: "/categories", slug: "categories" },
+    { label: "Maximum Cardio", to: "/shop", slug: "maximum-cardio" },
+    { label: "Essential Oil", to: "/shop", slug: "essential-oil" },
+    { label: "Ray's Vitality", to: "/shop", slug: "rays-vitality" },
+    { label: "Loose Herbs", to: "/shop", slug: "loose-herbs" },
+    { label: "Coffee", to: "/shop", slug: "coffee" },
   ] as const;
 
   const topnavItems = [
@@ -150,17 +150,38 @@ export function Header() {
         </div>
       </div>
 
-      {/* Sub-navbar */}
+      {/* Sub-navbar with Hover Popups */}
       <div className="border-b border-gray-200 bg-gray-50">
-        <div className="container-rhl flex items-center gap-4 overflow-x-auto py-2.5 lg:gap-6">
+        <div className="container-rhl flex items-center gap-4 overflow-x-auto py-2.5 lg:gap-6 relative">
           {subnavItems.map((item) => (
-            <Link
-              key={item.label}
-              to={item.to}
-              className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-green-600 transition-colors pb-1 border-b-2 border-transparent hover:border-green-600"
-            >
-              {item.label}
-            </Link>
+            <div key={item.label} className="group relative">
+              <button className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-green-600 transition-colors pb-1 border-b-2 border-transparent hover:border-green-600 py-2">
+                {item.label}
+              </button>
+              
+              {/* Hover Popup */}
+              <div className="invisible group-hover:visible absolute left-0 top-full mt-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4 w-56">
+                <div className="text-center mb-4">
+                  <h3 className="font-bold text-gray-900 text-base mb-2">{item.label}</h3>
+                  <p className="text-xs text-gray-600 mb-4">Discover the benefits of {item.label}</p>
+                </div>
+                
+                <div className="flex gap-2">
+                  <Link
+                    to="/shop"
+                    className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded transition-colors text-center"
+                  >
+                    Shop Now
+                  </Link>
+                  <Link
+                    to={`/${item.slug}`}
+                    className="flex-1 px-3 py-2 border border-green-600 text-green-600 hover:bg-green-50 text-sm font-semibold rounded transition-colors text-center"
+                  >
+                    Know More
+                  </Link>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>

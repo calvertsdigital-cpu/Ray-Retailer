@@ -52,7 +52,7 @@ export function Header() {
 
       <div className="container-rhl flex h-18 items-center gap-4 py-3">
         <Link to="/" className="flex shrink-0 items-center gap-2" aria-label="Ray's Healthy Living home">
-          <img src="/favicon.png" alt="Ray's Healthy Living" className="h-10 w-auto" />
+          <img src="/favicon.png" alt="Ray's Healthy Living" className="h-16 w-auto" />
         </Link>
 
         <nav aria-label="Main" className="hidden flex-1 items-center justify-center gap-1 lg:flex">

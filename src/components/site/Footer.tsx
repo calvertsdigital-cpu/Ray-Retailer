@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { Facebook, Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react";
 import { toast } from "sonner";
 
-import logo from "@/assets/rhl-logo-white.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { categories } from "@/data/catalog";
@@ -41,7 +40,7 @@ export function Footer() {
     <footer className="mt-16 bg-primary-dark text-primary-foreground">
       <div className="container-rhl grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-2">
-          <img src={logo.url} alt="Ray's Healthy Living" width={150} height={54} className="h-12 w-auto" loading="lazy" />
+          <h1 className="text-2xl font-bold">Ray's Healthy Living</h1>
           <p className="mt-4 max-w-sm text-sm text-primary-foreground/80">
             A family-centric business providing quality health and beauty supplements built on natural and organic
             ingredients, at prices families can keep up with.

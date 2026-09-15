@@ -1,8 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, BookOpen, FlaskConical, HeartHandshake, Leaf, Quote, Sparkles, Stethoscope } from "lucide-react";
 
-import heroAsset from "@/assets/rhl-hero.jpg.asset.json";
-import guaranteeAsset from "@/assets/rhl-guarantee.jpg.asset.json";
 import { ProductCard } from "@/components/site/ProductCard";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { StarRating } from "@/components/site/StarRating";
@@ -95,13 +93,9 @@ function Home() {
             </ul>
           </div>
           <div className="relative">
-            <img
-              src={heroAsset.url}
-              alt="Natural wellness products, botanicals and essential oils arranged on a green background"
-              width={1200}
-              height={800}
-              className="w-full rounded-2xl object-cover shadow-lift"
-            />
+            <div className="w-full rounded-2xl object-cover shadow-lift bg-gradient-to-br from-green-100 to-green-50 h-80 flex items-center justify-center">
+              <p className="text-xl font-semibold text-green-700">Natural Wellness Products</p>
+            </div>
           </div>
         </div>
       </section>
@@ -235,14 +229,12 @@ function Home() {
       {/* WHY RAY'S */}
       <section className="section-y">
         <div className="container-rhl grid items-center gap-10 lg:grid-cols-2">
-          <img
-            src={guaranteeAsset.url}
-            alt="Guaranteed quality seal used by Ray's Healthy Living"
-            loading="lazy"
-            width={800}
-            height={600}
-            className="w-full rounded-2xl object-cover shadow-card"
-          />
+          <div className="w-full rounded-2xl object-cover shadow-card bg-gradient-to-br from-green-100 to-green-50 h-80 flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-4xl font-bold text-green-700">✓</div>
+              <p className="mt-2 font-semibold text-green-700">30-Day Guarantee</p>
+            </div>
+          </div>
           <div>
             <p className="eyebrow">Why Ray's Healthy Living</p>
             <h2 className="heading-2 mt-2">Organic and ethical sourcing, kept honest</h2>

@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { Heart, Menu, Search, ShoppingBag, User } from "lucide-react";
 import { useState } from "react";
 
-import logo from "@/assets/rhl-logo-white.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -54,7 +53,7 @@ export function Header() {
       <div className="container-rhl flex h-18 items-center gap-4 py-3">
         <Link to="/" className="flex shrink-0 items-center gap-2" aria-label="Ray's Healthy Living home">
           <span className="grid place-items-center rounded-lg bg-primary-dark px-3 py-2">
-            <img src={logo.url} alt="Ray's Healthy Living" width={110} height={40} className="h-9 w-auto" />
+            <span className="h-9 w-auto font-bold text-primary-foreground">RHL</span>
           </span>
         </Link>
 

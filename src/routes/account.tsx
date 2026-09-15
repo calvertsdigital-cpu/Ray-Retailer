@@ -1,59 +1,113 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/account")({
-  head: () => ({
-    meta: [
-      { title: "Your Account | Ray's Healthy Living" },
-      {
-        name: "description",
-        content: "Sign in to your Ray's Healthy Living account to view orders, saved products and your wishlist.",
-      },
-      { property: "og:title", content: "Your Account | Ray's Healthy Living" },
-      { property: "og:description", content: "Orders, saved products and wishlist in one place." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
   component: AccountPage,
 });
 
 function AccountPage() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    const userData = localStorage.getItem("user");
+
+    if (!token) {
+      navigate({ to: "/auth/login" });
+      return;
+    }
+
+    if (userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (error) {
+        console.error("Failed to parse user data:", error);
+      }
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("user");
+    navigate({ to: "/" });
+  };
+
   return (
-    <div className="container-rhl section-y max-w-md">
-      <p className="eyebrow mb-2">Account</p>
-      <h1 className="heading-1">Sign in</h1>
-      <p className="mt-3 text-muted-foreground">
-        Accounts, orders and wishlists are coming soon. In the meantime you can shop and check out as a guest.
-      </p>
+    <div className="min-h-screen bg-cream py-12 px-4">
+      <div className="container-rhl max-w-2xl mx-auto">
+        <div className="bg-white rounded-lg shadow-lg p-8">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <User className="h-8 w-8 text-green-600" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">{user?.name || "My Account"}</h1>
+                <p className="text-gray-600">{user?.email}</p>
+              </div>
+            </div>
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="border-red-200 text-red-600 hover:bg-red-50"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+          </div>
 
-      <form
-        className="mt-8 space-y-4 rounded-xl border border-border bg-card p-6"
-        onSubmit={(e) => e.preventDefault()}
-        aria-describedby="account-note"
-      >
-        <div className="grid gap-1.5">
-          <Label htmlFor="a-email">Email address</Label>
-          <Input id="a-email" type="email" autoComplete="email" disabled />
-        </div>
-        <div className="grid gap-1.5">
-          <Label htmlFor="a-password">Password</Label>
-          <Input id="a-password" type="password" autoComplete="current-password" disabled />
-        </div>
-        <Button type="submit" className="w-full" disabled>
-          Sign in
-        </Button>
-        <p id="account-note" className="text-xs text-muted-foreground">
-          Sign-in isn't switched on yet.
-        </p>
-      </form>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Account Information</h2>
+              <dl className="space-y-3">
+                <div>
+                  <dt className="text-sm font-medium text-gray-600">Name</dt>
+                  <dd className="text-gray-900">{user?.name}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium text-gray-600">Email</dt>
+                  <dd className="text-gray-900">{user?.email}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium text-gray-600">Phone</dt>
+                  <dd className="text-gray-900">{user?.phone || "Not provided"}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium text-gray-600">Account Type</dt>
+                  <dd className="capitalize text-gray-900">{user?.role || "Customer"}</dd>
+                </div>
+              </dl>
+            </div>
 
-      <Button asChild variant="outline" className="mt-6 w-full">
-        <Link to="/shop">Continue shopping</Link>
-      </Button>
+            <div className="bg-green-50 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Links</h2>
+              <div className="space-y-3">
+                <a
+                  href="/shop"
+                  className="block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-center font-medium"
+                >
+                  Browse Products
+                </a>
+                <a
+                  href="/health-concerns"
+                  className="block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-center font-medium"
+                >
+                  Health Concerns
+                </a>
+                <a
+                  href="/"
+                  className="block px-4 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition-colors text-center font-medium"
+                >
+                  Back to Home
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -218,20 +218,338 @@ function AddressContent({ user }: { user: any }) {
 
 // Orders Content Component
 function OrdersContent({ user }: { user: any }) {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
+
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://ray-wholsell.onrender.com';
+  const token = localStorage.getItem('userToken');
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/orders/retailer-orders`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      setOrders(data.orders || []);
+    } catch (error) {
+      console.error('Failed to fetch orders:', error);
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
+
+  const downloadInvoice = async (orderId: string) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/orders/retailer-invoice/${orderId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || 'Cannot download invoice yet. Order not confirmed.');
+        return;
+      }
+
+      // Generate PDF invoice (simple HTML to PDF)
+      generateInvoicePDF(data.invoice);
+    } catch (error) {
+      console.error('Failed to download invoice:', error);
+    }
+  };
+
+  const generateInvoicePDF = (invoice: any) => {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          .invoice { max-width: 800px; margin: 0 auto; }
+          .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #16a34a; padding-bottom: 20px; }
+          .header h1 { color: #16a34a; margin: 0; }
+          .details { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+          .section { margin: 20px 0; }
+          table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+          th { background: #f3f4f6; padding: 10px; text-align: left; border-bottom: 2px solid #e5e7eb; }
+          td { padding: 10px; border-bottom: 1px solid #e5e7eb; }
+          .total-section { text-align: right; margin-top: 20px; }
+          .final-total { font-size: 18px; font-weight: bold; color: #16a34a; }
+        </style>
+      </head>
+      <body>
+        <div class="invoice">
+          <div class="header">
+            <h1>INVOICE</h1>
+            <p><strong>Order ID:</strong> ${invoice.orderId}</p>
+            <p><strong>Invoice Date:</strong> ${invoice.invoiceDate}</p>
+            <p><strong>Due Date:</strong> ${invoice.dueDate}</p>
+          </div>
+
+          <div class="details">
+            <div>
+              <h3>Bill To</h3>
+              <p><strong>${invoice.customer.name}</strong></p>
+              <p>${invoice.customer.email}</p>
+              <p>${invoice.customer.phone}</p>
+            </div>
+            <div>
+              <h3>Shipping Address</h3>
+              <p>${invoice.shippingAddress.firstName} ${invoice.shippingAddress.lastName}</p>
+              <p>${invoice.shippingAddress.street}</p>
+              <p>${invoice.shippingAddress.city}, ${invoice.shippingAddress.state} ${invoice.shippingAddress.zip}</p>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>Order Items</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Unit Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${invoice.items.map((item: any) => `
+                  <tr>
+                    <td>${item.productName}</td>
+                    <td>${item.quantity}</td>
+                    <td>$${item.retailPrice.toFixed(2)}</td>
+                    <td>$${item.lineTotal.toFixed(2)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="total-section">
+            <p><strong>Subtotal:</strong> $${invoice.pricing.subtotal.toFixed(2)}</p>
+            <p><strong>Shipping:</strong> $${invoice.pricing.shippingCost.toFixed(2)}</p>
+            <p><strong>Tax:</strong> $${invoice.pricing.tax.toFixed(2)}</p>
+            <p class="final-total">TOTAL DUE: $${invoice.pricing.finalTotal.toFixed(2)}</p>
+          </div>
+
+          <div class="section" style="margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 20px; text-align: center; color: #6b7280; font-size: 12px;">
+            <p>© Ray's Healthy Living - 70 Solomons Island Rd S, Prince Frederick, MD 20678</p>
+            <p>Thank you for your business!</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '', 'height=600,width=800');
+    if (printWindow) {
+      printWindow.document.write(html);
+      printWindow.document.close();
+      printWindow.print();
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending_confirmation':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'confirmed':
+        return 'bg-blue-100 text-blue-800';
+      case 'paid':
+        return 'bg-purple-100 text-purple-800';
+      case 'shipped':
+        return 'bg-indigo-100 text-indigo-800';
+      case 'delivered':
+        return 'bg-green-100 text-green-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'pending_confirmation':
+        return '⏳ Pending Admin Confirmation';
+      case 'confirmed':
+        return '✓ Confirmed';
+      case 'paid':
+        return '✓ Paid';
+      case 'shipped':
+        return '📦 Shipped';
+      case 'delivered':
+        return '✓ Delivered';
+      case 'rejected':
+        return '✕ Rejected';
+      default:
+        return status;
+    }
+  };
+
+  if (loadingOrders) {
+    return (
+      <div className="text-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading your orders...</p>
+      </div>
+    );
+  }
+
+  if (orders.length === 0) {
+    return (
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">My Orders</h2>
+        <div className="bg-gray-50 rounded-lg p-8 text-center border-2 border-dashed border-gray-300">
+          <ShoppingBag className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600 font-medium">No orders yet</p>
+          <p className="text-gray-500 text-sm mt-2">Start shopping to see your orders here</p>
+          <a
+            href="/shop"
+            className="inline-block mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold"
+          >
+            Browse Products
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">My Orders</h2>
-      
-      <div className="bg-gray-50 rounded-lg p-8 text-center border-2 border-dashed border-gray-300">
-        <ShoppingBag className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <p className="text-gray-600 font-medium">No orders yet</p>
-        <p className="text-gray-500 text-sm mt-2">Start shopping to see your orders here</p>
-        <a
-          href="/shop"
-          className="inline-block mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold"
-        >
-          Browse Products
-        </a>
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">My Orders ({orders.length})</h2>
+
+      <div className="space-y-4">
+        {orders.map((order) => (
+          <div
+            key={order._id}
+            className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
+          >
+            {/* Order Summary */}
+            <div
+              className="p-6 bg-gradient-to-r from-gray-50 to-white cursor-pointer flex items-center justify-between"
+              onClick={() =>
+                setExpandedOrder(expandedOrder === order._id ? null : order._id)
+              }
+            >
+              <div className="flex-1">
+                <div className="flex items-center gap-4">
+                  <div>
+                    <p className="font-bold text-gray-900">{order.orderId}</p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+                        order.status
+                      )}`}
+                    >
+                      {getStatusLabel(order.status)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-2xl font-bold text-green-600">
+                  ${order.pricing.finalTotal.toFixed(2)}
+                </p>
+                <p className="text-sm text-gray-500">{order.items.length} items</p>
+              </div>
+            </div>
+
+            {/* Expanded Details */}
+            {expandedOrder === order._id && (
+              <div className="p-6 border-t border-gray-200 bg-gray-50 space-y-4">
+                {/* Order Items */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3">Order Items</h4>
+                  <div className="bg-white rounded p-4 space-y-2">
+                    {order.items.map((item: any, idx: number) => (
+                      <div key={idx} className="flex justify-between text-sm">
+                        <span className="text-gray-600">
+                          {item.productName} × {item.quantity}
+                        </span>
+                        <span className="font-semibold text-gray-900">
+                          ${item.lineTotal.toFixed(2)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Pricing Details */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3">Pricing Details</h4>
+                  <div className="bg-white rounded p-4 space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Subtotal:</span>
+                      <span>${order.pricing.subtotal.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Shipping:</span>
+                      <span>${order.pricing.shippingCost.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Tax:</span>
+                      <span>${order.pricing.tax.toFixed(2)}</span>
+                    </div>
+                    <div className="border-t border-gray-200 pt-2 flex justify-between font-bold">
+                      <span>Total:</span>
+                      <span className="text-green-600">
+                        ${order.pricing.finalTotal.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Shipping Address */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3">Shipping To</h4>
+                  <div className="bg-white rounded p-4 text-sm text-gray-600">
+                    <p>
+                      {order.shippingAddress.firstName}{' '}
+                      {order.shippingAddress.lastName}
+                    </p>
+                    <p>{order.shippingAddress.street}</p>
+                    <p>
+                      {order.shippingAddress.city}, {order.shippingAddress.state}{' '}
+                      {order.shippingAddress.zip}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-2 pt-2">
+                  {['confirmed', 'paid', 'shipped', 'delivered'].includes(
+                    order.status
+                  ) && (
+                    <button
+                      onClick={() => downloadInvoice(order._id)}
+                      className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-sm"
+                    >
+                      📄 Download Invoice
+                    </button>
+                  )}
+                  {order.status === 'pending_confirmation' && (
+                    <div className="flex-1 px-4 py-2 bg-yellow-50 text-yellow-800 rounded-lg text-sm text-center font-semibold">
+                      ⏳ Awaiting Admin Confirmation
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -239,25 +557,128 @@ function OrdersContent({ user }: { user: any }) {
 
 // Payments Content Component
 function PaymentsContent({ user }: { user: any }) {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loadingPayments, setLoadingPayments] = useState(true);
+
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://ray-wholsell.onrender.com';
+  const token = localStorage.getItem('userToken');
+
+  useEffect(() => {
+    fetchPaymentInfo();
+  }, []);
+
+  const fetchPaymentInfo = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/orders/retailer-orders`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      setOrders(data.orders || []);
+    } catch (error) {
+      console.error('Failed to fetch payment info:', error);
+    } finally {
+      setLoadingPayments(false);
+    }
+  };
+
+  // Calculate totals
+  const confirmedOrders = orders.filter((o) =>
+    ['confirmed', 'paid', 'shipped', 'delivered'].includes(o.status)
+  );
+  const totalSpent = confirmedOrders.reduce(
+    (sum, o) => sum + o.pricing.finalTotal,
+    0
+  );
+  const unpaidAmount = confirmedOrders
+    .filter((o) => o.status !== 'paid')
+    .reduce((sum, o) => sum + o.pricing.finalTotal, 0);
+
+  if (loadingPayments) {
+    return (
+      <div className="text-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading payment information...</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Payments & Invoices</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
           <p className="text-sm text-gray-600 font-medium">Total Spent</p>
-          <p className="text-3xl font-bold text-blue-700 mt-2">$0.00</p>
+          <p className="text-3xl font-bold text-blue-700 mt-2">
+            ${totalSpent.toFixed(2)}
+          </p>
         </div>
         <div className="bg-green-50 rounded-lg p-6 border border-green-200">
           <p className="text-sm text-gray-600 font-medium">Total Orders</p>
-          <p className="text-3xl font-bold text-green-700 mt-2">0</p>
+          <p className="text-3xl font-bold text-green-700 mt-2">
+            {confirmedOrders.length}
+          </p>
+        </div>
+        <div className="bg-orange-50 rounded-lg p-6 border border-orange-200">
+          <p className="text-sm text-gray-600 font-medium">Unpaid Amount</p>
+          <p className="text-3xl font-bold text-orange-700 mt-2">
+            ${unpaidAmount.toFixed(2)}
+          </p>
         </div>
       </div>
 
-      <div className="bg-gray-50 rounded-lg p-8 text-center border-2 border-dashed border-gray-300">
-        <CreditCard className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <p className="text-gray-600 font-medium">No invoices yet</p>
-        <p className="text-gray-500 text-sm mt-2">Your invoices will appear here after you make a purchase</p>
+      {/* Payment Status */}
+      {confirmedOrders.length === 0 ? (
+        <div className="bg-gray-50 rounded-lg p-8 text-center border-2 border-dashed border-gray-300">
+          <CreditCard className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600 font-medium">No confirmed orders</p>
+          <p className="text-gray-500 text-sm mt-2">
+            Payment invoices will appear here after orders are confirmed by admin
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {confirmedOrders.map((order) => (
+            <div
+              key={order._id}
+              className="bg-white border border-gray-200 rounded-lg p-6 flex items-center justify-between"
+            >
+              <div className="flex-1">
+                <p className="font-bold text-gray-900">{order.orderId}</p>
+                <p className="text-sm text-gray-500">
+                  {new Date(order.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+              <div className="text-right mr-6">
+                <p className="text-xl font-bold text-gray-900">
+                  ${order.pricing.finalTotal.toFixed(2)}
+                </p>
+                <p
+                  className={`text-sm font-semibold mt-1 ${
+                    order.status === 'paid'
+                      ? 'text-green-600'
+                      : 'text-orange-600'
+                  }`}
+                >
+                  {order.status === 'paid' ? '✓ Paid' : '⏳ Pending Payment'}
+                </p>
+              </div>
+              <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">
+                💳 Pay Now
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+        <p className="text-blue-800 font-medium text-sm">
+          ℹ️ After your order is confirmed by admin, an invoice will be generated. You can
+          download it from your Orders page.
+        </p>
       </div>
     </div>
   );

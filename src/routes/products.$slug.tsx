@@ -83,7 +83,30 @@ function ProductPage() {
 
           <p className="mt-4 text-muted-foreground">{product.shortDescription}</p>
 
-          {product.variants && product.variants.length > 0 && (
+          {/* Pricing Information for Retailer */}
+          <div className="mt-6 rounded-lg border-2 border-green-200 bg-green-50 p-4">
+            <p className="text-xs font-semibold uppercase text-green-900">Wholesale vs Retail Pricing</p>
+            <div className="mt-3 space-y-2">
+              {variant && (
+                <>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-700">Wholesale Price:</span>
+                    <span className="font-semibold text-gray-900">${variant.price?.toFixed(2) || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-green-700">Your Retail Price (20%):</span>
+                    <span className="font-bold text-green-700">${(variant.price * 1.2).toFixed(2)}</span>
+                  </div>
+                  <div className="border-t border-green-200 pt-2 mt-2">
+                    <div className="flex justify-between text-sm font-semibold">
+                      <span>Your Profit per Unit:</span>
+                      <span className="text-green-600">${(variant.price * 0.2).toFixed(2)}</span>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
             <fieldset className="mt-6">
               <legend className="text-sm font-semibold">Available options:</legend>
               <div className="mt-2 flex flex-wrap gap-2">

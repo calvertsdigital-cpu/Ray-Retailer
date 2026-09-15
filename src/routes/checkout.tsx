@@ -64,6 +64,7 @@ function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
 
   // Form State
+  const [contactPhone, setContactPhone] = useState("");
   const [formData, setFormData] = useState<Address>({
     firstName: "",
     lastName: "",
@@ -213,7 +214,7 @@ function CheckoutPage() {
       const orderData = {
         orderNumber: `RO-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
         userEmail: user?.email,
-        userContactNumber: phone || selectedAddress.phone,
+        userContactNumber: contactPhone || selectedAddress.phone,
         subtotal: parseFloat(subtotal.toFixed(2)),
         total: parseFloat(subtotal.toFixed(2)),
         items: items.map((item) => ({
@@ -300,7 +301,14 @@ function CheckoutPage() {
               </div>
               <div className="grid gap-1.5">
                 <Label htmlFor="co-phone">Phone</Label>
-                <Input id="co-phone" type="tel" defaultValue={user?.phone || ""} required />
+                <Input 
+                  id="co-phone" 
+                  type="tel" 
+                  value={contactPhone}
+                  onChange={(e) => setContactPhone(e.target.value)}
+                  defaultValue={user?.phone || ""} 
+                  required 
+                />
               </div>
             </div>
           </fieldset>

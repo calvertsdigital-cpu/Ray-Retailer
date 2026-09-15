@@ -107,6 +107,8 @@ function ProductPage() {
               )}
             </div>
           </div>
+
+          {product.variants && (
             <fieldset className="mt-6">
               <legend className="text-sm font-semibold">Available options:</legend>
               <div className="mt-2 flex flex-wrap gap-2">

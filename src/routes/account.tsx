@@ -666,7 +666,10 @@ function PaymentsContent({ user }: { user: any }) {
                   {order.status === 'paid' ? '✓ Paid' : '⏳ Pending Payment'}
                 </p>
               </div>
-              <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">
+              <button 
+                onClick={() => navigate({ to: `/payment?orderId=${order._id}` })}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold"
+              >
                 💳 Pay Now
               </button>
             </div>

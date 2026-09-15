@@ -24,6 +24,7 @@ import { Route as EssentialOilRouteImport } from './routes/essential-oil'
 import { Route as IrishMossRouteImport } from './routes/irish-moss'
 import { Route as LooseHerbsRouteImport } from './routes/loose-herbs'
 import { Route as MaximumCardioRouteImport } from './routes/maximum-cardio'
+import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RaysVitalityRouteImport } from './routes/rays-vitality'
 import { Route as ShippingReturnsRouteImport } from './routes/shipping-returns'
@@ -114,6 +115,11 @@ const LooseHerbsRoute = LooseHerbsRouteImport.update({
 const MaximumCardioRoute = MaximumCardioRouteImport.update({
   id: '/maximum-cardio',
   path: '/maximum-cardio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentRoute = PaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/irish-moss': typeof IrishMossRoute
   '/loose-herbs': typeof LooseHerbsRoute
   '/maximum-cardio': typeof MaximumCardioRoute
+  '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/rays-vitality': typeof RaysVitalityRoute
   '/shipping-returns': typeof ShippingReturnsRoute
@@ -246,6 +253,7 @@ export interface FileRoutesByTo {
   '/irish-moss': typeof IrishMossRoute
   '/loose-herbs': typeof LooseHerbsRoute
   '/maximum-cardio': typeof MaximumCardioRoute
+  '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/rays-vitality': typeof RaysVitalityRoute
   '/shipping-returns': typeof ShippingReturnsRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   '/irish-moss': typeof IrishMossRoute
   '/loose-herbs': typeof LooseHerbsRoute
   '/maximum-cardio': typeof MaximumCardioRoute
+  '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/rays-vitality': typeof RaysVitalityRoute
   '/shipping-returns': typeof ShippingReturnsRoute
@@ -315,6 +324,7 @@ export interface FileRouteTypes {
     | '/irish-moss'
     | '/loose-herbs'
     | '/maximum-cardio'
+    | '/payment'
     | '/privacy'
     | '/rays-vitality'
     | '/shipping-returns'
@@ -348,6 +358,7 @@ export interface FileRouteTypes {
     | '/irish-moss'
     | '/loose-herbs'
     | '/maximum-cardio'
+    | '/payment'
     | '/privacy'
     | '/rays-vitality'
     | '/shipping-returns'
@@ -381,6 +392,7 @@ export interface FileRouteTypes {
     | '/irish-moss'
     | '/loose-herbs'
     | '/maximum-cardio'
+    | '/payment'
     | '/privacy'
     | '/rays-vitality'
     | '/shipping-returns'
@@ -415,6 +427,7 @@ export interface RootRouteChildren {
   IrishMossRoute: typeof IrishMossRoute
   LooseHerbsRoute: typeof LooseHerbsRoute
   MaximumCardioRoute: typeof MaximumCardioRoute
+  PaymentRoute: typeof PaymentRoute
   PrivacyRoute: typeof PrivacyRoute
   RaysVitalityRoute: typeof RaysVitalityRoute
   ShippingReturnsRoute: typeof ShippingReturnsRoute
@@ -538,6 +551,13 @@ declare module '@tanstack/react-router' {
       path: '/maximum-cardio'
       fullPath: '/maximum-cardio'
       preLoaderRoute: typeof MaximumCardioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment': {
+      id: '/payment'
+      path: '/payment'
+      fullPath: '/payment'
+      preLoaderRoute: typeof PaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -671,6 +691,7 @@ const rootRouteChildren: RootRouteChildren = {
   IrishMossRoute: IrishMossRoute,
   LooseHerbsRoute: LooseHerbsRoute,
   MaximumCardioRoute: MaximumCardioRoute,
+  PaymentRoute: PaymentRoute,
   PrivacyRoute: PrivacyRoute,
   RaysVitalityRoute: RaysVitalityRoute,
   ShippingReturnsRoute: ShippingReturnsRoute,

@@ -4,8 +4,9 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { products } from "@/data/catalog";
+import { products as localProducts } from "@/data/catalog";
 import { useCart } from "@/lib/cart";
+import { fetchProducts, convertBackendProduct } from "@/lib/api";
 import { MapPin, X, Plus, Loader2 } from "lucide-react";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://ray-wholsell.onrender.com';
@@ -54,6 +55,8 @@ function CheckoutPage() {
 
   // State Management
   const [user, setUser] = useState<any>(null);
+  const [allProducts, setAllProducts] = useState<any[]>([...localProducts]);
+  const [productsLoading, setProductsLoading] = useState(true);
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
@@ -71,6 +74,23 @@ function CheckoutPage() {
     country: "United States",
     phone: "",
   });
+
+  // Fetch backend products on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const backendProds = await fetchProducts(500);
+        const converted = backendProds.map(convertBackendProduct);
+        setAllProducts([...converted, ...localProducts]);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setAllProducts([...localProducts]);
+      } finally {
+        setProductsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   // Load user and addresses
   useEffect(() => {
@@ -104,7 +124,8 @@ function CheckoutPage() {
   // Process cart items
   const items: OrderItem[] = lines
     .map((line) => {
-      const product = products.find((p) => p.slug === line.slug);
+      // Try to find product from all available products (backend + local)
+      const product = allProducts.find((p) => p.slug === line.slug);
       if (!product) return null;
 
       // Assume backend sends sellPrice as wholesale price
@@ -127,7 +148,7 @@ function CheckoutPage() {
   const markupAmount = items.reduce((sum, i) => sum + (i.retailPrice - i.wholesalePrice) * i.qty, 0);
   const total = subtotal;
 
-  if (hydrated && items.length === 0) {
+  if (hydrated && !productsLoading && items.length === 0) {
     return (
       <div className="container-rhl section-y max-w-lg text-center">
         <h1 className="heading-1">Checkout</h1>
@@ -135,6 +156,15 @@ function CheckoutPage() {
         <Button asChild className="mt-6">
           <Link to="/shop">Shop products</Link>
         </Button>
+      </div>
+    );
+  }
+
+  if (!hydrated || productsLoading) {
+    return (
+      <div className="container-rhl section-y max-w-lg text-center">
+        <h1 className="heading-1">Checkout</h1>
+        <p className="mt-3 text-muted-foreground">Loading your cart...</p>
       </div>
     );
   }

@@ -55,6 +55,7 @@ export async function fetchProducts(
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'x-website-role': 'retailer',
         }
       }
     );
@@ -90,6 +91,7 @@ export async function getProductById(productId: string): Promise<BackendProduct 
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'x-website-role': 'retailer',
         }
       }
     );
@@ -118,6 +120,7 @@ export async function fetchCategories(): Promise<any[]> {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'x-website-role': 'retailer',
         }
       }
     );

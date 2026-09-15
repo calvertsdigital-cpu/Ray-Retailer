@@ -137,16 +137,7 @@ function Home() {
       >
         <div className="absolute inset-0 bg-black/40" />
         <div className="container-rhl relative flex items-center py-16 md:py-24 lg:py-32">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-wider text-white/90">RAY'S HEALTHY LIVING</p>
-            <h1 className="mt-4 text-4xl font-bold md:text-5xl lg:text-6xl text-white">
-              <span className="block">{heroSlides[heroIndex].title}</span>
-              <span className="block text-white/95 mt-2">{heroSlides[heroIndex].subtitle}</span>
-            </h1>
-            <p className="mt-6 max-w-xl text-lg text-white/90">
-              {heroSlides[heroIndex].text}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
+          <div className="mt-8 flex flex-wrap gap-4">
               <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold">
                 <Link to="/shop">Shop Products <ArrowRight className="ml-2 h-4 w-4" /></Link>
               </Button>
@@ -154,7 +145,6 @@ function Home() {
                 <Link to="/health-concerns">Learn More</Link>
               </Button>
             </div>
-          </div>
         </div>
 
         {/* Slider Dots */}

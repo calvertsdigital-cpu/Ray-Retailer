@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Minus, Plus, ShoppingBag, X } from "lucide-react";
+import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
-import { getProduct } from "@/data/catalog";
+import { getProduct, products as localProducts } from "@/data/catalog";
 import { useCart } from "@/lib/cart";
+import { fetchProducts, convertBackendProduct } from "@/lib/api";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({
@@ -20,10 +22,30 @@ export const Route = createFileRoute("/cart")({
 
 function CartPage() {
   const { lines, setQty, remove, hydrated } = useCart();
+  const [allProducts, setAllProducts] = useState<any[]>([...localProducts]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch backend products to include them in cart lookups
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const backendProds = await fetchProducts(500);
+        const converted = backendProds.map(convertBackendProduct);
+        setAllProducts([...converted, ...localProducts]);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setAllProducts([...localProducts]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const rows = lines
     .map((l) => {
-      const product = getProduct(l.slug);
+      // Try to find product from all available products (backend + local)
+      const product = allProducts.find((p) => p.slug === l.slug) || getProduct(l.slug);
       if (!product) return null;
       const variant = product.variants?.find((v) => v.id === l.variantId);
       return { ...l, product, variant };
@@ -36,7 +58,7 @@ function CartPage() {
     <div className="container-rhl section-y">
       <h1 className="heading-1">Your cart</h1>
 
-      {!hydrated ? (
+      {!hydrated || loading ? (
         <p className="mt-8 text-muted-foreground">Loading your cart…</p>
       ) : rows.length === 0 ? (
         <div className="mt-8 rounded-xl border border-dashed border-border p-12 text-center">

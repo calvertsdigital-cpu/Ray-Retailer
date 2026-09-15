@@ -13,6 +13,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/s
 import { brands, categories, products, searchProducts } from "@/data/catalog";
 import { healthConcerns } from "@/data/concerns";
 import { hiddenSlugs } from "@/lib/cms";
+import { fetchProducts, searchBackendProducts, convertBackendProduct } from "@/lib/api";
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -50,6 +51,8 @@ function Shop() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/shop" });
   const [visible, setVisible] = useState(PAGE_SIZE);
+  const [backendProducts, setBackendProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const setSearch = (next: Partial<z.infer<typeof searchSchema>>) =>
     (setVisible(PAGE_SIZE), navigate({ search: (prev) => ({ ...prev, ...next }) }));
@@ -57,16 +60,41 @@ function Shop() {
   const [hidden, setHidden] = useState<Set<string>>(new Set());
   useEffect(() => setHidden(hiddenSlugs()), []);
 
+  // Fetch products from backend
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const backendProds = await fetchProducts(500, search.q || '');
+        const converted = backendProds.map(convertBackendProduct);
+        setBackendProducts(converted);
+      } catch (error) {
+        console.error('Error fetching backend products:', error);
+        // Fallback to local data
+        setBackendProducts(products);
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, [search.q]);
+
+  // Use backend products if available, otherwise fallback to local
+  const allProducts = backendProducts.length > 0 ? backendProducts : products;
+
   const filtered = useMemo(() => {
-    const base = search.q ? searchProducts(search.q) : products;
+    const base = search.q ? allProducts.filter(p => 
+      p.name.toLowerCase().includes(search.q!.toLowerCase()) ||
+      p.sku?.toLowerCase().includes(search.q!.toLowerCase()) ||
+      p.category?.toLowerCase().includes(search.q!.toLowerCase())
+    ) : allProducts;
+    
     let list = base.filter((p) => {
       if (hidden.has(p.slug)) return false;
       if (search.category && p.category !== search.category) return false;
       if (search.brand && p.brand !== search.brand) return false;
-      if (search.concern && !p.concernSlugs.includes(search.concern)) return false;
+      if (search.concern && !p.concernSlugs?.includes(search.concern)) return false;
       return true;
     });
-
 
     switch (search.sort) {
       case "name-asc":
@@ -76,7 +104,7 @@ function Shop() {
         list = [...list].sort((a, b) => b.name.localeCompare(a.name));
         break;
       case "rating":
-        list = [...list].sort((a, b) => b.rating - a.rating);
+        list = [...list].sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       case "newest":
         list = [...list].sort((a, b) => Number(Boolean(b.isNewArrival)) - Number(Boolean(a.isNewArrival)));
@@ -85,7 +113,7 @@ function Shop() {
         break;
     }
     return list;
-  }, [search, hidden]);
+  }, [search, hidden, allProducts]);
 
   const activeCount = [search.category, search.brand, search.concern, search.q].filter(Boolean).length;
 

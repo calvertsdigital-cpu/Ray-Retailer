@@ -9,6 +9,7 @@ import { TrustBar } from "@/components/site/TrustBar";
 import { Button } from "@/components/ui/button";
 import { categories, products } from "@/data/catalog";
 import { healthConcerns, upcomingConcerns } from "@/data/concerns";
+import { fetchProducts, convertBackendProduct } from "@/lib/api";
 
 // Import hero slider images
 import HeroSliderImg1 from "@/assets/HeroSliderImg1.jpg";
@@ -61,6 +62,28 @@ const testimonials = [
 
 function Home() {
   const [heroIndex, setHeroIndex] = useState(0);
+  const [backendProducts, setBackendProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch products from backend
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const backendProds = await fetchProducts(500);
+        const converted = backendProds.map(convertBackendProduct);
+        setBackendProducts(converted);
+      } catch (error) {
+        console.error('Error fetching backend products:', error);
+        // Fallback to local data
+        setBackendProducts(products);
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  // Use backend products if available, otherwise fallback to local
+  const allProducts = backendProducts.length > 0 ? backendProducts : products;
   
   const heroSlides = [
     {
@@ -91,9 +114,9 @@ function Home() {
     return () => clearInterval(interval);
   }, [heroSlides.length]);
   
-  const featured = products.slice(0, 4);
-  const bestSellers = products.filter((p) => p.isBestSeller);
-  const newArrivals = products.filter((p) => p.isNewArrival);
+  const featured = allProducts.slice(0, 4);
+  const bestSellers = allProducts.filter((p) => p.isBestSeller).slice(0, 4);
+  const newArrivals = allProducts.filter((p) => p.isNewArrival).slice(0, 4);
   const concernCards = [
     ...healthConcerns.map((c) => ({ name: c.name, category: c.category, slug: c.slug, text: c.heroSubtext })),
     ...upcomingConcerns.map((c) => ({ name: c.name, category: c.category, slug: null, text: "Guide coming soon." })),

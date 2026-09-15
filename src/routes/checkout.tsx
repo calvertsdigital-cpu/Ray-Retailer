@@ -43,7 +43,7 @@ interface Address {
 }
 
 interface OrderItem {
-  product: (typeof products)[number];
+  product: any;
   qty: number;
   wholesalePrice: number;
   retailPrice: number;

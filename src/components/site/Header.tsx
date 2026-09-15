@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, Menu, Search, ShoppingBag, User, Home, Info, Mail, LogOut, Bell, ShoppingCart } from "lucide-react";
+import { Heart, Menu, Search, ShoppingBag, User } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -36,41 +36,35 @@ export function Header() {
   ] as const;
 
   const topnavItems = [
-    { label: "Home", icon: Home, to: "/" },
-    { label: "About", icon: Info, to: "/about" },
-    { label: "Pitchdecks", icon: ShoppingCart, to: "/shop" },
-    { label: "Blog", icon: Bell, to: "/blog" },
-    { label: "Contact", icon: Mail, to: "/contact" },
+    { label: "Home", to: "/" },
+    { label: "Products", to: "/shop" },
+    { label: "Health Concerns", to: "/health-concerns" },
+    { label: "Categories", to: "/categories" },
+    { label: "Brands", to: "/brands" },
+    { label: "About", to: "/about" },
+    { label: "Blog", to: "/blog" },
+    { label: "Contact", to: "/contact" },
   ] as const;
 
   return (
     <header className="sticky top-0 z-50 bg-background">
-      {/* Top bar with green background */}
+      {/* Top bar with green background - Main Navigation */}
       <div className="bg-gradient-to-r from-green-700 to-green-600 text-white">
-        <div className="container-rhl flex h-10 items-center justify-between text-sm">
-          <div className="flex items-center gap-4">
-            {topnavItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.label}
-                  to={item.to}
-                  className="flex items-center gap-1.5 hover:text-green-100 transition-colors"
-                  title={item.label}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span className="hidden sm:inline text-xs">{item.label}</span>
-                </Link>
-              );
-            })}
+        <div className="container-rhl flex h-12 items-center justify-between text-sm">
+          <div className="hidden lg:flex items-center gap-6">
+            {topnavItems.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="text-white hover:text-green-100 transition-colors font-medium"
+              >
+                {item.label}
+              </Link>
+            ))}
           </div>
-          <div className="flex items-center gap-3">
-            <button className="px-3 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded text-xs font-semibold transition-colors">
+          <div className="flex items-center gap-3 ml-auto lg:ml-0">
+            <button className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded text-sm font-semibold transition-colors">
               🛒 Wholesale
-            </button>
-            <button className="flex items-center gap-1 hover:text-green-100 transition-colors">
-              <LogOut className="h-4 w-4" />
-              <span className="hidden sm:inline text-xs">Find Book</span>
             </button>
           </div>
         </div>
@@ -156,16 +150,14 @@ export function Header() {
         </div>
       </div>
 
-      {/* Sub-navbar with main navigation items */}
+      {/* Sub-navbar */}
       <div className="border-b border-gray-200 bg-gray-50">
         <div className="container-rhl flex items-center gap-4 overflow-x-auto py-2.5 lg:gap-6">
-          {nav.map((item) => (
+          {subnavItems.map((item) => (
             <Link
-              key={item.to}
+              key={item.label}
               to={item.to}
               className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-green-600 transition-colors pb-1 border-b-2 border-transparent hover:border-green-600"
-              activeProps={{ className: "text-green-600 border-b-2 border-green-600 font-semibold" }}
-              activeOptions={{ exact: item.to === "/" }}
             >
               {item.label}
             </Link>

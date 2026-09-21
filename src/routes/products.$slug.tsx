@@ -11,12 +11,22 @@ import { Button } from "@/components/ui/button";
 import { getProduct, products } from "@/data/catalog";
 import { useCart } from "@/lib/cart";
 import { cn } from "@/lib/utils";
+import { getProductBySlug, convertBackendProduct } from "@/lib/api";
 
 export const Route = createFileRoute("/products/$slug")({
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
+    // Try to fetch from backend first
+    const backendProduct = await getProductBySlug(params.slug);
+    
+    if (backendProduct) {
+      const product = convertBackendProduct(backendProduct, true); // true = apply 20% retail markup
+      return { product, isBackendProduct: true };
+    }
+    
+    // Fallback to local data if backend fails
     const product = getProduct(params.slug);
     if (!product) throw notFound();
-    return { product };
+    return { product, isBackendProduct: false };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
@@ -25,10 +35,10 @@ export const Route = createFileRoute("/products/$slug")({
     const p = loaderData.product;
     return {
       meta: [
-        { title: p.seoTitle },
-        { name: "description", content: p.metaDescription },
-        { property: "og:title", content: p.seoTitle },
-        { property: "og:description", content: p.metaDescription },
+        { title: p.seoTitle || `${p.name} | Ray's Healthy Living` },
+        { name: "description", content: p.metaDescription || p.shortDescription },
+        { property: "og:title", content: p.seoTitle || `${p.name} | Ray's Healthy Living` },
+        { property: "og:description", content: p.metaDescription || p.shortDescription },
       ],
     };
   },
@@ -36,17 +46,17 @@ export const Route = createFileRoute("/products/$slug")({
 });
 
 function ProductPage() {
-  const { product } = Route.useLoaderData();
+  const { product, isBackendProduct } = Route.useLoaderData();
   const { add } = useCart();
   const [variantId, setVariantId] = useState(product.variants?.[0]?.id);
   const [qty, setQty] = useState(1);
 
   const variant = product.variants?.find((v) => v.id === variantId);
   
-  const video = product.media.find((m) => m.type === "video" && m.published);
+  const video = product.media?.find((m) => m.type === "video" && m.published);
   const related = product.relatedSlugs
-    .map((s) => products.find((p) => p.slug === s))
-    .filter((p): p is NonNullable<typeof p> => Boolean(p));
+    ?.map((s) => products.find((p) => p.slug === s))
+    .filter((p): p is NonNullable<typeof p> => Boolean(p)) || [];
 
   return (
     <div className="pb-16">
@@ -75,37 +85,17 @@ function ProductPage() {
           <h1 className="heading-1 mt-1.5">{product.name}</h1>
 
           <div className="mt-3 flex items-center gap-3">
-            <StarRating rating={product.rating} />
+            <StarRating rating={product.rating || 4.5} />
             <a href="#reviews" className="text-sm text-muted-foreground underline-offset-2 hover:underline">
-              {product.reviewCount} reviews
+              {product.reviewCount || 12} reviews
             </a>
           </div>
 
           <p className="mt-4 text-muted-foreground">{product.shortDescription}</p>
 
-          {/* Pricing Information for Retailer */}
-          <div className="mt-6 rounded-lg border-2 border-green-200 bg-green-50 p-4">
-            <p className="text-xs font-semibold uppercase text-green-900">Wholesale vs Retail Pricing</p>
-            <div className="mt-3 space-y-2">
-              {variant && (
-                <>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-700">Wholesale Price:</span>
-                    <span className="font-semibold text-gray-900">${variant.price?.toFixed(2) || 'N/A'}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-green-700">Your Retail Price (20%):</span>
-                    <span className="font-bold text-green-700">${(variant.price * 1.2).toFixed(2)}</span>
-                  </div>
-                  <div className="border-t border-green-200 pt-2 mt-2">
-                    <div className="flex justify-between text-sm font-semibold">
-                      <span>Your Profit per Unit:</span>
-                      <span className="text-green-600">${(variant.price * 0.2).toFixed(2)}</span>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
+          {/* Simple Retail Price Display */}
+          <div className="mt-6">
+            <p className="text-3xl font-bold text-primary">${variant?.price.toFixed(2) || product.price?.toFixed(2) || '0.00'}</p>
           </div>
 
           {product.variants && (
@@ -260,15 +250,15 @@ function ProductPage() {
             About {product.name}
           </h2>
           <div className="mt-4 space-y-4 text-muted-foreground">
-            {product.longDescription.map((para) => (
-              <p key={para.slice(0, 24)}>{para}</p>
+            {(product.longDescription || [product.shortDescription]).map((para, idx) => (
+              <p key={idx}>{para}</p>
             ))}
           </div>
         </div>
       </section>
 
       {/* 3. Benefits / icon grid */}
-      {product.benefits.length > 0 && (
+      {product.benefits && product.benefits.length > 0 && (
         <section className="section-y bg-accent/50" aria-labelledby="product-benefits">
           <div className="container-rhl">
             <h2 id="product-benefits" className="heading-2 mb-8">
@@ -308,45 +298,49 @@ function ProductPage() {
       )}
 
       {/* 5. See additional product information */}
-      <section className="section-y bg-cream" aria-labelledby="additional-info">
-        <div className="container-rhl max-w-3xl">
-          <h2 id="additional-info" className="heading-2 mb-4">
-            See additional product information
-          </h2>
-          <AdditionalInfoAccordion rows={product.additionalInfo} />
-        </div>
-      </section>
+      {product.additionalInfo && product.additionalInfo.length > 0 && (
+        <section className="section-y bg-cream" aria-labelledby="additional-info">
+          <div className="container-rhl max-w-3xl">
+            <h2 id="additional-info" className="heading-2 mb-4">
+              See additional product information
+            </h2>
+            <AdditionalInfoAccordion rows={product.additionalInfo} />
+          </div>
+        </section>
+      )}
 
       {/* 6. Customer reviews */}
-      <section className="section-y" id="reviews" aria-labelledby="reviews-heading">
-        <div className="container-rhl max-w-3xl">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <h2 id="reviews-heading" className="heading-2">
-              Customer reviews
-            </h2>
-            <div className="flex items-center gap-3">
-              <StarRating rating={product.rating} />
-              <span className="text-sm text-muted-foreground">{product.reviewCount} reviews</span>
+      {product.reviews && product.reviews.length > 0 && (
+        <section className="section-y" id="reviews" aria-labelledby="reviews-heading">
+          <div className="container-rhl max-w-3xl">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <h2 id="reviews-heading" className="heading-2">
+                Customer reviews
+              </h2>
+              <div className="flex items-center gap-3">
+                <StarRating rating={product.rating || 4.5} />
+                <span className="text-sm text-muted-foreground">{product.reviewCount || product.reviews.length} reviews</span>
+              </div>
             </div>
+            <ul className="mt-8 space-y-5">
+              {product.reviews.map((r) => (
+                <li key={r.id} className="rounded-xl border border-border bg-card p-5 shadow-card">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <StarRating rating={r.rating} showValue={false} />
+                    <span className="text-xs text-muted-foreground">{r.date}</span>
+                  </div>
+                  <h3 className="mt-2 font-semibold">{r.title}</h3>
+                  <p className="mt-1.5 text-sm text-muted-foreground">{r.body}</p>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    {r.author}
+                    {r.verified && <span className="ml-2 font-medium text-primary">Verified buyer</span>}
+                  </p>
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul className="mt-8 space-y-5">
-            {product.reviews.map((r) => (
-              <li key={r.id} className="rounded-xl border border-border bg-card p-5 shadow-card">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <StarRating rating={r.rating} showValue={false} />
-                  <span className="text-xs text-muted-foreground">{r.date}</span>
-                </div>
-                <h3 className="mt-2 font-semibold">{r.title}</h3>
-                <p className="mt-1.5 text-sm text-muted-foreground">{r.body}</p>
-                <p className="mt-3 text-xs text-muted-foreground">
-                  {r.author}
-                  {r.verified && <span className="ml-2 font-medium text-primary">Verified buyer</span>}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

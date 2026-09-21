@@ -9,8 +9,8 @@ import { cn } from "@/lib/utils";
 import type { Product } from "@/data/types";
 
 /**
- * Shared product card. Product prices are intentionally NOT displayed
- * anywhere on the storefront — pricing lives in the data model only.
+ * Shared product card with retail pricing display.
+ * Shows retail price (20% markup over wholesale) to help retailers understand their margins.
  */
 export function ProductCard({
   product,
@@ -45,6 +45,10 @@ export function ProductCard({
             width={600}
             height={600}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+            onError={(e) => {
+              // Fallback if image fails to load
+              e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%2316a34a' width='400' height='400'/%3E%3Ctext fill='white' font-size='60' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle'%3ERay's%3C/text%3E%3C/svg%3E`;
+            }}
           />
         </Link>
         <button
@@ -65,6 +69,12 @@ export function ProductCard({
           </Link>
         </h3>
         <p className="line-clamp-2 text-sm text-muted-foreground">{note ?? product.supportStatement}</p>
+        
+        {/* Price Display - Simple Retail Price Only */}
+        <div className="mt-2">
+          <p className="text-lg font-bold text-primary">${product.price?.toFixed(2) || '0.00'}</p>
+        </div>
+
         <p className="font-mono text-[11px] text-muted-foreground">
           RHL ID {product.sku}
           {product.upc ? ` · UPC ${product.upc}` : ""}
@@ -86,6 +96,7 @@ export function ProductCard({
               add(product.slug, 1);
               toast.success(`${product.name} added to cart`);
             }}
+            disabled={!product.inStock}
           >
             <Plus className="h-4 w-4" /> Add
           </Button>

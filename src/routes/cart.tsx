@@ -29,8 +29,8 @@ function CartPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const backendProds = await fetchProducts(500);
-        const converted = backendProds.map(convertBackendProduct);
+        const backendProds = await fetchProducts({ limit: 500 });
+        const converted = backendProds.map(p => convertBackendProduct(p, true));
         setAllProducts([...converted, ...localProducts]);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -53,6 +53,10 @@ function CartPage() {
     .filter((r): r is NonNullable<typeof r> => Boolean(r));
 
   const itemCount = rows.reduce((s, r) => s + r.qty, 0);
+  const subtotal = rows.reduce((sum, r) => {
+    const price = r.variant?.price || r.product.price || 0;
+    return sum + (price * r.qty);
+  }, 0);
 
   return (
     <div className="container-rhl section-y">
@@ -100,6 +104,14 @@ function CartPage() {
                     {r.product.brand}
                     {r.variant ? ` · ${r.variant.label}` : ""}
                   </p>
+                  <p className="mt-1 text-lg font-bold text-primary">
+                    ${(r.variant?.price || r.product.price || 0).toFixed(2)}
+                    {r.qty > 1 && (
+                      <span className="ml-2 text-sm font-normal text-muted-foreground">
+                        × {r.qty}
+                      </span>
+                    )}
+                  </p>
                   <div className="mt-3 flex items-center gap-2">
                     <Button
                       variant="outline"
@@ -132,6 +144,9 @@ function CartPage() {
                   >
                     <X className="h-4 w-4" />
                   </Button>
+                  <p className="text-right font-bold">
+                    ${((r.variant?.price || r.product.price || 0) * r.qty).toFixed(2)}
+                  </p>
                 </div>
               </li>
             ))}
@@ -146,12 +161,22 @@ function CartPage() {
                   <dd className="font-semibold">{itemCount}</dd>
                 </div>
                 <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Subtotal</dt>
+                  <dd className="font-semibold">${subtotal.toFixed(2)}</dd>
+                </div>
+                <div className="flex justify-between">
                   <dt className="text-muted-foreground">Shipping</dt>
                   <dd>Confirmed at checkout</dd>
                 </div>
               </dl>
+              <div className="mt-4 border-t border-border pt-4">
+                <div className="flex justify-between text-lg font-bold">
+                  <dt>Estimated Total</dt>
+                  <dd className="text-primary">${subtotal.toFixed(2)}</dd>
+                </div>
+              </div>
               <p className="mt-3 text-xs text-muted-foreground">
-                Order totals are confirmed by our team when your order is reviewed.
+                Final total and shipping will be confirmed at checkout.
               </p>
               <Button asChild size="lg" className="mt-5 w-full">
                 <Link to="/checkout">Proceed to checkout</Link>

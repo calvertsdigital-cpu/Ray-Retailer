@@ -1,0 +1,198 @@
+{
+  "_readme": "This is the Department > Category structure for the Ray Retailer product filter. Departments come from the user's spec. Only 'Amino Acid' has confirmed categories (from the example given). Every other department has an empty 'categories' array — fill these in with the real category names before handing this file to Kiro, or ask Kiro to help propose them from the product list, then approve/edit each one yourself. Do NOT let Kiro invent categories that aren't reviewed by a human — these drive navigation and SEO.",
+  "departments": [
+    { 
+      "department": "Vitamins A-Z", 
+      "categories": [
+        "B VITAMINS",
+        "C VITAMINS", 
+        "D VITAMINS",
+        "VITAMIN A-Z"
+      ]
+    },
+    {
+      "department": "Amino Acid",
+      "categories": [
+        "Arginine",
+        "Aspartates",
+        "Amino Acid Cocktails",
+        "Branched Chain Amino Acids (BCAA)",
+        "Glutamine",
+        "Ornithine, Lysine & Arginine",
+        "Protein Supplements",
+        "Tryptophan",
+        "New Amino Acid Complex"
+      ]
+    },
+    { 
+      "department": "Herbal Supplement A-Z", 
+      "categories": [
+        "FRESH GROUND VEGGIE CAPSULES",
+        "HERBAL SUPPLEMENT"
+      ]
+    },
+    { 
+      "department": "Nervous System", 
+      "categories": [
+        "STRESS SUPPORT",
+        "BRAIN -  NERVE SUPPORT -  MENT",
+        "STRESS ANXIETY SUPPORT",
+        "ANXIETY SUPPORT",
+        "EYE CARE",
+        "HEAD - AID",
+        "SLEEP"
+      ]
+    },
+    { 
+      "department": "Liquid Herbs A-Z", 
+      "categories": [
+        "LIQUID HERBS",
+        "LIQUID SUPPLEMENT"
+      ]
+    },
+    { 
+      "department": "Multi-Vitamin", 
+      "categories": []
+    },
+    { 
+      "department": "Minerals", 
+      "categories": [
+        "ZINC",
+        "IRON"
+      ]
+    },
+    { 
+      "department": "Digestion & Clensing Support", 
+      "categories": [
+        "INTESTINAL SUPPORT",
+        "CLEANSING - COLON SUPPORT",
+        "DIGESTIVE AID - ENZYMES",
+        "DETOX - LIVER CLENSES",
+        "DETOX",
+        "YEAST - BACTERIA - FUNGAL DETO",
+        "KIDNNEY - URINARY - LYMPH SUPP"
+      ]
+    },
+    { 
+      "department": "Men & Women Health", 
+      "categories": [
+        "GLANDULAR SUPPORT",
+        "WOMEN HEALTH",
+        "HORMONAL HEALTH",
+        "MEN AND WOMEN GLANDULAR SUPPOR",
+        "MEN'S HEALTH",
+        "MEN & WOMEN hEALTH",
+        "ADRENAL SUPPORT",
+        "THYROID SUPPORT",
+        "WEIGHT MANAGEMENT"
+      ]
+    },
+    { 
+      "department": "Weight Management", 
+      "categories": []
+    },
+    { 
+      "department": "Immune Support", 
+      "categories": [
+        "IMMUNE SUPPORT",
+        "MUSHROOM",
+        "IMMUNE ANTIOXIDANT SUPPORT",
+        "BLACK SEED",
+        "RESPIRATORY HERBS/BRONCHIAL SU",
+        "SINUS SUPPORT -   ALLERGIES SU"
+      ]
+    },
+    { 
+      "department": "Ginseng", 
+      "categories": []
+    },
+    { 
+      "department": "Cardiovascular Support", 
+      "categories": [
+        "HEART SUPPORT",
+        "CHOLESTEROL",
+        "CIRCULARTORY SUPPORT",
+        "GINSENG ENERGRY"
+      ]
+    },
+    { 
+      "department": "Blood Sugar Support", 
+      "categories": [
+        "INSULIN SUPPORT"
+      ]
+    },
+    { 
+      "department": "Joint Support", 
+      "categories": [
+        "PAIN MANAGMENT",
+        "JOINT HEALTH",
+        "JOINT AND ARTHRITIS",
+        "INFLAMMATION"
+      ]
+    },
+    { 
+      "department": "Personal Support", 
+      "categories": [
+        "HAIR",
+        "HAIR - SKIN - NAILS",
+        "EAR",
+        "FIRST AID"
+      ]
+    },
+    { 
+      "department": "Hygiene", 
+      "categories": [
+        "MOUTHWASH"
+      ]
+    },
+    { 
+      "department": "Shower & Bath", 
+      "categories": []
+    },
+    { 
+      "department": "Proteins & Greens", 
+      "categories": []
+    },
+    { 
+      "department": "Herbal Teas", 
+      "categories": []
+    },
+    { 
+      "department": "Aroma-Therapy", 
+      "categories": [
+        "ESSENTIAL OILS",
+        "CARRIER OIL"
+      ]
+    },
+    { 
+      "department": "Super Food Pantry", 
+      "categories": []
+    },
+    { 
+      "department": "Cellular Health", 
+      "categories": []
+    },
+    { 
+      "department": "CBD Hemp Oil", 
+      "categories": []
+    },
+    { 
+      "department": "Energy Stamina", 
+      "categories": []
+    },
+    { 
+      "department": "Irish Moss", 
+      "categories": []
+    }
+  ],
+  "product_fields_required": [
+    "product_name",
+    "department",
+    "category",
+    "product_image",
+    "product_description",
+    "price",
+    "sku_or_product_id",
+    "availability"
+  ]
+}

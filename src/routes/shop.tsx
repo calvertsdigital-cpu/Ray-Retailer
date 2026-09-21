@@ -1,25 +1,28 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { SlidersHorizontal, X } from "lucide-react";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 
 import { ProductCard } from "@/components/site/ProductCard";
+import { DepartmentCategoryFilter } from "@/components/site/DepartmentCategoryFilter";
+import { PriceRangeFilter } from "@/components/site/PriceRangeFilter";
+import { AvailabilityFilter } from "@/components/site/AvailabilityFilter";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { brands, categories, products, searchProducts } from "@/data/catalog";
-import { healthConcerns } from "@/data/concerns";
 import { hiddenSlugs } from "@/lib/cms";
-import { fetchProducts, searchBackendProducts, convertBackendProduct } from "@/lib/api";
+import { fetchProducts, convertBackendProduct } from "@/lib/api";
+import taxonomyData from "../../department-category-taxonomy.json";
 
 const searchSchema = z.object({
   q: z.string().optional(),
-  category: z.string().optional(),
-  brand: z.string().optional(),
-  concern: z.string().optional(),
+  categories: z.array(z.string()).optional(),
+  minPrice: z.number().optional(),
+  maxPrice: z.number().optional(),
+  inStock: z.boolean().optional(),
+  outOfStock: z.boolean().optional(),
   sort: z.enum(["featured", "name-asc", "name-desc", "rating", "newest"]).optional(),
 });
 
@@ -53,6 +56,24 @@ function Shop() {
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [backendProducts, setBackendProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Category filter state only (no department selection)
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(search.categories || []);
+  
+  // Sync state with URL when URL changes
+  useEffect(() => {
+    setSelectedCategories(search.categories || []);
+  }, [search.categories]);
+  
+  // Price filter state
+  const [priceRange, setPriceRange] = useState<[number, number]>([
+    search.minPrice || 0,
+    search.maxPrice || 200
+  ]);
+  
+  // Availability filter state
+  const [showInStock, setShowInStock] = useState(search.inStock ?? true);
+  const [showOutOfStock, setShowOutOfStock] = useState(search.outOfStock ?? true);
 
   const setSearch = (next: Partial<z.infer<typeof searchSchema>>) =>
     (setVisible(PAGE_SIZE), navigate({ search: (prev) => ({ ...prev, ...next }) }));
@@ -65,21 +86,35 @@ function Shop() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const backendProds = await fetchProducts(500, search.q || '');
-        const converted = backendProds.map(convertBackendProduct);
+        const categories = search.categories || [];
+        
+        console.log('🔄 Fetching with categories:', categories);
+        
+        const backendProds = await fetchProducts({
+          limit: 500,
+          search: search.q || '',
+          departments: [], // No department filtering
+          categories: categories,
+          minPrice: search.minPrice,
+          maxPrice: search.maxPrice,
+        });
+        const converted = backendProds.map(p => convertBackendProduct(p, true)); // true = apply 20% retail markup
+        
+        console.log('✅ Converted products:', converted.length, 'products');
+        console.log('📦 Sample product:', converted[0]);
+        
         setBackendProducts(converted);
       } catch (error) {
         console.error('Error fetching backend products:', error);
-        // Fallback to local data
-        setBackendProducts(products);
+        setBackendProducts([]);
       }
       setLoading(false);
     };
     fetchData();
-  }, [search.q]);
+  }, [search.q, search.categories, search.minPrice, search.maxPrice]);
 
-  // Use backend products if available, otherwise fallback to local
-  const allProducts = backendProducts.length > 0 ? backendProducts : products;
+  // Use ONLY backend products (no demo products)
+  const allProducts = backendProducts;
 
   const filtered = useMemo(() => {
     const base = search.q ? allProducts.filter(p => 
@@ -90,9 +125,13 @@ function Shop() {
     
     let list = base.filter((p) => {
       if (hidden.has(p.slug)) return false;
-      if (search.category && p.category !== search.category) return false;
-      if (search.brand && p.brand !== search.brand) return false;
-      if (search.concern && !p.concernSlugs?.includes(search.concern)) return false;
+      
+      // Availability filter
+      if (!showInStock && !showOutOfStock) return true; // Show all if both unchecked
+      if (showInStock && showOutOfStock) return true; // Show all if both checked
+      if (showInStock && !p.inStock) return false;
+      if (showOutOfStock && p.inStock) return false;
+      
       return true;
     });
 
@@ -113,50 +152,101 @@ function Shop() {
         break;
     }
     return list;
-  }, [search, hidden, allProducts]);
+  }, [search, hidden, allProducts, showInStock, showOutOfStock]);
 
-  const activeCount = [search.category, search.brand, search.concern, search.q].filter(Boolean).length;
+  // Prepare department data with counts
+  const departmentData = useMemo(() => {
+    return taxonomyData.departments.map((dept: any) => {
+      // Count products in this department
+      const deptProducts = allProducts.filter(p => p.department === dept.department);
+      
+      // Count products per category
+      const categoriesWithCounts = (dept.categories || []).map((catName: string) => ({
+        name: catName,
+        count: allProducts.filter(p => p.department === dept.department && p.category === catName).length
+      }));
+
+      return {
+        name: dept.department,
+        categories: categoriesWithCounts,
+        isOpen: false
+      };
+    });
+  }, [allProducts]);
+
+  // Calculate min/max prices from all products
+  const priceExtent = useMemo(() => {
+    if (allProducts.length === 0) return { min: 0, max: 200 };
+    const prices = allProducts.map(p => p.price || 0);
+    return {
+      min: Math.floor(Math.min(...prices)),
+      max: Math.ceil(Math.max(...prices))
+    };
+  }, [allProducts]);
+
+  // Filter handlers - Only category selection
+  const handleCategoryChange = (category: string, checked: boolean) => {
+    const updated = checked
+      ? [...selectedCategories, category]
+      : selectedCategories.filter(c => c !== category);
+    setSelectedCategories(updated);
+    setSearch({ categories: updated.length > 0 ? updated : undefined });
+  };
+
+  const handlePriceChange = (min: number, max: number) => {
+    setPriceRange([min, max]);
+    setSearch({ minPrice: min, maxPrice: max });
+  };
+
+  const handleInStockChange = (checked: boolean) => {
+    setShowInStock(checked);
+    setSearch({ inStock: checked });
+  };
+
+  const handleOutOfStockChange = (checked: boolean) => {
+    setShowOutOfStock(checked);
+    setSearch({ outOfStock: checked });
+  };
+
+  const activeCount = [
+    search.q,
+    ...(selectedCategories.length > 0 ? [true] : []),
+  ].filter(Boolean).length;
 
   const filters = (
     <div className="space-y-7">
-      <FilterGroup title="Category">
-        {categories.map((c) => (
-          <CheckRow
-            key={c.slug}
-            id={`cat-${c.slug}`}
-            label={c.name}
-            checked={search.category === c.slug}
-            onChange={(v) => setSearch({ category: v ? c.slug : undefined })}
-          />
-        ))}
-      </FilterGroup>
+      {/* Department & Category Filter */}
+      <DepartmentCategoryFilter
+        departments={departmentData}
+        selectedCategories={selectedCategories}
+        onCategoryChange={handleCategoryChange}
+      />
 
-      <FilterGroup title="Brand">
-        {brands.map((b) => (
-          <CheckRow
-            key={b}
-            id={`brand-${b}`}
-            label={b}
-            checked={search.brand === b}
-            onChange={(v) => setSearch({ brand: v ? b : undefined })}
-          />
-        ))}
-      </FilterGroup>
+      {/* Price Range Filter */}
+      <PriceRangeFilter
+        minPrice={priceExtent.min}
+        maxPrice={priceExtent.max}
+        currentMin={priceRange[0]}
+        currentMax={priceRange[1]}
+        onChange={handlePriceChange}
+      />
 
-      <FilterGroup title="Health concern">
-        {healthConcerns.map((c) => (
-          <CheckRow
-            key={c.slug}
-            id={`hc-${c.slug}`}
-            label={c.name}
-            checked={search.concern === c.slug}
-            onChange={(v) => setSearch({ concern: v ? c.slug : undefined })}
-          />
-        ))}
-      </FilterGroup>
+      {/* Availability Filter */}
+      <AvailabilityFilter
+        showInStock={showInStock}
+        showOutOfStock={showOutOfStock}
+        onInStockChange={handleInStockChange}
+        onOutOfStockChange={handleOutOfStockChange}
+      />
 
       {activeCount > 0 && (
-        <Button variant="ghost" onClick={() => navigate({ search: {} })}>
+        <Button variant="ghost" onClick={() => {
+          setSelectedCategories([]);
+          setPriceRange([priceExtent.min, priceExtent.max]);
+          setShowInStock(true);
+          setShowOutOfStock(true);
+          navigate({ search: {} });
+        }}>
           <X className="h-4 w-4" /> Clear all filters
         </Button>
       )}
@@ -222,12 +312,23 @@ function Shop() {
           </div>
 
           <p className="mb-4 text-sm text-muted-foreground" aria-live="polite">
-            Showing {Math.min(visible, filtered.length)} of {filtered.length} product{filtered.length === 1 ? "" : "s"}
-            {filtered.length !== products.length ? ` (${products.length} in the full catalog)` : ""}
-
+            {loading ? (
+              'Loading products...'
+            ) : (
+              <>
+                Showing {Math.min(visible, filtered.length)} of {filtered.length} product{filtered.length === 1 ? "" : "s"}
+              </>
+            )}
           </p>
 
-          {filtered.length === 0 ? (
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="text-center">
+                <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                <p className="mt-4 text-sm text-muted-foreground">Loading products from backend...</p>
+              </div>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="rounded-xl border border-dashed border-border p-12 text-center">
               <p className="font-semibold">No products match those filters</p>
               <p className="mt-1 text-sm text-muted-foreground">Try a different search term or clearing a filter.</p>
@@ -251,35 +352,5 @@ function Shop() {
         </div>
       </div>
     </>
-  );
-}
-
-function FilterGroup({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section>
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider">{title}</h2>
-      <div className="space-y-2.5">{children}</div>
-    </section>
-  );
-}
-
-function CheckRow({
-  id,
-  label,
-  checked,
-  onChange,
-}: {
-  id: string;
-  label: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <div className="flex items-center gap-2.5">
-      <Checkbox id={id} checked={checked} onCheckedChange={(v) => onChange(Boolean(v))} />
-      <Label htmlFor={id} className="cursor-pointer text-sm font-normal">
-        {label}
-      </Label>
-    </div>
   );
 }

@@ -3,6 +3,11 @@
  * Connects to Ray-wholsell-1 backend for products and data
  */
 
+import capsules from "@/assets/product-capsules.jpg";
+import irishMoss from "@/assets/cat-irish-moss.jpg";
+import looseHerbs from "@/assets/cat-loose-herbs.jpg";
+import essentialOil from "@/assets/cat-essential-oil.jpg";
+
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://ray-wholsell.onrender.com';
 
 export interface BackendProduct {
@@ -277,7 +282,7 @@ export function convertBackendProduct(bp: BackendProduct, applyRetailMarkup: boo
   const retailPrice = applyRetailMarkup ? wholesalePrice * 1.2 : wholesalePrice;
   
   // Use real product image instead of SVG placeholder
-  const productImage = '/src/assets/product-capsules.jpg';
+  const productImage = capsules;
   
   // Product media gallery with multiple images and video
   const mediaGallery = [
@@ -296,7 +301,7 @@ export function convertBackendProduct(bp: BackendProduct, applyRetailMarkup: boo
       type: 'image',
       kind: 'ingredient',
       label: 'Irish Moss ingredient',
-      src: '/src/assets/cat-irish-moss.jpg',
+      src: irishMoss,
       alt: 'Irish Moss',
       sortOrder: 2,
       published: true,
@@ -306,7 +311,7 @@ export function convertBackendProduct(bp: BackendProduct, applyRetailMarkup: boo
       type: 'image',
       kind: 'ingredient',
       label: 'Essential oils',
-      src: '/src/assets/cat-essential-oil.jpg',
+      src: essentialOil,
       alt: 'Essential Oils',
       sortOrder: 3,
       published: true,

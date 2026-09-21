@@ -231,7 +231,7 @@ function OrdersContent({ user }: { user: any }) {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/orders/retailer-orders`, {
+      const response = await fetch(`${BACKEND_URL}/api/retailer-orders/my-orders`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -359,17 +359,19 @@ function OrdersContent({ user }: { user: any }) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending_confirmation':
+      case 'pending':
         return 'bg-yellow-100 text-yellow-800';
       case 'confirmed':
         return 'bg-blue-100 text-blue-800';
       case 'paid':
         return 'bg-purple-100 text-purple-800';
-      case 'shipped':
+      case 'processing':
         return 'bg-indigo-100 text-indigo-800';
+      case 'shipped':
+        return 'bg-cyan-100 text-cyan-800';
       case 'delivered':
         return 'bg-green-100 text-green-800';
-      case 'rejected':
+      case 'cancelled':
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -378,18 +380,20 @@ function OrdersContent({ user }: { user: any }) {
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'pending_confirmation':
-        return '⏳ Pending Admin Confirmation';
+      case 'pending':
+        return '⏳ Pending Review';
       case 'confirmed':
         return '✓ Confirmed';
       case 'paid':
         return '✓ Paid';
+      case 'processing':
+        return '📦 Processing';
       case 'shipped':
-        return '📦 Shipped';
+        return '🚚 Shipped';
       case 'delivered':
         return '✓ Delivered';
-      case 'rejected':
-        return '✕ Rejected';
+      case 'cancelled':
+        return '✕ Cancelled';
       default:
         return status;
     }
@@ -428,128 +432,135 @@ function OrdersContent({ user }: { user: any }) {
       <h2 className="text-2xl font-bold text-gray-900 mb-6">My Orders ({orders.length})</h2>
 
       <div className="space-y-4">
-        {orders.map((order) => (
-          <div
-            key={order._id}
-            className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
-          >
-            {/* Order Summary */}
+        {orders.map((order) => {
+          // Calculate line total for each item
+          const orderTotal = order.total || 0;
+          const itemCount = order.items?.length || 0;
+          
+          return (
             <div
-              className="p-6 bg-gradient-to-r from-gray-50 to-white cursor-pointer flex items-center justify-between"
-              onClick={() =>
-                setExpandedOrder(expandedOrder === order._id ? null : order._id)
-              }
+              key={order._id}
+              className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
             >
-              <div className="flex-1">
-                <div className="flex items-center gap-4">
-                  <div>
-                    <p className="font-bold text-gray-900">{order.orderId}</p>
-                    <p className="text-sm text-gray-500">
-                      {new Date(order.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
-                        order.status
-                      )}`}
-                    >
-                      {getStatusLabel(order.status)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-2xl font-bold text-green-600">
-                  ${order.pricing.finalTotal.toFixed(2)}
-                </p>
-                <p className="text-sm text-gray-500">{order.items.length} items</p>
-              </div>
-            </div>
-
-            {/* Expanded Details */}
-            {expandedOrder === order._id && (
-              <div className="p-6 border-t border-gray-200 bg-gray-50 space-y-4">
-                {/* Order Items */}
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Order Items</h4>
-                  <div className="bg-white rounded p-4 space-y-2">
-                    {order.items.map((item: any, idx: number) => (
-                      <div key={idx} className="flex justify-between text-sm">
-                        <span className="text-gray-600">
-                          {item.productName} × {item.quantity}
-                        </span>
-                        <span className="font-semibold text-gray-900">
-                          ${item.lineTotal.toFixed(2)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Pricing Details */}
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Pricing Details</h4>
-                  <div className="bg-white rounded p-4 space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Subtotal:</span>
-                      <span>${order.pricing.subtotal.toFixed(2)}</span>
+              {/* Order Summary */}
+              <div
+                className="p-6 bg-gradient-to-r from-gray-50 to-white cursor-pointer flex items-center justify-between"
+                onClick={() =>
+                  setExpandedOrder(expandedOrder === order._id ? null : order._id)
+                }
+              >
+                <div className="flex-1">
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <p className="font-bold text-gray-900">#{order.orderNumber}</p>
+                      <p className="text-sm text-gray-500">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </p>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Shipping:</span>
-                      <span>${order.pricing.shippingCost.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Tax:</span>
-                      <span>${order.pricing.tax.toFixed(2)}</span>
-                    </div>
-                    <div className="border-t border-gray-200 pt-2 flex justify-between font-bold">
-                      <span>Total:</span>
-                      <span className="text-green-600">
-                        ${order.pricing.finalTotal.toFixed(2)}
+                    <div>
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+                          order.status
+                        )}`}
+                      >
+                        {getStatusLabel(order.status)}
                       </span>
                     </div>
                   </div>
                 </div>
-
-                {/* Shipping Address */}
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Shipping To</h4>
-                  <div className="bg-white rounded p-4 text-sm text-gray-600">
-                    <p>
-                      {order.shippingAddress.firstName}{' '}
-                      {order.shippingAddress.lastName}
-                    </p>
-                    <p>{order.shippingAddress.street}</p>
-                    <p>
-                      {order.shippingAddress.city}, {order.shippingAddress.state}{' '}
-                      {order.shippingAddress.zip}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-2 pt-2">
-                  {['confirmed', 'paid', 'shipped', 'delivered'].includes(
-                    order.status
-                  ) && (
-                    <button
-                      onClick={() => downloadInvoice(order._id)}
-                      className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-sm"
-                    >
-                      📄 Download Invoice
-                    </button>
-                  )}
-                  {order.status === 'pending_confirmation' && (
-                    <div className="flex-1 px-4 py-2 bg-yellow-50 text-yellow-800 rounded-lg text-sm text-center font-semibold">
-                      ⏳ Awaiting Admin Confirmation
-                    </div>
-                  )}
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-green-600">
+                    ${orderTotal.toFixed(2)}
+                  </p>
+                  <p className="text-sm text-gray-500">{itemCount} items</p>
                 </div>
               </div>
-            )}
-          </div>
-        ))}
+
+              {/* Expanded Details */}
+              {expandedOrder === order._id && (
+                <div className="p-6 border-t border-gray-200 bg-gray-50 space-y-4">
+                  {/* Order Items */}
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3">Order Items</h4>
+                    <div className="bg-white rounded p-4 space-y-2">
+                      {order.items?.map((item: any, idx: number) => (
+                        <div key={idx} className="flex justify-between text-sm">
+                          <span className="text-gray-600">
+                            {item.product?.name || 'Product'} × {item.quantity}
+                          </span>
+                          <span className="font-semibold text-gray-900">
+                            ${(item.priceAtOrder * item.quantity).toFixed(2)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Pricing Details */}
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3">Pricing Details</h4>
+                    <div className="bg-white rounded p-4 space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Subtotal:</span>
+                        <span>${(order.subtotal || 0).toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Shipping:</span>
+                        <span>${(order.shippingCost || 0).toFixed(2)}</span>
+                      </div>
+                      <div className="border-t border-gray-200 pt-2 flex justify-between font-bold">
+                        <span>Total:</span>
+                        <span className="text-green-600">
+                          ${orderTotal.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Shipping Address */}
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3">Shipping To</h4>
+                    <div className="bg-white rounded p-4 text-sm text-gray-600">
+                      <p>{order.shippingAddress?.fullName}</p>
+                      <p>{order.shippingAddress?.street}</p>
+                      <p>
+                        {order.shippingAddress?.city}, {order.shippingAddress?.state}{' '}
+                        {order.shippingAddress?.zipCode}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Admin Notes */}
+                  {order.adminNotes && (
+                    <div className="bg-blue-50 rounded p-4">
+                      <h4 className="font-semibold text-blue-900 mb-2 text-sm">Admin Notes:</h4>
+                      <p className="text-sm text-blue-800">{order.adminNotes}</p>
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  <div className="flex gap-2 pt-2">
+                    {order.status === 'pending' && (
+                      <div className="flex-1 px-4 py-2 bg-yellow-50 text-yellow-800 rounded-lg text-sm text-center font-semibold">
+                        ⏳ Awaiting Admin Confirmation
+                      </div>
+                    )}
+                    {order.status === 'confirmed' && (
+                      <div className="flex-1 px-4 py-2 bg-blue-50 text-blue-800 rounded-lg text-sm text-center font-semibold">
+                        ✓ Order Confirmed - Ready for Payment
+                      </div>
+                    )}
+                    {['paid', 'processing', 'shipped', 'delivered'].includes(order.status) && (
+                      <div className="flex-1 px-4 py-2 bg-green-50 text-green-800 rounded-lg text-sm text-center font-semibold">
+                        ✓ Order {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -569,7 +580,7 @@ function PaymentsContent({ user }: { user: any }) {
 
   const fetchPaymentInfo = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/orders/retailer-orders`, {
+      const response = await fetch(`${BACKEND_URL}/api/retailer-orders/my-orders`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -585,15 +596,15 @@ function PaymentsContent({ user }: { user: any }) {
 
   // Calculate totals
   const confirmedOrders = orders.filter((o) =>
-    ['confirmed', 'paid', 'shipped', 'delivered'].includes(o.status)
+    ['confirmed', 'paid', 'processing', 'shipped', 'delivered'].includes(o.status)
   );
   const totalSpent = confirmedOrders.reduce(
-    (sum, o) => sum + o.pricing.finalTotal,
+    (sum, o) => sum + (o.total || 0),
     0
   );
   const unpaidAmount = confirmedOrders
-    .filter((o) => o.status !== 'paid')
-    .reduce((sum, o) => sum + o.pricing.finalTotal, 0);
+    .filter((o) => o.status !== 'paid' && o.status !== 'processing' && o.status !== 'shipped' && o.status !== 'delivered')
+    .reduce((sum, o) => sum + (o.total || 0), 0);
 
   if (loadingPayments) {
     return (
@@ -647,31 +658,31 @@ function PaymentsContent({ user }: { user: any }) {
               className="bg-white border border-gray-200 rounded-lg p-6 flex items-center justify-between"
             >
               <div className="flex-1">
-                <p className="font-bold text-gray-900">{order.orderId}</p>
+                <p className="font-bold text-gray-900">#{order.orderNumber}</p>
                 <p className="text-sm text-gray-500">
                   {new Date(order.createdAt).toLocaleDateString()}
                 </p>
               </div>
               <div className="text-right mr-6">
                 <p className="text-xl font-bold text-gray-900">
-                  ${order.pricing.finalTotal.toFixed(2)}
+                  ${(order.total || 0).toFixed(2)}
                 </p>
                 <p
                   className={`text-sm font-semibold mt-1 ${
-                    order.status === 'paid'
+                    order.status === 'paid' || order.status === 'processing' || order.status === 'shipped' || order.status === 'delivered'
                       ? 'text-green-600'
                       : 'text-orange-600'
                   }`}
                 >
-                  {order.status === 'paid' ? '✓ Paid' : '⏳ Pending Payment'}
+                  {order.status === 'paid' || order.status === 'processing' || order.status === 'shipped' || order.status === 'delivered' ? '✓ Paid' : '⏳ Pending Payment'}
                 </p>
               </div>
-              <button 
-                onClick={() => navigate({ to: `/payment?orderId=${order._id}` })}
+              <a 
+                href={`/my-orders`}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold"
               >
-                💳 Pay Now
-              </button>
+                View Order
+              </a>
             </div>
           ))}
         </div>

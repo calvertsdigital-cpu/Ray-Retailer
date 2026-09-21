@@ -118,6 +118,36 @@ function MyOrdersPage() {
       console.log('Attempting payment for order:', orderId);
       console.log('Backend URL:', BACKEND_URL);
 
+      // Check if we're in development mode with localhost backend
+      const isDevelopment = BACKEND_URL.includes('localhost') || BACKEND_URL.includes('127.0.0.1');
+      
+      if (isDevelopment) {
+        // For development, simulate payment flow
+        console.log('Development mode: Simulating payment flow');
+        toast.success("Development Mode: Payment simulation successful!");
+        
+        // Simulate successful payment by updating order status
+        try {
+          const response = await fetch(`${BACKEND_URL}/api/orders/${orderId}/status`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+            },
+            body: JSON.stringify({ status: 'paid' })
+          });
+          
+          if (response.ok) {
+            fetchOrders(); // Refresh orders
+          }
+        } catch (error) {
+          console.log('Status update failed, but payment simulated');
+        }
+        
+        setPayingOrderId(null);
+        return;
+      }
+
       // Try the retailer-specific endpoint first, then fallback to general endpoint
       let response;
       try {
@@ -145,6 +175,12 @@ function MyOrdersPage() {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Payment intent error response:', errorText);
+        
+        // Check for specific Stripe key error
+        if (errorText.includes('Expired API Key') || errorText.includes('Invalid API Key')) {
+          throw new Error("Payment system configuration error. Please contact support or try again later.");
+        }
+        
         throw new Error(`Failed to create payment intent: ${response.status} ${response.statusText}`);
       }
 
@@ -414,6 +450,15 @@ function MyOrdersPage() {
                       View Invoice
                     </Button>
                   </div>
+                  
+                  {/* Development Notice */}
+                  {(BACKEND_URL.includes('localhost') || BACKEND_URL.includes('127.0.0.1')) && (
+                    <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-xs text-blue-700">
+                        🧪 Development Mode: Payment will be simulated (no actual charge)
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 

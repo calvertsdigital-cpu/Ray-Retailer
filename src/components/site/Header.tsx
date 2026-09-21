@@ -21,7 +21,12 @@ const nav = [
 // Per-item dropdown configuration
 // type: "menu"  → shows a dropdown panel with action links
 // type: "direct" → clicking the label navigates directly, no dropdown
-type DropdownAction = { label: string; to: string; style: "primary" | "outline" | "ghost" };
+type DropdownAction = { 
+  label: string; 
+  to: string; 
+  style: "primary" | "outline" | "ghost";
+  external?: boolean; // Optional flag for external links
+};
 
 type SubnavItem =
   | { label: string; type: "direct"; to: string }
@@ -63,7 +68,7 @@ const subnavItems: SubnavItem[] = [
     label: "Maximum Cardio",
     type: "menu",
     actions: [
-      { label: "Shop Now", to: "/shop", style: "primary" },
+      { label: "Shop Now", to: "https://maximumcardio.com/", style: "primary", external: true },
       { label: "Know More", to: "/maximum-cardio", style: "outline" },
       { label: "Videos", to: "/maximum-cardio-video", style: "ghost" },
     ],
@@ -269,22 +274,45 @@ export function Header() {
                     role="menu"
                   >
                     <div className="min-w-[160px] rounded-lg border border-gray-200 bg-white shadow-lg overflow-hidden">
-                      {item.actions.map((action) => (
-                        <Link
-                          key={action.label}
-                          to={action.to}
-                          role="menuitem"
-                          onClick={() => setActiveDropdown(null)}
-                          className={`block w-full px-4 py-2.5 text-sm font-medium transition-colors text-left ${action.style === "primary"
-                              ? "bg-green-600 text-white hover:bg-green-700"
-                              : action.style === "outline"
-                                ? "text-green-700 hover:bg-green-50 border-t border-gray-100"
-                                : "text-gray-600 hover:bg-gray-50 border-t border-gray-100"
-                            }`}
-                        >
-                          {action.label}
-                        </Link>
-                      ))}
+                      {item.actions.map((action) => {
+                        const linkClassName = `block w-full px-4 py-2.5 text-sm font-medium transition-colors text-left ${
+                          action.style === "primary"
+                            ? "bg-green-600 text-white hover:bg-green-700"
+                            : action.style === "outline"
+                              ? "text-green-700 hover:bg-green-50 border-t border-gray-100"
+                              : "text-gray-600 hover:bg-gray-50 border-t border-gray-100"
+                        }`;
+
+                        // External link - use regular <a> tag
+                        if (action.external) {
+                          return (
+                            <a
+                              key={action.label}
+                              href={action.to}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              role="menuitem"
+                              onClick={() => setActiveDropdown(null)}
+                              className={linkClassName}
+                            >
+                              {action.label}
+                            </a>
+                          );
+                        }
+
+                        // Internal link - use TanStack Router Link
+                        return (
+                          <Link
+                            key={action.label}
+                            to={action.to}
+                            role="menuitem"
+                            onClick={() => setActiveDropdown(null)}
+                            className={linkClassName}
+                          >
+                            {action.label}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 )}

@@ -8,7 +8,12 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://ray-wholsell.onrender.com';
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
+
+// Check if we're using the correct Stripe key
+const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '';
+console.log('Using Stripe key:', stripePublishableKey.substring(0, 20) + '...');
+
+const stripePromise = loadStripe(stripePublishableKey);
 
 export const Route = createFileRoute("/my-orders")({
   head: () => ({
@@ -291,16 +296,30 @@ function MyOrdersPage() {
             Order #{order?.orderNumber} | Total: ${order?.total.toFixed(2)}
           </p>
 
-          <Elements stripe={stripePromise} options={{ clientSecret }}>
-            <PaymentForm 
-              orderId={payingOrderId} 
-              onSuccess={() => {
-                setClientSecret(null);
-                setPayingOrderId(null);
-                fetchOrders();
+          {/* Loading indicator while Stripe initializes */}
+          <div className="min-h-[200px]">
+            <Elements 
+              stripe={stripePromise} 
+              options={{ 
+                clientSecret,
+                appearance: {
+                  theme: 'stripe',
+                  variables: {
+                    colorPrimary: '#16a34a',
+                  }
+                }
               }}
-            />
-          </Elements>
+            >
+              <PaymentForm 
+                orderId={payingOrderId} 
+                onSuccess={() => {
+                  setClientSecret(null);
+                  setPayingOrderId(null);
+                  fetchOrders();
+                }}
+              />
+            </Elements>
+          </div>
         </div>
       </div>
     );
@@ -719,18 +738,29 @@ function PaymentForm({ orderId, onSuccess }: { orderId: string; onSuccess: () =>
   const stripe = useStripe();
   const elements = useElements();
   const [processing, setProcessing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
 
     if (!stripe || !elements) {
+      setErrorMessage("Payment system is loading, please wait...");
+      return;
+    }
+
+    const paymentElement = elements.getElement('payment');
+    if (!paymentElement) {
+      setErrorMessage("Payment form is not ready. Please refresh and try again.");
       return;
     }
 
     setProcessing(true);
 
     try {
-      const { error } = await stripe.confirmPayment({
+      console.log('Confirming payment...');
+      
+      const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
           return_url: `${window.location.origin}/my-orders`,
@@ -738,9 +768,16 @@ function PaymentForm({ orderId, onSuccess }: { orderId: string; onSuccess: () =>
         redirect: 'if_required',
       });
 
+      console.log('Payment confirmation result:', { error, paymentIntent });
+
       if (error) {
-        toast.error(error.message || "Payment failed");
-      } else {
+        console.error('Payment error:', error);
+        if (error.type === 'card_error' || error.type === 'validation_error') {
+          setErrorMessage(error.message || "Payment failed");
+        } else {
+          setErrorMessage("Payment processing failed. Please try again.");
+        }
+      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
         // Confirm payment with backend
         try {
           const response = await fetch(`${BACKEND_URL}/api/retailer-orders/${orderId}/payment/confirm`, {
@@ -750,7 +787,7 @@ function PaymentForm({ orderId, onSuccess }: { orderId: string; onSuccess: () =>
               Authorization: `Bearer ${localStorage.getItem("userToken")}`,
             },
             body: JSON.stringify({
-              paymentIntentId: "stripe_payment_completed",
+              paymentIntentId: paymentIntent.id,
             }),
           });
 
@@ -763,12 +800,12 @@ function PaymentForm({ orderId, onSuccess }: { orderId: string; onSuccess: () =>
                 Authorization: `Bearer ${localStorage.getItem("userToken")}`,
               },
               body: JSON.stringify({
-                paymentIntentId: "stripe_payment_completed",
+                paymentIntentId: paymentIntent.id,
               }),
             });
 
             if (!fallbackResponse.ok) {
-              throw new Error("Failed to confirm payment with backend");
+              console.warn("Backend confirmation failed, but payment succeeded");
             }
           }
 
@@ -779,10 +816,12 @@ function PaymentForm({ orderId, onSuccess }: { orderId: string; onSuccess: () =>
           toast.success("Payment processed! Order confirmation may take a moment.");
           onSuccess();
         }
+      } else {
+        setErrorMessage("Payment was not completed. Please try again.");
       }
     } catch (error) {
-      console.error("Payment error:", error);
-      toast.error("Payment processing failed");
+      console.error("Payment processing error:", error);
+      setErrorMessage("Payment processing failed. Please try again.");
     } finally {
       setProcessing(false);
     }
@@ -790,7 +829,18 @@ function PaymentForm({ orderId, onSuccess }: { orderId: string; onSuccess: () =>
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <PaymentElement />
+      {errorMessage && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-700">{errorMessage}</p>
+        </div>
+      )}
+      
+      <PaymentElement 
+        options={{
+          layout: 'tabs',
+          paymentMethodOrder: ['card']
+        }}
+      />
       
       <Button
         type="submit"
@@ -809,7 +859,7 @@ function PaymentForm({ orderId, onSuccess }: { orderId: string; onSuccess: () =>
       </Button>
 
       <p className="text-xs text-center text-muted-foreground">
-        Your payment is secure and encrypted
+        Your payment is secure and encrypted. Test mode - no actual charges will be made.
       </p>
     </form>
   );

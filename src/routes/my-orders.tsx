@@ -59,6 +59,7 @@ function MyOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [payingOrderId, setPayingOrderId] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [showInvoice, setShowInvoice] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("userToken");
@@ -119,6 +120,10 @@ function MyOrdersPage() {
     }
   };
 
+  const handleViewInvoice = (orderId: string) => {
+    setShowInvoice(orderId);
+  };
+
   const getStatusIcon = (status: Order['status']) => {
     switch (status) {
       case 'pending':
@@ -166,6 +171,18 @@ function MyOrdersPage() {
         </div>
       </div>
     );
+  }
+
+  // If showing invoice modal
+  if (showInvoice) {
+    const order = orders.find(o => o._id === showInvoice);
+    
+    if (!order) {
+      setShowInvoice(null);
+      return null;
+    }
+
+    return <InvoiceModal order={order} onClose={() => setShowInvoice(null)} />;
   }
 
   // If paying for an order, show payment form
@@ -301,7 +318,7 @@ function MyOrdersPage() {
                 </div>
               )}
 
-              {/* Status-specific Messages */}
+              {/* Status-specific Messages and Actions */}
               {order.status === 'pending' && (
                 <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <p className="text-sm text-yellow-800">
@@ -317,53 +334,277 @@ function MyOrdersPage() {
                       ✓ Order confirmed! Shipping cost added. Click "Pay Now" to complete your order.
                     </p>
                   </div>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={() => handlePayNow(order._id)}
+                      className="flex-1 bg-green-600 hover:bg-green-700"
+                      disabled={payingOrderId === order._id}
+                    >
+                      {payingOrderId === order._id ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Initializing Payment...
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard className="mr-2 h-4 w-4" />
+                          Pay Now - ${order.total.toFixed(2)}
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => handleViewInvoice(order._id)}
+                      className="flex-1"
+                    >
+                      <Package className="mr-2 h-4 w-4" />
+                      View Invoice
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {(order.status === 'paid' || order.status === 'processing' || order.status === 'shipped' || order.status === 'delivered') && (
+                <div className="space-y-3">
+                  {order.status === 'paid' && (
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm text-green-800">
+                        ✓ Payment received! Your order is being processed.
+                      </p>
+                    </div>
+                  )}
+                  
+                  {order.status === 'shipped' && (
+                    <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+                      <p className="text-sm text-indigo-800">
+                        📦 Your order has been shipped! Track your package for delivery updates.
+                      </p>
+                    </div>
+                  )}
+
+                  {order.status === 'delivered' && (
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm text-green-800">
+                        ✅ Order delivered successfully!
+                      </p>
+                    </div>
+                  )}
+
                   <Button
-                    onClick={() => handlePayNow(order._id)}
-                    className="w-full bg-green-600 hover:bg-green-700"
-                    disabled={payingOrderId === order._id}
+                    variant="outline"
+                    onClick={() => handleViewInvoice(order._id)}
+                    className="w-full"
                   >
-                    {payingOrderId === order._id ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Initializing Payment...
-                      </>
-                    ) : (
-                      <>
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        Pay Now - ${order.total.toFixed(2)}
-                      </>
-                    )}
+                    <Package className="mr-2 h-4 w-4" />
+                    View Invoice
                   </Button>
-                </div>
-              )}
-
-              {order.status === 'paid' && (
-                <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-sm text-green-800">
-                    ✓ Payment received! Your order is being processed.
-                  </p>
-                </div>
-              )}
-
-              {order.status === 'shipped' && (
-                <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
-                  <p className="text-sm text-indigo-800">
-                    📦 Your order has been shipped! Track your package for delivery updates.
-                  </p>
-                </div>
-              )}
-
-              {order.status === 'cancelled' && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-800">
-                    ✕ This order has been cancelled.
-                  </p>
                 </div>
               )}
             </div>
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function InvoiceModal({ order, onClose }: { order: Order; onClose: () => void }) {
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleDownloadPDF = () => {
+    // Create a printable invoice page
+    const invoiceContent = document.getElementById('invoice-content');
+    if (invoiceContent) {
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>Invoice - Order #${order.orderNumber}</title>
+              <style>
+                body { font-family: Arial, sans-serif; margin: 40px; }
+                .invoice-header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
+                .company-logo { font-size: 24px; font-weight: bold; color: #7d9f48; }
+                .invoice-title { font-size: 28px; font-weight: bold; margin: 10px 0; }
+                .order-info { display: flex; justify-content: space-between; margin-bottom: 30px; }
+                .billing-section { margin-bottom: 30px; }
+                .items-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                .items-table th, .items-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                .items-table th { background-color: #f5f5f5; font-weight: bold; }
+                .totals-section { text-align: right; }
+                .total-row { font-weight: bold; font-size: 18px; }
+                .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+                .status-confirmed { background: #dbeafe; color: #1e40af; }
+                .status-paid { background: #dcfce7; color: #166534; }
+                .footer { margin-top: 40px; text-align: center; color: #666; font-size: 12px; }
+              </style>
+            </head>
+            <body>
+              ${invoiceContent.innerHTML}
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+      }
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">Invoice</h2>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={handlePrint}>
+                Print Invoice
+              </Button>
+              <Button variant="outline" onClick={handleDownloadPDF}>
+                Download PDF
+              </Button>
+              <Button variant="ghost" onClick={onClose}>
+                ✕ Close
+              </Button>
+            </div>
+          </div>
+
+          <div id="invoice-content" className="invoice-content">
+            {/* Invoice Header */}
+            <div className="invoice-header text-center border-b-2 border-gray-800 pb-6 mb-8">
+              <div className="company-logo text-3xl font-bold text-green-600 mb-2">
+                Ray's Healthy Living
+              </div>
+              <div className="text-sm text-gray-600">
+                70 Solomons Island Rd S<br />
+                Prince Frederick, MD 20678<br />
+                Phone: +1 (443) 432-3295<br />
+                Email: info@rayshealthyliving.com
+              </div>
+              <div className="invoice-title text-3xl font-bold text-gray-800 mt-4">
+                INVOICE
+              </div>
+            </div>
+
+            {/* Order Information */}
+            <div className="order-info grid grid-cols-2 gap-8 mb-8">
+              <div>
+                <h3 className="text-lg font-bold mb-3">Bill To:</h3>
+                <div className="text-sm">
+                  <p className="font-semibold">{order.shippingAddress.fullName}</p>
+                  <p>{order.shippingAddress.street}</p>
+                  <p>{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}</p>
+                  <p>Phone: {order.shippingAddress.phone}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="mb-2">
+                  <span className="text-sm text-gray-600">Invoice Number:</span>
+                  <p className="font-bold">{order.orderNumber}</p>
+                </div>
+                <div className="mb-2">
+                  <span className="text-sm text-gray-600">Invoice Date:</span>
+                  <p className="font-bold">
+                    {new Date(order.createdAt).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </p>
+                </div>
+                <div className="mb-2">
+                  <span className="text-sm text-gray-600">Status:</span>
+                  <span className={`status-badge ml-2 ${
+                    order.status === 'paid' ? 'status-paid' : 'status-confirmed'
+                  }`}>
+                    {order.status.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Items Table */}
+            <div className="items-section mb-8">
+              <table className="items-table w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="border border-gray-300 p-3 text-left">Product</th>
+                    <th className="border border-gray-300 p-3 text-left">Variant</th>
+                    <th className="border border-gray-300 p-3 text-right">Qty</th>
+                    <th className="border border-gray-300 p-3 text-right">Unit Price</th>
+                    <th className="border border-gray-300 p-3 text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {order.items.map((item, idx) => (
+                    <tr key={idx}>
+                      <td className="border border-gray-300 p-3">{item.product.name}</td>
+                      <td className="border border-gray-300 p-3 text-sm text-gray-600">
+                        {item.variantLabel || 'Standard'}
+                      </td>
+                      <td className="border border-gray-300 p-3 text-right">{item.quantity}</td>
+                      <td className="border border-gray-300 p-3 text-right">${item.priceAtOrder.toFixed(2)}</td>
+                      <td className="border border-gray-300 p-3 text-right font-semibold">
+                        ${(item.priceAtOrder * item.quantity).toFixed(2)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Totals Section */}
+            <div className="totals-section">
+              <div className="w-80 ml-auto">
+                <div className="flex justify-between py-2 border-b border-gray-300">
+                  <span>Subtotal:</span>
+                  <span>${order.subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-gray-300">
+                  <span>Shipping:</span>
+                  <span>{order.shippingCost > 0 ? `$${order.shippingCost.toFixed(2)}` : 'TBD'}</span>
+                </div>
+                <div className="flex justify-between py-3 border-b-2 border-gray-800 text-lg font-bold">
+                  <span>Total:</span>
+                  <span>${order.total.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Information */}
+            {order.status === 'paid' && order.paidAt && (
+              <div className="payment-info mt-8 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <h3 className="text-lg font-bold text-green-800 mb-2">Payment Information</h3>
+                <p className="text-sm text-green-700">
+                  Payment received on {new Date(order.paidAt).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </p>
+              </div>
+            )}
+
+            {/* Admin Notes */}
+            {order.adminNotes && (
+              <div className="admin-notes mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h3 className="text-lg font-bold text-blue-800 mb-2">Notes:</h3>
+                <p className="text-sm text-blue-700">{order.adminNotes}</p>
+              </div>
+            )}
+
+            {/* Footer */}
+            <div className="footer mt-12 text-center text-xs text-gray-500">
+              <p>Thank you for your business!</p>
+              <p>Questions? Contact us at info@rayshealthyliving.com or +1 (443) 432-3295</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

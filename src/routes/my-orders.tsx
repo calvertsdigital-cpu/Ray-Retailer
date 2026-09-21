@@ -1,0 +1,451 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Package, CreditCard, Truck, CheckCircle, XCircle, Clock } from "lucide-react";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://ray-wholsell.onrender.com';
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
+
+export const Route = createFileRoute("/my-orders")({
+  head: () => ({
+    meta: [
+      { title: "My Orders | Ray's Healthy Living" },
+      {
+        name: "description",
+        content: "View and manage your orders",
+      },
+    ],
+  }),
+  component: MyOrdersPage,
+});
+
+interface Order {
+  _id: string;
+  orderNumber: string;
+  items: Array<{
+    product: {
+      name: string;
+      images?: string[];
+    };
+    variantLabel: string;
+    quantity: number;
+    priceAtOrder: number;
+  }>;
+  subtotal: number;
+  shippingCost: number;
+  total: number;
+  status: 'pending' | 'confirmed' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  shippingAddress: {
+    fullName: string;
+    phone: string;
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  adminNotes?: string;
+  createdAt: string;
+  confirmedAt?: string;
+  paidAt?: string;
+}
+
+function MyOrdersPage() {
+  const navigate = useNavigate();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [payingOrderId, setPayingOrderId] = useState<string | null>(null);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      navigate({ to: "/auth/login" });
+      return;
+    }
+
+    fetchOrders();
+  }, [navigate]);
+
+  const fetchOrders = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/retailer-orders/my-orders`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch orders");
+      }
+
+      setOrders(data.orders || []);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      toast.error("Failed to load orders");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePayNow = async (orderId: string) => {
+    try {
+      setPayingOrderId(orderId);
+
+      const response = await fetch(`${BACKEND_URL}/api/retailer-orders/${orderId}/payment-intent`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to initialize payment");
+      }
+
+      setClientSecret(data.clientSecret);
+    } catch (error) {
+      console.error("Payment initialization error:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to initialize payment");
+      setPayingOrderId(null);
+    }
+  };
+
+  const getStatusIcon = (status: Order['status']) => {
+    switch (status) {
+      case 'pending':
+        return <Clock className="h-5 w-5 text-yellow-600" />;
+      case 'confirmed':
+        return <CreditCard className="h-5 w-5 text-blue-600" />;
+      case 'paid':
+        return <CheckCircle className="h-5 w-5 text-green-600" />;
+      case 'processing':
+        return <Package className="h-5 w-5 text-purple-600" />;
+      case 'shipped':
+        return <Truck className="h-5 w-5 text-indigo-600" />;
+      case 'delivered':
+        return <CheckCircle className="h-5 w-5 text-green-700" />;
+      case 'cancelled':
+        return <XCircle className="h-5 w-5 text-red-600" />;
+      default:
+        return <Package className="h-5 w-5 text-gray-600" />;
+    }
+  };
+
+  const getStatusBadge = (status: Order['status']) => {
+    const variants: Record<Order['status'], string> = {
+      pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      confirmed: "bg-blue-100 text-blue-800 border-blue-200",
+      paid: "bg-green-100 text-green-800 border-green-200",
+      processing: "bg-purple-100 text-purple-800 border-purple-200",
+      shipped: "bg-indigo-100 text-indigo-800 border-indigo-200",
+      delivered: "bg-green-200 text-green-900 border-green-300",
+      cancelled: "bg-red-100 text-red-800 border-red-200",
+    };
+
+    return (
+      <Badge className={`${variants[status]} border`} variant="outline">
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </Badge>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="container-rhl section-y max-w-5xl">
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  // If paying for an order, show payment form
+  if (clientSecret && payingOrderId) {
+    const order = orders.find(o => o._id === payingOrderId);
+    
+    return (
+      <div className="container-rhl section-y max-w-2xl">
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setClientSecret(null);
+              setPayingOrderId(null);
+            }}
+          >
+            ← Back to orders
+          </Button>
+        </div>
+
+        <div className="rounded-xl border border-border bg-card p-6">
+          <h2 className="text-2xl font-bold mb-2">Complete Payment</h2>
+          <p className="text-muted-foreground mb-6">
+            Order #{order?.orderNumber} | Total: ${order?.total.toFixed(2)}
+          </p>
+
+          <Elements stripe={stripePromise} options={{ clientSecret }}>
+            <PaymentForm 
+              orderId={payingOrderId} 
+              onSuccess={() => {
+                setClientSecret(null);
+                setPayingOrderId(null);
+                fetchOrders();
+              }}
+            />
+          </Elements>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container-rhl section-y max-w-5xl">
+      <h1 className="heading-1 mb-8">My Orders</h1>
+
+      {orders.length === 0 ? (
+        <div className="text-center py-20">
+          <Package className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+          <h2 className="text-xl font-semibold mb-2">No orders yet</h2>
+          <p className="text-muted-foreground mb-6">Start shopping to place your first order</p>
+          <Button onClick={() => navigate({ to: "/shop" })}>
+            Browse Products
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {orders.map((order) => (
+            <div
+              key={order._id}
+              className="rounded-xl border border-border bg-card p-6 hover:shadow-md transition-shadow"
+            >
+              {/* Order Header */}
+              <div className="flex flex-wrap items-start justify-between gap-4 mb-4 pb-4 border-b border-border">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    {getStatusIcon(order.status)}
+                    <h3 className="text-lg font-bold">Order #{order.orderNumber}</h3>
+                    {getStatusBadge(order.status)}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Placed on {new Date(order.createdAt).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <p className="text-sm text-muted-foreground">Total Amount</p>
+                  <p className="text-2xl font-bold text-green-600">${order.total.toFixed(2)}</p>
+                </div>
+              </div>
+
+              {/* Order Items */}
+              <div className="mb-4">
+                <p className="text-sm font-semibold text-muted-foreground mb-3">Items:</p>
+                <div className="space-y-2">
+                  {order.items.map((item, idx) => (
+                    <div key={idx} className="flex justify-between items-start text-sm">
+                      <div className="flex-1">
+                        <p className="font-medium">{item.product.name}</p>
+                        {item.variantLabel && (
+                          <p className="text-xs text-muted-foreground">{item.variantLabel}</p>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <p>× {item.quantity}</p>
+                        <p className="font-semibold">${(item.priceAtOrder * item.quantity).toFixed(2)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pricing Breakdown */}
+              <div className="mb-4 pb-4 border-b border-border space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Subtotal:</span>
+                  <span>${order.subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Shipping:</span>
+                  <span>{order.shippingCost > 0 ? `$${order.shippingCost.toFixed(2)}` : 'TBD'}</span>
+                </div>
+              </div>
+
+              {/* Shipping Address */}
+              <div className="mb-4">
+                <p className="text-sm font-semibold text-muted-foreground mb-2">Shipping Address:</p>
+                <p className="text-sm">{order.shippingAddress.fullName}</p>
+                <p className="text-sm text-muted-foreground">{order.shippingAddress.street}</p>
+                <p className="text-sm text-muted-foreground">
+                  {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}
+                </p>
+              </div>
+
+              {/* Admin Notes */}
+              {order.adminNotes && (
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm font-semibold text-blue-900 mb-1">Admin Note:</p>
+                  <p className="text-sm text-blue-800">{order.adminNotes}</p>
+                </div>
+              )}
+
+              {/* Status-specific Messages */}
+              {order.status === 'pending' && (
+                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm text-yellow-800">
+                    ⏳ Your order is pending review. We'll confirm availability and shipping costs soon.
+                  </p>
+                </div>
+              )}
+
+              {order.status === 'confirmed' && (
+                <div className="space-y-3">
+                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-sm text-blue-800">
+                      ✓ Order confirmed! Shipping cost added. Click "Pay Now" to complete your order.
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => handlePayNow(order._id)}
+                    className="w-full bg-green-600 hover:bg-green-700"
+                    disabled={payingOrderId === order._id}
+                  >
+                    {payingOrderId === order._id ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Initializing Payment...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard className="mr-2 h-4 w-4" />
+                        Pay Now - ${order.total.toFixed(2)}
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              {order.status === 'paid' && (
+                <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm text-green-800">
+                    ✓ Payment received! Your order is being processed.
+                  </p>
+                </div>
+              )}
+
+              {order.status === 'shipped' && (
+                <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+                  <p className="text-sm text-indigo-800">
+                    📦 Your order has been shipped! Track your package for delivery updates.
+                  </p>
+                </div>
+              )}
+
+              {order.status === 'cancelled' && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-800">
+                    ✕ This order has been cancelled.
+                  </p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PaymentForm({ orderId, onSuccess }: { orderId: string; onSuccess: () => void }) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [processing, setProcessing] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setProcessing(true);
+
+    try {
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/my-orders`,
+        },
+        redirect: 'if_required',
+      });
+
+      if (error) {
+        toast.error(error.message || "Payment failed");
+      } else {
+        // Confirm payment with backend
+        const response = await fetch(`${BACKEND_URL}/api/retailer-orders/${orderId}/payment/confirm`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+          body: JSON.stringify({
+            paymentIntentId: (await stripe.retrievePaymentIntent((await elements.getElement('payment')?.['__private_stripeElement'])?.['_componentName'] || '')).paymentIntent?.id,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to confirm payment");
+        }
+
+        toast.success("Payment successful! Your order is confirmed.");
+        onSuccess();
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast.error("Payment processing failed");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <PaymentElement />
+      
+      <Button
+        type="submit"
+        disabled={!stripe || processing}
+        className="w-full bg-green-600 hover:bg-green-700"
+        size="lg"
+      >
+        {processing ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Processing Payment...
+          </>
+        ) : (
+          "Complete Payment"
+        )}
+      </Button>
+
+      <p className="text-xs text-center text-muted-foreground">
+        Your payment is secure and encrypted
+      </p>
+    </form>
+  );
+}
+
+export default MyOrdersPage;

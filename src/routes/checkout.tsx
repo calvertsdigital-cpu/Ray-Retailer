@@ -210,37 +210,26 @@ function CheckoutPage() {
     setSubmitting(true);
 
     try {
-      // Prepare order data - match Order schema exactly
+      // Prepare order data for new retailer order API
       const orderData = {
-        orderNumber: `RO-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-        userEmail: user?.email,
-        userContactNumber: contactPhone || selectedAddress.phone,
-        subtotal: parseFloat(subtotal.toFixed(2)),
-        total: parseFloat(subtotal.toFixed(2)),
         items: items.map((item) => ({
-          name: item.product.name,
+          productId: item.product._id || item.product.id,
+          variantLabel: item.product.variant || '',
           quantity: item.qty,
-          price: item.retailPrice,
-          websiteRole: 'retailer',
-          product: item.product._id || item.product.id,
         })),
-        deliveryAddress: {
-          name: `${selectedAddress.firstName} ${selectedAddress.lastName}`,
-          contactNumber: selectedAddress.phone,
-          email: user?.email,
-          addressLine1: selectedAddress.street,
+        shippingAddress: {
+          fullName: `${selectedAddress.firstName} ${selectedAddress.lastName}`,
+          phone: contactPhone || selectedAddress.phone,
+          street: selectedAddress.street,
           city: selectedAddress.city,
           state: selectedAddress.state,
           zipCode: selectedAddress.zip,
           country: selectedAddress.country || "United States",
         },
-        status: "processing",
-        paymentStatus: "pending",
-        website: "retailer",
       };
 
-      // Send to backend
-      const response = await fetch(`${BACKEND_URL}/api/orders/create-retailer-order`, {
+      // Send to new retailer order endpoint
+      const response = await fetch(`${BACKEND_URL}/api/retailer-orders/submit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -252,23 +241,21 @@ function CheckoutPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to create order");
+        throw new Error(data.message || "Failed to submit order");
       }
 
-      const orderId = data.orderId || data._id;
-
-      // Store order ID locally
-      localStorage.setItem("lastOrderId", orderId);
+      const order = data.order;
 
       // Clear cart
       clear();
 
       // Show success message
-      toast.success(`Order submitted! Order ID: ${orderId}`);
+      toast.success(`Order request submitted! Order #${order.orderNumber}`);
+      toast.info("You'll receive an invoice once admin confirms shipping details");
 
-      // Redirect to order confirmation page
+      // Redirect to My Orders page
       setTimeout(() => {
-        navigate({ to: `/account?tab=orders&orderId=${orderId}` });
+        navigate({ to: `/my-orders` });
       }, 1500);
     } catch (error) {
       console.error("Order submission error:", error);

@@ -25,6 +25,7 @@ import { Route as IrishMossRouteImport } from './routes/irish-moss'
 import { Route as LooseHerbsRouteImport } from './routes/loose-herbs'
 import { Route as MaximumCardioRouteImport } from './routes/maximum-cardio'
 import { Route as MaximumCardioVideoRouteImport } from './routes/maximum-cardio-video'
+import { Route as MyOrdersRouteImport } from './routes/my-orders'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RaysVitalityRouteImport } from './routes/rays-vitality'
@@ -121,6 +122,11 @@ const MaximumCardioRoute = MaximumCardioRouteImport.update({
 const MaximumCardioVideoRoute = MaximumCardioVideoRouteImport.update({
   id: '/maximum-cardio-video',
   path: '/maximum-cardio-video',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyOrdersRoute = MyOrdersRouteImport.update({
+  id: '/my-orders',
+  path: '/my-orders',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaymentRoute = PaymentRouteImport.update({
@@ -226,6 +232,7 @@ export interface FileRoutesByFullPath {
   '/loose-herbs': typeof LooseHerbsRoute
   '/maximum-cardio': typeof MaximumCardioRoute
   '/maximum-cardio-video': typeof MaximumCardioVideoRoute
+  '/my-orders': typeof MyOrdersRoute
   '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/rays-vitality': typeof RaysVitalityRoute
@@ -261,6 +268,7 @@ export interface FileRoutesByTo {
   '/loose-herbs': typeof LooseHerbsRoute
   '/maximum-cardio': typeof MaximumCardioRoute
   '/maximum-cardio-video': typeof MaximumCardioVideoRoute
+  '/my-orders': typeof MyOrdersRoute
   '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/rays-vitality': typeof RaysVitalityRoute
@@ -297,6 +305,7 @@ export interface FileRoutesById {
   '/loose-herbs': typeof LooseHerbsRoute
   '/maximum-cardio': typeof MaximumCardioRoute
   '/maximum-cardio-video': typeof MaximumCardioVideoRoute
+  '/my-orders': typeof MyOrdersRoute
   '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/rays-vitality': typeof RaysVitalityRoute
@@ -334,6 +343,7 @@ export interface FileRouteTypes {
     | '/loose-herbs'
     | '/maximum-cardio'
     | '/maximum-cardio-video'
+    | '/my-orders'
     | '/payment'
     | '/privacy'
     | '/rays-vitality'
@@ -369,6 +379,7 @@ export interface FileRouteTypes {
     | '/loose-herbs'
     | '/maximum-cardio'
     | '/maximum-cardio-video'
+    | '/my-orders'
     | '/payment'
     | '/privacy'
     | '/rays-vitality'
@@ -404,6 +415,7 @@ export interface FileRouteTypes {
     | '/loose-herbs'
     | '/maximum-cardio'
     | '/maximum-cardio-video'
+    | '/my-orders'
     | '/payment'
     | '/privacy'
     | '/rays-vitality'
@@ -440,6 +452,7 @@ export interface RootRouteChildren {
   LooseHerbsRoute: typeof LooseHerbsRoute
   MaximumCardioRoute: typeof MaximumCardioRoute
   MaximumCardioVideoRoute: typeof MaximumCardioVideoRoute
+  MyOrdersRoute: typeof MyOrdersRoute
   PaymentRoute: typeof PaymentRoute
   PrivacyRoute: typeof PrivacyRoute
   RaysVitalityRoute: typeof RaysVitalityRoute
@@ -571,6 +584,13 @@ declare module '@tanstack/react-router' {
       path: '/maximum-cardio-video'
       fullPath: '/maximum-cardio-video'
       preLoaderRoute: typeof MaximumCardioVideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-orders': {
+      id: '/my-orders'
+      path: '/my-orders'
+      fullPath: '/my-orders'
+      preLoaderRoute: typeof MyOrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/payment': {
@@ -712,6 +732,7 @@ const rootRouteChildren: RootRouteChildren = {
   LooseHerbsRoute: LooseHerbsRoute,
   MaximumCardioRoute: MaximumCardioRoute,
   MaximumCardioVideoRoute: MaximumCardioVideoRoute,
+  MyOrdersRoute: MyOrdersRoute,
   PaymentRoute: PaymentRoute,
   PrivacyRoute: PrivacyRoute,
   RaysVitalityRoute: RaysVitalityRoute,

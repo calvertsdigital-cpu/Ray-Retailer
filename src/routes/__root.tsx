@@ -16,6 +16,8 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/lib/cart";
+import { MedicalNotice } from "@/components/modals/MedicalNotice";
+import { CookieNotice } from "@/components/modals/CookieNotice";
 
 
 function NotFoundComponent() {
@@ -148,6 +150,14 @@ function RootComponent() {
           {!isAuthPage && <Footer />}
         </div>
         <Toaster position="top-center" richColors />
+        
+        {/* Global Modals */}
+        {!isAuthPage && (
+          <>
+            <MedicalNotice />
+            <CookieNotice />
+          </>
+        )}
       </CartProvider>
     </QueryClientProvider>
   );

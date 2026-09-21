@@ -359,6 +359,80 @@ function Home() {
         </div>
       </section>
 
+      {/* COMPLIANCE & CERTIFICATIONS */}
+      <section className="section-y">
+        <div className="container-rhl">
+          <SectionHeading
+            eyebrow="Our Promise"
+            title="100% Compliant & Certified"
+            description="We meet the highest industry standards for safety, quality, and purity."
+          />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              "NSF GMP Certified",
+              "FDA OTC registered facility", 
+              "KOF-K kosher certified",
+              "Certified Organic",
+              "Non-GMO",
+              "Gluten-Free", 
+              "Allergen Testing",
+              "Pesticide Testing"
+            ].map((certification) => (
+              <div key={certification} className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-card">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                    <Leaf className="h-4 w-4 text-green-600" />
+                  </div>
+                </div>
+                <span className="text-sm font-medium text-gray-700">{certification}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ABOUT RAY'S HEALTHY LIVING */}
+      <section className="section-y bg-accent/30">
+        <div className="container-rhl grid items-center gap-10 lg:grid-cols-2">
+          <div className="order-2 lg:order-1">
+            <p className="eyebrow text-primary">About Our Firm</p>
+            <h2 className="heading-2 mt-2">Ray's <span className="text-primary">Healthy Living</span></h2>
+            <div className="w-20 h-1 bg-gradient-to-r from-primary to-orange-500 mt-4 mb-6 rounded-full"></div>
+            <p className="text-muted-foreground mb-4">
+              We serve the community through a trusted network of physical retail locations and our comprehensive online platform. 
+              Ray's Healthy Living specializes in premium natural vitamins, minerals, and herbal supplements formulated to the highest quality standards.
+            </p>
+            <p className="text-muted-foreground mb-6">
+              <strong className="text-foreground">Our Commitment:</strong> We prioritize customer satisfaction and safety above all else. 
+              At Ray's Healthy Living, we believe our customers are family—and family deserves the very best care and attention.
+            </p>
+            <div className="flex gap-8 mb-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">100%</div>
+                <div className="text-sm text-muted-foreground">Natural Quality</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">20+</div>
+                <div className="text-sm text-muted-foreground">Years Experience</div>
+              </div>
+            </div>
+            <Button asChild variant="outline">
+              <Link to="/about">Learn more about us</Link>
+            </Button>
+          </div>
+          <div className="order-1 lg:order-2">
+            <div className="rounded-2xl overflow-hidden shadow-card bg-gradient-to-br from-green-100 to-green-50 h-80 flex items-center justify-center relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-orange-500/10"></div>
+              <div className="text-center relative z-10">
+                <div className="text-4xl font-bold text-primary mb-2">🌿</div>
+                <p className="font-semibold text-primary">Natural Wellness</p>
+                <p className="text-sm text-muted-foreground">Since 2004</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* REVIEWS */}
       <section className="section-y">
         <div className="container-rhl">

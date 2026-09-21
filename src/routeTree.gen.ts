@@ -28,6 +28,7 @@ import { Route as MaximumCardioVideoRouteImport } from './routes/maximum-cardio-
 import { Route as MyOrdersRouteImport } from './routes/my-orders'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as RaysVitalityRouteImport } from './routes/rays-vitality'
 import { Route as ShippingReturnsRouteImport } from './routes/shipping-returns'
 import { Route as ShopRouteImport } from './routes/shop'
@@ -139,6 +140,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RaysVitalityRoute = RaysVitalityRouteImport.update({
   id: '/rays-vitality',
   path: '/rays-vitality',
@@ -235,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/my-orders': typeof MyOrdersRoute
   '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/rays-vitality': typeof RaysVitalityRoute
   '/shipping-returns': typeof ShippingReturnsRoute
   '/shop': typeof ShopRoute
@@ -271,6 +278,7 @@ export interface FileRoutesByTo {
   '/my-orders': typeof MyOrdersRoute
   '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/rays-vitality': typeof RaysVitalityRoute
   '/shipping-returns': typeof ShippingReturnsRoute
   '/shop': typeof ShopRoute
@@ -308,6 +316,7 @@ export interface FileRoutesById {
   '/my-orders': typeof MyOrdersRoute
   '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/rays-vitality': typeof RaysVitalityRoute
   '/shipping-returns': typeof ShippingReturnsRoute
   '/shop': typeof ShopRoute
@@ -346,6 +355,7 @@ export interface FileRouteTypes {
     | '/my-orders'
     | '/payment'
     | '/privacy'
+    | '/privacy-policy'
     | '/rays-vitality'
     | '/shipping-returns'
     | '/shop'
@@ -382,6 +392,7 @@ export interface FileRouteTypes {
     | '/my-orders'
     | '/payment'
     | '/privacy'
+    | '/privacy-policy'
     | '/rays-vitality'
     | '/shipping-returns'
     | '/shop'
@@ -418,6 +429,7 @@ export interface FileRouteTypes {
     | '/my-orders'
     | '/payment'
     | '/privacy'
+    | '/privacy-policy'
     | '/rays-vitality'
     | '/shipping-returns'
     | '/shop'
@@ -455,6 +467,7 @@ export interface RootRouteChildren {
   MyOrdersRoute: typeof MyOrdersRoute
   PaymentRoute: typeof PaymentRoute
   PrivacyRoute: typeof PrivacyRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   RaysVitalityRoute: typeof RaysVitalityRoute
   ShippingReturnsRoute: typeof ShippingReturnsRoute
   ShopRoute: typeof ShopRoute
@@ -607,6 +620,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rays-vitality': {
       id: '/rays-vitality'
       path: '/rays-vitality'
@@ -735,6 +755,7 @@ const rootRouteChildren: RootRouteChildren = {
   MyOrdersRoute: MyOrdersRoute,
   PaymentRoute: PaymentRoute,
   PrivacyRoute: PrivacyRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   RaysVitalityRoute: RaysVitalityRoute,
   ShippingReturnsRoute: ShippingReturnsRoute,
   ShopRoute: ShopRoute,

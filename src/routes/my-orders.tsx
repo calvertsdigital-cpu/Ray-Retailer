@@ -760,53 +760,37 @@ function PaymentForm({ orderId, onSuccess }: { orderId: string; onSuccess: () =>
       return;
     }
 
-    // For now, simulate payment success due to key mismatch issues
-    console.log('Simulating payment success due to Stripe key configuration issue');
-    
     setProcessing(true);
     
     try {
-      // Simulate payment processing delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Mark payment as completed in backend
-      try {
-        const response = await fetch(`${BACKEND_URL}/api/retailer-orders/${orderId}/payment/simulate`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-          },
-          body: JSON.stringify({
-            paymentMethod: "stripe_simulation",
-            amount: "91.65"
-          }),
-        });
-
-        if (!response.ok) {
-          // Try fallback endpoint
-          const fallbackResponse = await fetch(`${BACKEND_URL}/api/orders/${orderId}/status`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-            },
-            body: JSON.stringify({ status: 'paid' }),
-          });
-
-          if (!fallbackResponse.ok) {
-            console.log("Backend update failed, but payment simulated successfully");
-          }
-        }
-      } catch (backendError) {
-        console.log("Backend confirmation failed:", backendError);
+      const { error: submitError } = await elements.submit();
+      if (submitError) {
+        setErrorMessage(submitError.message || "Failed to submit payment information");
+        setProcessing(false);
+        return;
       }
 
-      toast.success("Payment completed successfully! (Test Mode)");
-      onSuccess();
+      const { error, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        clientSecret,
+        confirmParams: {
+          return_url: `${window.location.origin}/my-orders`,
+        },
+        redirect: 'if_required'
+      });
+
+      if (error) {
+        console.error("Payment error:", error);
+        setErrorMessage(error.message || "Payment failed. Please try again.");
+      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        toast.success("Payment completed successfully!");
+        onSuccess();
+      } else {
+        setErrorMessage("Payment was not completed. Please try again.");
+      }
       
     } catch (error) {
-      console.error("Payment simulation error:", error);
+      console.error("Payment processing error:", error);
       setErrorMessage("Payment processing failed. Please try again.");
     } finally {
       setProcessing(false);
@@ -826,57 +810,40 @@ function PaymentForm({ orderId, onSuccess }: { orderId: string; onSuccess: () =>
 
   return (
     <div className="space-y-6">
-      {/* Stripe Key Mismatch Notice */}
-      <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-        <h3 className="text-sm font-semibold text-yellow-800 mb-2">⚠️ Payment Configuration Notice</h3>
-        <p className="text-sm text-yellow-700 mb-2">
-          There's a Stripe key configuration mismatch between frontend and backend. 
-        </p>
-        <p className="text-sm text-yellow-700">
-          <strong>For testing:</strong> We'll simulate a successful payment. In production, 
-          ensure both frontend and backend use matching Stripe key pairs.
-        </p>
-      </div>
-
       {errorMessage && (
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-sm text-red-700">{errorMessage}</p>
         </div>
       )}
 
-      {/* Simulated Payment Form */}
+      {/* Real Stripe Payment Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
-          <h3 className="font-semibold text-gray-700 mb-2">🧪 Test Payment Simulation</h3>
-          <p className="text-sm text-gray-600 mb-3">
-            This will simulate a successful payment without charging any real money.
-          </p>
-          <div className="space-y-2 text-sm text-gray-600">
-            <div><strong>Order:</strong> #{orderId.substring(0, 8)}...</div>
-            <div><strong>Amount:</strong> $91.65</div>
-            <div><strong>Mode:</strong> Test Simulation</div>
-          </div>
+        <div className="p-4 border border-border rounded-lg bg-card">
+          <h3 className="font-semibold mb-4">Payment Information</h3>
+          
+          {/* Stripe Payment Element */}
+          <PaymentElement />
         </div>
         
         <Button
           type="submit"
-          disabled={processing}
-          className="w-full bg-green-600 hover:bg-green-700"
+          disabled={processing || !stripe || !elements}
+          className="w-full"
           size="lg"
         >
           {processing ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Simulating Payment...
+              Processing Payment...
             </>
           ) : (
-            "🧪 Simulate Successful Payment"
+            `Pay Now - $${(clientSecret.split('_secret')[0].includes('pi_') ? order?.total?.toFixed(2) || '0.00' : '0.00')}`
           )}
         </Button>
 
         <div className="text-xs text-center text-muted-foreground space-y-1">
-          <p>⚡ Test mode - No actual charges will be made</p>
-          <p>🔧 To fix: Ensure backend uses matching Stripe secret key</p>
+          <p>🔒 Secure payment powered by Stripe</p>
+          <p>🧪 Test mode - Use test card: 4242 4242 4242 4242</p>
         </div>
       </form>
     </div>

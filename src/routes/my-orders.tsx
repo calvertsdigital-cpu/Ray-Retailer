@@ -313,6 +313,7 @@ function MyOrdersPage() {
               <PaymentForm 
                 orderId={payingOrderId}
                 clientSecret={clientSecret}
+                amount={order?.total || 0}
                 onSuccess={() => {
                   setClientSecret(null);
                   setPayingOrderId(null);
@@ -735,7 +736,7 @@ function InvoiceModal({ order, onClose }: { order: Order; onClose: () => void })
   );
 }
 
-function PaymentForm({ orderId, clientSecret, onSuccess }: { orderId: string; clientSecret: string; onSuccess: () => void }) {
+function PaymentForm({ orderId, clientSecret, amount, onSuccess }: { orderId: string; clientSecret: string; amount: number; onSuccess: () => void }) {
   const stripe = useStripe();
   const elements = useElements();
   const [processing, setProcessing] = useState(false);
@@ -838,13 +839,14 @@ function PaymentForm({ orderId, clientSecret, onSuccess }: { orderId: string; cl
               Processing Payment...
             </>
           ) : (
-            `Pay Now - $${order?.total?.toFixed(2) || '0.00'}`
+            `Pay Now - $${amount.toFixed(2)}`
           )}
         </Button>
 
         <div className="text-xs text-center text-muted-foreground space-y-1">
           <p>🔒 Secure payment powered by Stripe</p>
-          <p>🧪 Test mode - Use test card: 4242 4242 4242 4242</p>
+          <p>⚠️ LIVE MODE - Real payments will be processed!</p>
+          <p>Use real card details for actual transactions</p>
         </div>
       </form>
     </div>

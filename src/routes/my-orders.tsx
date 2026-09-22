@@ -311,7 +311,8 @@ function MyOrdersPage() {
               }}
             >
               <PaymentForm 
-                orderId={payingOrderId} 
+                orderId={payingOrderId}
+                clientSecret={clientSecret}
                 onSuccess={() => {
                   setClientSecret(null);
                   setPayingOrderId(null);
@@ -734,7 +735,7 @@ function InvoiceModal({ order, onClose }: { order: Order; onClose: () => void })
   );
 }
 
-function PaymentForm({ orderId, onSuccess }: { orderId: string; onSuccess: () => void }) {
+function PaymentForm({ orderId, clientSecret, onSuccess }: { orderId: string; clientSecret: string; onSuccess: () => void }) {
   const stripe = useStripe();
   const elements = useElements();
   const [processing, setProcessing] = useState(false);
@@ -837,7 +838,7 @@ function PaymentForm({ orderId, onSuccess }: { orderId: string; onSuccess: () =>
               Processing Payment...
             </>
           ) : (
-            `Pay Now - $${(clientSecret.split('_secret')[0].includes('pi_') ? order?.total?.toFixed(2) || '0.00' : '0.00')}`
+            `Pay Now - $${order?.total?.toFixed(2) || '0.00'}`
           )}
         </Button>
 

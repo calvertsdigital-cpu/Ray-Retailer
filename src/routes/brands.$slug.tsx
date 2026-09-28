@@ -5,9 +5,6 @@ import { getBrandBySlug, products } from "@/data/catalog";
 
 const brandBlurbs: Record<string, string> = {
   "Ray's Healthy Living": "Our own house blends, made in small batches and sold in our stores since day one.",
-  "Nature's Field": "Everyday herbal capsules and extracts with clear labelling and consistent sourcing.",
-  "Green Harvest Botanicals": "Whole-plant botanicals from growers who publish their harvest practices.",
-  "Atlantic Sea Co.": "Cold-water sea moss and marine botanicals harvested along the Atlantic coast.",
 };
 
 export const Route = createFileRoute("/brands/$slug")({

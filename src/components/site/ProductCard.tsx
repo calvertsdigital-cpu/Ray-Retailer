@@ -36,7 +36,7 @@ export function ProductCard({
         <Link
           to="/products/$slug"
           params={{ slug: product.slug }}
-          className="block aspect-square overflow-hidden bg-secondary"
+          className="block aspect-square overflow-hidden bg-white"
         >
           <img
             src={cover?.src}
@@ -44,10 +44,10 @@ export function ProductCard({
             loading="lazy"
             width={600}
             height={600}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+            className="h-full w-full object-contain p-3 transition-transform duration-500 group-hover:scale-[1.04]"
             onError={(e) => {
               // Fallback if image fails to load
-              e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%2316a34a' width='400' height='400'/%3E%3Ctext fill='white' font-size='60' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle'%3ERay's%3C/text%3E%3C/svg%3E`;
+              e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f8f8f8' width='400' height='400'/%3E%3Ctext fill='%2316a34a' font-size='40' font-family='Arial' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle'%3ERay's%3C/text%3E%3C/svg%3E`;
             }}
           />
         </Link>
@@ -76,9 +76,14 @@ export function ProductCard({
         </div>
 
         <p className="font-mono text-[11px] text-muted-foreground">
-          RHL ID {product.sku}
+          {product.rhlId ? `RHL ID ${product.rhlId}` : `RHL ID ${product.sku}`}
           {product.upc ? ` · UPC ${product.upc}` : ""}
         </p>
+        {product.binLocation && (
+          <p className="font-mono text-[11px] font-semibold text-primary">
+            📦 Bin: {product.binLocation}
+          </p>
+        )}
         <div className="mt-1">
           <StarRating rating={product.rating} count={product.reviewCount} showValue={false} />
         </div>

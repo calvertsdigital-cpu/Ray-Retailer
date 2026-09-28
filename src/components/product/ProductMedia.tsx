@@ -35,7 +35,7 @@ export function ProductMediaGallery({ media, productName }: { media: Media[]; pr
             aria-label={m.label}
             onClick={() => setActiveId(m.id)}
             className={cn(
-              "relative aspect-square h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 bg-secondary transition-colors md:h-auto md:w-full",
+              "relative aspect-square h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 bg-white transition-colors md:h-auto md:w-full",
               m.id === active?.id ? "border-primary" : "border-border hover:border-primary/50",
             )}
           >
@@ -45,7 +45,7 @@ export function ProductMediaGallery({ media, productName }: { media: Media[]; pr
               loading="lazy"
               width={160}
               height={160}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain p-1"
             />
             {m.type === "video" && (
               <>
@@ -65,7 +65,7 @@ export function ProductMediaGallery({ media, productName }: { media: Media[]; pr
 
       {/* CENTER COLUMN — stable dimensions, no layout jump on media change */}
       <div className="order-1 flex-1 md:order-2">
-        <div className="aspect-square w-full overflow-hidden rounded-xl border border-border bg-secondary">
+        <div className="aspect-square w-full overflow-hidden rounded-xl border border-border bg-white">
           {active?.type === "video" ? (
             <video
               key={active.id}
@@ -85,7 +85,7 @@ export function ProductMediaGallery({ media, productName }: { media: Media[]; pr
               alt={active?.alt ?? productName}
               width={900}
               height={900}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain p-4"
             />
           )}
         </div>

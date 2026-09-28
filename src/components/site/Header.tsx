@@ -146,13 +146,13 @@ export function Header() {
 
       {/* ── Tier 2: White main bar ── */}
       <div className="border-b border-gray-200 bg-white">
-        <div className="container-rhl flex h-24 items-center gap-6 py-2">
+        <div className="container-rhl flex h-16 items-center gap-3 py-2 lg:h-24 lg:gap-6">
           <Link to="/" className="flex shrink-0 flex-col items-start" aria-label="Ray's Healthy Living home">
-            <img src="/favicon.png" alt="Ray's Healthy Living" className="h-12 w-auto mb-0.5" />
-            <span className="text-xs font-bold text-green-700">Quality</span>
+            <img src="/favicon.png" alt="Ray's Healthy Living" className="h-9 w-auto lg:h-12 mb-0.5" />
+            <span className="hidden text-xs font-bold text-green-700 lg:block">Quality</span>
           </Link>
 
-          <div className="flex flex-1 items-center">
+          <div className="hidden flex-1 items-center sm:flex">
             <div className="relative w-full max-w-lg">
               <input
                 type="text"
@@ -165,15 +165,18 @@ export function Header() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button className="text-gray-600 hover:text-gray-900 transition-colors" title="Wishlist">
+          <div className="ml-auto flex items-center gap-3 lg:gap-4">
+            <button className="sm:hidden text-gray-600 hover:text-gray-900 transition-colors" title="Search">
+              <Search className="h-5 w-5" />
+            </button>
+            <button className="hidden sm:block text-gray-600 hover:text-gray-900 transition-colors" title="Wishlist">
               <Heart className="h-6 w-6" />
             </button>
             <Link to="/account" className="text-gray-600 hover:text-gray-900 transition-colors" title="Account">
-              <User className="h-6 w-6" />
+              <User className="h-5 w-5 lg:h-6 lg:w-6" />
             </Link>
             <Link to="/cart" className="relative text-gray-600 hover:text-gray-900 transition-colors" title="Shopping cart">
-              <ShoppingBag className="h-6 w-6" />
+              <ShoppingBag className="h-5 w-5 lg:h-6 lg:w-6" />
               {hydrated && count > 0 && (
                 <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-xs font-bold text-white">
                   {count}
@@ -204,6 +207,20 @@ export function Header() {
                       {item.label}
                     </Link>
                   ))}
+                  {/* Subnav categories in mobile menu */}
+                  <div className="mt-3 border-t border-border pt-3">
+                    <p className="px-4 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Categories</p>
+                    {subnavItems.filter(i => i.type === "direct").map((item) => (
+                      <Link
+                        key={item.label}
+                        to={(item as { to: string }).to}
+                        onClick={() => setOpen(false)}
+                        className="rounded-md px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-primary-dark"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
                 </nav>
               </SheetContent>
             </Sheet>
@@ -211,8 +228,8 @@ export function Header() {
         </div>
       </div>
 
-      {/* ── Tier 3: Sub-navbar ── */}
-      <div className="border-b border-gray-200 bg-gray-50">
+      {/* ── Tier 3: Sub-navbar — desktop only ── */}
+      <div className="hidden border-b border-gray-200 bg-gray-50 lg:block">
         <div className="container-rhl flex flex-wrap items-center justify-center gap-1 py-2 lg:gap-1">
           {subnavItems.map((item) => {
             if (item.type === "direct") {

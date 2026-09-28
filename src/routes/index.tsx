@@ -126,19 +126,19 @@ function Home() {
     <>
       {/* HERO SLIDER */}
       <section 
-        className="relative overflow-hidden min-h-[500px] lg:min-h-[600px]"
+        className="relative overflow-hidden min-h-[400px] sm:min-h-[500px] lg:min-h-[600px]"
         style={{
           backgroundImage: `url(${heroSlides[heroIndex].image})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
+          backgroundAttachment: 'scroll',
           transition: 'background-image 1s ease-in-out',
         }}
       >
         <div className="absolute inset-0 bg-black/40" />
-        <div className="container-rhl relative flex items-center py-16 md:py-24 lg:py-32">
+        <div className="container-rhl relative flex items-center py-12 sm:py-16 md:py-24 lg:py-32">
           <div className="max-w-2xl">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
               <span className="block">{heroSlides[heroIndex]?.title || "Pure Wellness"}</span>
               <span className="block text-orange-500">{heroSlides[heroIndex]?.subtitle || "Naturally Yours"}</span>
             </h1>
@@ -149,7 +149,7 @@ function Home() {
               <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold">
                 <Link to="/shop">Shop Products <ArrowRight className="ml-2 h-4 w-4" /></Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 font-semibold">
+              <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold border-2 border-orange-500">
                 <Link to="/health-concerns">Learn More</Link>
               </Button>
             </div>
@@ -222,7 +222,7 @@ function Home() {
             description="Start with the concern, not the product. Each guide explains the basics, then shows the support options we would talk through in store."
             action={{ label: "All concerns", to: "/health-concerns" }}
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {concernCards.map((c) =>
               c.slug ? (
                 <Link
@@ -345,7 +345,7 @@ function Home() {
             description="We would rather you understood the why before you spent a dollar."
             action={{ label: "Read the blog", to: "/blog" }}
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {education.map((e) => (
               <div key={e.title} className="rounded-xl border border-border bg-card p-5 shadow-card">
                 <span className="grid h-11 w-11 place-items-center rounded-full bg-accent text-primary-dark">
@@ -367,7 +367,7 @@ function Home() {
             title="100% Compliant & Certified"
             description="We meet the highest industry standards for safety, quality, and purity."
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {[
               "NSF GMP Certified",
               "FDA OTC registered facility", 

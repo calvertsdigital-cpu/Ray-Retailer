@@ -51,6 +51,10 @@ export interface Product {
   id: string;
   sku: string;
   upc?: string;
+  /** Numeric RHL product ID from the backend (e.g. 200, 201 …) */
+  rhlId?: number | string;
+  /** Bin location for picking — e.g. "A-12" */
+  binLocation?: string;
   slug: string;
   name: string;
   brand: string;

@@ -180,7 +180,7 @@ function ProductPage() {
           <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 rounded-xl border border-border bg-secondary/50 p-4 text-sm">
             <div>
               <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground">RHL ID</dt>
-              <dd className="font-mono text-sm">{variant?.sku ?? product.sku}</dd>
+              <dd className="font-mono text-sm">{product.rhlId ?? variant?.sku ?? product.sku}</dd>
             </div>
             <div>
               <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground">RHL UPC</dt>
@@ -194,6 +194,12 @@ function ProductPage() {
               <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Size</dt>
               <dd>{variant?.label ?? "Single size"}</dd>
             </div>
+            {product.binLocation && (
+              <div className="col-span-2">
+                <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Bin Location</dt>
+                <dd className="font-mono text-sm font-semibold text-primary">{product.binLocation}</dd>
+              </div>
+            )}
           </dl>
 
 

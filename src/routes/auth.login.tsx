@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
-import { LogIn, AlertCircle, CheckCircle, X } from "lucide-react";
+import { LogIn, AlertCircle, CheckCircle, X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -126,6 +126,16 @@ function LoginPage() {
   return (
     <div className="min-h-screen bg-cream flex items-center justify-center py-12 px-4">
       <Toast message={toast.message} type={toast.type} show={toast.show} onClose={() => {}} />
+
+      {/* Go Back button — top-left, always visible */}
+      <button
+        type="button"
+        onClick={() => navigate({ to: "/" })}
+        className="fixed top-4 left-4 z-50 flex items-center gap-2 rounded-lg bg-gray-800 px-4 py-2 text-sm font-bold text-white shadow-md transition-colors hover:bg-gray-600"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Go Back
+      </button>
       
       <div className="w-full max-w-md">
         <div className="bg-white rounded-lg shadow-lg p-8">

@@ -39,7 +39,7 @@ export function Footer() {
   return (
     <footer className="mt-16 bg-primary-dark text-primary-foreground">
       <div className="container-rhl grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-5">
-        <div className="lg:col-span-2">
+        <div className="md:col-span-2 lg:col-span-2">
           <h1 className="text-2xl font-bold">Ray's Healthy Living</h1>
           <p className="mt-4 max-w-sm text-sm text-primary-foreground/80">
             A family-centric business providing quality health and beauty supplements built on natural and organic

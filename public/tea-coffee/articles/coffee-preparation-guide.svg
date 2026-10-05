@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <radialGradient id="g" cx="40%" cy="40%" r="75%">
+      <stop offset="0%" stop-color="#795548"/>
+      <stop offset="100%" stop-color="#1a0a04"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <!-- Steam -->
+  <g stroke="#d4a96a" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.55">
+    <path d="M360,190 Q368,165 360,138 Q352,112 360,86"/>
+    <path d="M400,195 Q408,168 400,142 Q392,116 400,90"/>
+    <path d="M440,190 Q448,165 440,138 Q432,112 440,86"/>
+  </g>
+  <!-- Espresso cup silhouette -->
+  <path d="M330,210 L340,340 Q400,365 460,340 L470,210 Z" fill="#fff8f0" opacity="0.85"/>
+  <ellipse cx="400" cy="210" rx="70" ry="14" fill="#fff8f0" opacity="0.9"/>
+  <ellipse cx="400" cy="210" rx="58" ry="10" fill="#c8945a" opacity="0.7"/>
+  <!-- Handle -->
+  <path d="M465,250 Q510,250 510,290 Q510,330 465,330" stroke="#fff8f0" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.8"/>
+  <rect x="190" y="420" width="500" height="130" rx="12" fill="rgba(40,15,5,0.55)"/>
+  <text x="440" y="468" font-family="Georgia,serif" font-size="13" fill="#ffe0b2" text-anchor="middle" letter-spacing="4">RAY'S HEALTHY LIVING</text>
+  <text x="440" y="502" font-family="Georgia,serif" font-size="20" font-weight="bold" fill="#ffffff" text-anchor="middle">Coffee Preparation Guide</text>
+</svg>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="40%" r="75%">
+      <stop offset="0%" stop-color="#fffbe6"/>
+      <stop offset="100%" stop-color="#d4a520"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <!-- Simple daisy petals -->
+  <g transform="translate(400,230)">
+    <g fill="#ffffff" stroke="#e8c840" stroke-width="1.5">
+      <ellipse cx="0"   cy="-52" rx="12" ry="28"/>
+      <ellipse cx="0"   cy="-52" rx="12" ry="28" transform="rotate(45)"/>
+      <ellipse cx="0"   cy="-52" rx="12" ry="28" transform="rotate(90)"/>
+      <ellipse cx="0"   cy="-52" rx="12" ry="28" transform="rotate(135)"/>
+      <ellipse cx="0"   cy="-52" rx="12" ry="28" transform="rotate(180)"/>
+      <ellipse cx="0"   cy="-52" rx="12" ry="28" transform="rotate(225)"/>
+      <ellipse cx="0"   cy="-52" rx="12" ry="28" transform="rotate(270)"/>
+      <ellipse cx="0"   cy="-52" rx="12" ry="28" transform="rotate(315)"/>
+    </g>
+    <circle cx="0" cy="0" r="22" fill="#f5c518"/>
+  </g>
+  <rect x="150" y="340" width="500" height="130" rx="12" fill="rgba(180,120,0,0.35)"/>
+  <text x="400" y="388" font-family="Georgia,serif" font-size="13" fill="#7a5000" text-anchor="middle" letter-spacing="4">RAY'S HEALTHY LIVING</text>
+  <text x="400" y="422" font-family="Georgia,serif" font-size="22" font-weight="bold" fill="#3d2800" text-anchor="middle">Chamomile Loose Botanical</text>
+  <text x="400" y="452" font-family="Arial,sans-serif" font-size="13" fill="#7a5000" text-anchor="middle" letter-spacing="2">SAMPLE PLACEHOLDER</text>
+</svg>

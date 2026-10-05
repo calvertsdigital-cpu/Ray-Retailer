@@ -1,0 +1,17 @@
+# TEA & COFFEE PRODUCT CSV TEMPLATE — Ray's Healthy Living®
+# ─────────────────────────────────────────────────────────────────────────────
+# INSTRUCTIONS
+#   • Remove all lines that start with # before importing.
+#   • One product per row. Do not merge cells or add blank rows.
+#   • Pipe-separate multiple image paths in the `images` column: img1.jpg|img2.jpg
+#   • Leave coffee-only fields empty for tea rows (coffeeType, grindPreparation, brewingMethod).
+#   • Leave tea-only fields empty for coffee rows (teaType, botanicalFamily, steepingMethod).
+#   • Set is_sample=true for placeholder records so they are easy to find and delete.
+#   • Prices in USD (numbers only, no $ sign).
+#   • compare_at_price: leave blank if no sale price.
+#   • in_stock: true | false
+#   • is_best_seller / is_new_arrival: true | false
+#   • relatedU20xChallenge: slug string or leave blank (empty = bridge not shown)
+# ─────────────────────────────────────────────────────────────────────────────
+id,rhl_product_id,slug,name,department,product_type,coffee_type,grind_preparation,brewing_method,tea_type,botanical_family,steeping_method,flavor_profile,origin,size,price,compare_at_price,in_stock,short_description,long_description,ingredients_list,preparation,storage_instructions,caution,images,related_article_slug,related_health_concern_slug,related_u20x_challenge,is_sample,is_best_seller,is_new_arrival,seo_title,meta_description
+TC-EXAMPLE-01,RHL-TC-001,arabica-reserve-whole-bean,Arabica Reserve — Whole Bean,tea-coffee,coffee,arabica,whole-bean,French press or pour-over — 94 °C — 4 min,,,,Smooth and balanced with mild acidity,Ethiopia,250 g,18.95,,true,A smooth medium-roast whole bean coffee from Arabica plants.,Single-origin Arabica whole bean. Roasted in small batches.\nStore sealed and use within 30 days of opening for best flavour.,100% Arabica coffee beans,Grind immediately before brewing for best results. Recommended grind: coarse for French press; medium for pour-over.,Store in an airtight container away from heat and direct sunlight.,Contains caffeine. Not recommended for children or those sensitive to caffeine.,tea-coffee/arabica-reserve-wb-front.jpg|tea-coffee/arabica-reserve-wb-lifestyle.jpg,coffee-preparation-guide,,morning-coffee-ritual,true,false,false,Arabica Reserve Whole Bean Coffee | Ray's Healthy Living,Smooth single-origin Arabica whole bean coffee roasted in small batches. Shop at Ray's Healthy Living.

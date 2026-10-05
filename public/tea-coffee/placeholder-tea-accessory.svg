@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff8e1"/>
+      <stop offset="100%" stop-color="#a1887f"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <!-- Strainer silhouette -->
+  <ellipse cx="400" cy="260" rx="110" ry="30" fill="none" stroke="#8d6e63" stroke-width="6"/>
+  <path d="M290,260 Q290,360 400,380 Q510,360 510,260" fill="#bcaaa4" opacity="0.5" stroke="#8d6e63" stroke-width="4"/>
+  <!-- Handle -->
+  <rect x="380" y="155" width="40" height="80" rx="8" fill="#8d6e63" opacity="0.7"/>
+  <!-- Mesh dots -->
+  <g fill="#6d4c41" opacity="0.4">
+    <circle cx="360" cy="295" r="4"/><circle cx="390" cy="295" r="4"/><circle cx="420" cy="295" r="4"/>
+    <circle cx="345" cy="320" r="4"/><circle cx="375" cy="320" r="4"/><circle cx="405" cy="320" r="4"/><circle cx="435" cy="320" r="4"/>
+  </g>
+  <rect x="150" y="400" width="500" height="130" rx="12" fill="rgba(80,50,20,0.35)"/>
+  <text x="400" y="448" font-family="Georgia,serif" font-size="13" fill="#efebe9" text-anchor="middle" letter-spacing="4">RAY'S HEALTHY LIVING</text>
+  <text x="400" y="482" font-family="Georgia,serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">Bamboo Tea Strainer</text>
+  <text x="400" y="512" font-family="Arial,sans-serif" font-size="13" fill="#efebe9" text-anchor="middle" letter-spacing="2">SAMPLE PLACEHOLDER</text>
+</svg>

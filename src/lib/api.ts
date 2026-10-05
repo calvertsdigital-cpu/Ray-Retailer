@@ -39,6 +39,18 @@ export interface BackendProduct {
   status?: string;
   createdAt?: string;
   updatedAt?: string;
+  
+  // Tea & Coffee specific fields (Phase 4)
+  productType?: 'tea' | 'coffee' | string;
+  coffeeType?: 'arabica' | 'robusta' | 'specialty' | string;
+  grindPreparation?: string;
+  brewingMethod?: 'espresso' | 'pour-over' | 'french-press' | 'cold-brew' | 'moka-pot' | 'aeropress' | string;
+  teaType?: 'black' | 'green' | 'oolong' | 'white' | 'pu-erh' | 'herbal' | 'blend' | string;
+  botanicalFamily?: string;
+  steepingMethod?: 'infuser' | 'loose-leaf' | 'sachets' | 'bags' | string;
+  relatedArticleSlug?: string | string[];
+  relatedHealthConcernSlug?: string | string[];
+  relatedU20xChallenge?: string;
 }
 
 export interface FetchProductsOptions {
@@ -48,6 +60,22 @@ export interface FetchProductsOptions {
   categories?: string[];
   minPrice?: number;
   maxPrice?: number;
+}
+
+/**
+ * Tea & Coffee specific fetch options with product type and attribute filters
+ */
+export interface FetchTeaCoffeeOptions {
+  limit?: number;
+  search?: string;
+  productType?: 'tea' | 'coffee';
+  coffeeType?: 'arabica' | 'robusta' | 'specialty';
+  teaType?: 'black' | 'green' | 'oolong' | 'white' | 'pu-erh' | 'herbal' | 'blend';
+  brewingMethod?: string;
+  steepingMethod?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  relatedHealthConcern?: string;
 }
 
 /**
@@ -207,6 +235,140 @@ export async function fetchCategories(): Promise<any[]> {
   } catch (error) {
     console.error('Error fetching categories from backend:', error);
     return [];
+  }
+}
+
+/**
+ * Fetch tea & coffee products from backend with tea-coffee specific filters
+ * Supports filtering by productType, coffeeType, teaType, brewing/steeping methods, and health concerns
+ */
+export async function fetchTeaCoffeeProducts(
+  options: FetchTeaCoffeeOptions = {}
+): Promise<BackendProduct[]> {
+  try {
+    const { 
+      limit = 500, 
+      search = '', 
+      productType,
+      coffeeType,
+      teaType,
+      brewingMethod,
+      steepingMethod,
+      minPrice,
+      maxPrice,
+      relatedHealthConcern
+    } = options;
+
+    const params = new URLSearchParams({
+      page: '1',
+      limit: limit.toString(),
+      ...(search && { search }),
+      ...(productType && { productType }),
+      ...(coffeeType && { coffeeType }),
+      ...(teaType && { teaType }),
+      ...(brewingMethod && { brewingMethod }),
+      ...(steepingMethod && { steepingMethod }),
+      ...(relatedHealthConcern && { relatedHealthConcernSlug: relatedHealthConcern }),
+    });
+
+    console.log('🔍 Fetching tea-coffee products with params:', {
+      productType,
+      coffeeType,
+      teaType,
+      brewingMethod,
+      steepingMethod,
+      search,
+      url: `${BACKEND_URL}/api/user/catalog/products?${params}`
+    });
+
+    const response = await fetch(
+      `${BACKEND_URL}/api/user/catalog/products?${params}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-website-role': 'retailer',
+        }
+      }
+    );
+
+    if (!response.ok) {
+      console.error('Failed to fetch tea-coffee products:', response.statusText);
+      return [];
+    }
+
+    const data = await response.json();
+    let products = data.products || [];
+
+    console.log(`✅ Received ${products.length} tea-coffee products from backend (total: ${data.totalProducts})`);
+
+    // Apply client-side price filtering if needed
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      products = products.filter((p: BackendProduct) => {
+        const price = p.variants?.[0]?.price || p.sellPrice || p.buyPrice || 0;
+        const retailPrice = price * 1.2; // Apply retail markup
+        if (minPrice !== undefined && retailPrice < minPrice) return false;
+        if (maxPrice !== undefined && retailPrice > maxPrice) return false;
+        return true;
+      });
+    }
+
+    return products;
+  } catch (error) {
+    console.error('Error fetching tea-coffee products from backend:', error);
+    return [];
+  }
+}
+
+/**
+ * Get single tea/coffee product by slug with full tea-coffee details
+ * Ensures the product has tea-coffee specific fields populated
+ */
+export async function fetchTeaCoffeeProductBySlug(slug: string): Promise<BackendProduct | null> {
+  try {
+    console.log('🔍 Fetching tea-coffee product by slug:', slug);
+    
+    // Try multiple search strategies
+    const searchStrategies = [
+      slug, // Original slug
+      slug.replace(/-/g, ' '), // Replace hyphens with spaces
+      slug.split('-').slice(0, 3).join(' '), // First 3 words
+    ];
+
+    for (const searchTerm of searchStrategies) {
+      const response = await fetch(
+        `${BACKEND_URL}/api/user/catalog/products?search=${encodeURIComponent(searchTerm)}&limit=10`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-website-role': 'retailer',
+          }
+        }
+      );
+
+      if (!response.ok) {
+        console.error('Failed to fetch tea-coffee product:', response.statusText);
+        continue;
+      }
+
+      const data = await response.json();
+      if (data.products && data.products.length > 0) {
+        const product = data.products[0];
+        
+        // Validate it's a tea or coffee product
+        if (product.productType === 'tea' || product.productType === 'coffee') {
+          console.log('✅ Found tea-coffee product:', product.name);
+          return product;
+        }
+      }
+    }
+
+    console.warn('⚠️ No tea-coffee product found for slug:', slug);
+    return null;
+  } catch (error) {
+    console.error('Error fetching tea-coffee product from backend:', error);
+    return null;
   }
 }
 

@@ -91,11 +91,6 @@ const subnavItems: SubnavItem[] = [
     type: "menu",
     actions: [{ label: "Shop Now", to: "/shop", style: "primary" }],
   },
-  {
-    label: "Coffee",
-    type: "menu",
-    actions: [{ label: "Shop Now", to: "/shop", style: "primary" }],
-  },
 ];
 
 export function Header() {
@@ -105,7 +100,9 @@ export function Header() {
 
   // Track which sub-nav item has its dropdown open (by label)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [tcMegaOpen, setTcMegaOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tcCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function openDropdown(label: string) {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -118,6 +115,19 @@ export function Header() {
 
   function cancelClose() {
     if (closeTimer.current) clearTimeout(closeTimer.current);
+  }
+
+  function openMega() {
+    if (tcCloseTimer.current) clearTimeout(tcCloseTimer.current);
+    setTcMegaOpen(true);
+  }
+
+  function scheduleMegaClose() {
+    tcCloseTimer.current = setTimeout(() => setTcMegaOpen(false), 150);
+  }
+
+  function cancelMegaClose() {
+    if (tcCloseTimer.current) clearTimeout(tcCloseTimer.current);
   }
 
   return (
@@ -207,6 +217,53 @@ export function Header() {
                       {item.label}
                     </Link>
                   ))}
+                  
+                  {/* Tea & Coffee Mobile Accordion */}
+                  <div className="mt-3 border-t border-border pt-3">
+                    <button
+                      onClick={() => setTcMegaOpen(!tcMegaOpen)}
+                      className={`w-full flex items-center justify-between px-4 py-3 text-base font-medium rounded-md transition-colors ${
+                        tcMegaOpen
+                          ? "text-primary bg-primary/10"
+                          : "text-foreground hover:bg-accent"
+                      }`}
+                    >
+                      <span>Tea & Coffee</span>
+                      <ChevronDown
+                        className={`h-4 w-4 transition-transform ${tcMegaOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+
+                    {tcMegaOpen && (
+                      <div className="mt-2 space-y-3 px-4 py-2">
+                        {/* Tea Submenu */}
+                        <div className="text-sm font-semibold text-primary mb-2">Tea</div>
+                        <ul className="space-y-1.5 ml-2">
+                          <li><Link to="/tea-coffee/tea?type=loose-botanical-leaves" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm">Loose Botanical Leaves</Link></li>
+                          <li><Link to="/tea-coffee/tea?type=herbal-teas" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm">Herbal Teas</Link></li>
+                          <li><Link to="/tea-coffee/tea?type=flowers" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm">Flowers</Link></li>
+                          <li><Link to="/tea-coffee/tea?type=roots" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm">Roots</Link></li>
+                          <li><Link to="/tea-coffee/tea?type=stems-traditional-botanicals" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm">Stems & Traditional Botanicals</Link></li>
+                          <li><Link to="/tea-coffee/tea?type=botanical-powders" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm">Botanical Powders</Link></li>
+                          <li><Link to="/tea-coffee/tea?type=tea-accessories" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm">Tea Accessories</Link></li>
+                          <li><Link to="/tea-coffee/tea" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm font-semibold text-primary">All Teas</Link></li>
+                        </ul>
+
+                        {/* Coffee Submenu */}
+                        <div className="text-sm font-semibold text-primary mb-2 mt-4">Coffee</div>
+                        <ul className="space-y-1.5 ml-2">
+                          <li><Link to="/tea-coffee/coffee?type=arabica" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm">Arabica Reserve</Link></li>
+                          <li><Link to="/tea-coffee/coffee?type=robusta" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm">Robusta Intense</Link></li>
+                          <li><Link to="/tea-coffee/coffee?type=culi" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm">Culi Select — Peaberry</Link></li>
+                          <li><Link to="/tea-coffee/coffee?grind=whole-bean" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm">Whole Bean</Link></li>
+                          <li><Link to="/tea-coffee/coffee?grind=medium-ground" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm">Medium/Ground</Link></li>
+                          <li><Link to="/tea-coffee/coffee?grind=fine-specialty-grind" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm">Fine/Specialty Grind</Link></li>
+                          <li><Link to="/tea-coffee/coffee" onClick={() => setOpen(false)} className="link-tc-ghost block text-sm font-semibold text-primary">All Selections</Link></li>
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Subnav categories in mobile menu */}
                   <div className="mt-3 border-t border-border pt-3">
                     <p className="px-4 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Categories</p>
@@ -229,8 +286,8 @@ export function Header() {
       </div>
 
       {/* ── Tier 3: Sub-navbar — desktop only ── */}
-      <div className="hidden border-b border-gray-200 bg-gray-50 lg:block">
-        <div className="container-rhl flex flex-wrap items-center justify-center gap-1 py-2 lg:gap-1">
+      <div className="hidden border-b border-gray-200 bg-gray-50 lg:block overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-50">
+        <div className="flex items-center justify-center gap-0.5 py-2 flex-nowrap whitespace-nowrap px-4 min-w-fit mx-auto">
           {subnavItems.map((item) => {
             if (item.type === "direct") {
               // Brands / Categories — plain link, no dropdown at all
@@ -336,6 +393,119 @@ export function Header() {
               </div>
             );
           })}
+
+          {/* ── Tea & Coffee Mega Menu ── */}
+          <div
+            className="relative"
+            onMouseEnter={openMega}
+            onMouseLeave={scheduleMegaClose}
+          >
+            <button
+              onClick={() => setTcMegaOpen((v) => !v)}
+              className={`flex items-center gap-1 whitespace-nowrap text-sm font-medium transition-colors px-3 py-1.5 rounded-md border-b-2 ${
+                tcMegaOpen
+                  ? "text-green-600 border-green-600 bg-green-50"
+                  : "text-gray-700 hover:text-green-600 border-transparent hover:border-green-600 hover:bg-green-50"
+              }`}
+              aria-haspopup="true"
+              aria-expanded={tcMegaOpen}
+            >
+              Tea &amp; Coffee
+              <ChevronDown
+                className={`h-3.5 w-3.5 transition-transform duration-150 ${tcMegaOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+
+            {/* Mega menu panel — uses design tokens for Tea & Coffee colors */}
+            {tcMegaOpen && (
+              <div
+                className="absolute left-1/2 -translate-x-1/2 top-full pt-2 z-50"
+                onMouseEnter={cancelMegaClose}
+                onMouseLeave={scheduleMegaClose}
+              >
+                <div className="w-screen max-w-3xl bg-tc-mega-menu divide-x divide-tc-gold">
+                  <div className="grid grid-cols-2">
+                    
+                    {/* ── TEA COLUMN ─────────────────────────── */}
+                    <div className="p-6">
+                      <div className="flex items-center gap-3 mb-5">
+                        <img src="/tea-coffee/chamomile.svg" alt="Tea" className="h-12 w-12 rounded-sm" />
+                        <h3 className="text-tc-heading-md text-primary">TEA</h3>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-6">
+                        {/* Shop Tea */}
+                        <div>
+                          <p className="text-tc-label mb-3">Shop Tea</p>
+                          <ul className="space-y-2">
+                            <li><Link to="/tea-coffee/tea?type=loose-botanical-leaves" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Loose Botanical Leaves</Link></li>
+                            <li><Link to="/tea-coffee/tea?type=herbal-teas" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Herbal Teas</Link></li>
+                            <li><Link to="/tea-coffee/tea?type=flowers" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Flowers</Link></li>
+                            <li><Link to="/tea-coffee/tea?type=roots" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Roots</Link></li>
+                            <li><Link to="/tea-coffee/tea?type=stems-traditional-botanicals" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Stems & Traditional Botanicals</Link></li>
+                            <li><Link to="/tea-coffee/tea?type=botanical-powders" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Botanical Powders</Link></li>
+                            <li><Link to="/tea-coffee/tea?type=tea-accessories" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Tea Accessories & Strainers</Link></li>
+                            <li><Link to="/tea-coffee/tea" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm font-semibold text-primary">All Teas</Link></li>
+                          </ul>
+                        </div>
+
+                        {/* Learn */}
+                        <div>
+                          <p className="text-tc-label mb-3">Learn</p>
+                          <ul className="space-y-2">
+                            <li><Link to="/tea-coffee/learn/tea-preparation" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Tea Preparation Guide</Link></li>
+                            <li><Link to="/tea-coffee/learn/how-much-tea" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">How Much Tea to Use</Link></li>
+                            <li><Link to="/tea-coffee/learn/steeping-methods" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Steeping Methods</Link></li>
+                            <li><Link to="/tea-coffee/learn/traditional-uses" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Traditional Uses</Link></li>
+                            <li><Link to="/tea-coffee/articles" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Tea Articles</Link></li>
+                            <li><Link to="/tea-coffee/learn/tea-wellness" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Tea & Wellness Education</Link></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ── COFFEE COLUMN ──────────────────────── */}
+                    <div className="p-6 bg-tc-cream">
+                      <div className="flex items-center gap-3 mb-5">
+                        <img src="/tea-coffee/coffee-beans.svg" alt="Coffee" className="h-12 w-12 rounded-sm" />
+                        <h3 className="text-tc-heading-md" style={{ color: "var(--tc-coffee-charcoal)" }}>COFFEE</h3>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-6">
+                        {/* Shop Coffee */}
+                        <div>
+                          <p className="text-tc-label mb-3">Ray's Coffee Collection</p>
+                          <ul className="space-y-2">
+                            <li><Link to="/tea-coffee/coffee?type=arabica" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Arabica Reserve</Link></li>
+                            <li><Link to="/tea-coffee/coffee?type=robusta" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Robusta Intense</Link></li>
+                            <li><Link to="/tea-coffee/coffee?type=culi" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Culi Select — Peaberry</Link></li>
+                            <li><Link to="/tea-coffee/coffee?grind=whole-bean" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Whole Bean</Link></li>
+                            <li><Link to="/tea-coffee/coffee?grind=medium-ground" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Medium/Ground</Link></li>
+                            <li><Link to="/tea-coffee/coffee?grind=fine-specialty-grind" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Fine/Specialty Grind</Link></li>
+                            <li><Link to="/tea-coffee/coffee" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm font-semibold" style={{ color: "var(--coffee-robusta)" }}>Shop All 9 Coffee Selections</Link></li>
+                          </ul>
+                        </div>
+
+                        {/* Learn */}
+                        <div>
+                          <p className="text-tc-label mb-3">Learn</p>
+                          <ul className="space-y-2">
+                            <li><Link to="/tea-coffee/learn/coffee-preparation" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Coffee Preparation</Link></li>
+                            <li><Link to="/tea-coffee/learn/coffee-timing" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Coffee Timing</Link></li>
+                            <li><Link to="/tea-coffee/learn/coffee-hydration" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Coffee & Hydration</Link></li>
+                            <li><Link to="/tea-coffee/learn/understanding-grinds" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Understanding Coffee Grinds</Link></li>
+                            <li><Link to="/tea-coffee/learn/whole-bean-vs-ground" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Whole Bean vs. Ground</Link></li>
+                            <li><Link to="/tea-coffee/articles" onClick={() => setTcMegaOpen(false)} className="link-tc-ghost text-sm">Coffee Articles</Link></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

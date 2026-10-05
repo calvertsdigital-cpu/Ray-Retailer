@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8f5e9"/>
+      <stop offset="100%" stop-color="#2e7d32"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <!-- Steam lines -->
+  <g stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.5">
+    <path d="M340,200 Q350,170 340,140 Q330,110 340,80"/>
+    <path d="M400,210 Q410,180 400,150 Q390,120 400,90"/>
+    <path d="M460,200 Q470,170 460,140 Q450,110 460,80"/>
+  </g>
+  <!-- Cup -->
+  <path d="M300,220 L310,380 Q400,420 490,380 L500,220 Z" fill="white" opacity="0.85"/>
+  <ellipse cx="400" cy="220" rx="100" ry="20" fill="white" opacity="0.9"/>
+  <ellipse cx="400" cy="220" rx="85" ry="14" fill="#a5d6a7" opacity="0.7"/>
+  <!-- Saucer -->
+  <ellipse cx="400" cy="395" rx="130" ry="22" fill="white" opacity="0.7"/>
+  <rect x="200" y="430" width="500" height="130" rx="12" fill="rgba(20,70,20,0.4)"/>
+  <text x="400" y="478" font-family="Georgia,serif" font-size="13" fill="#c8e6c9" text-anchor="middle" letter-spacing="4">RAY'S HEALTHY LIVING</text>
+  <text x="400" y="512" font-family="Georgia,serif" font-size="20" font-weight="bold" fill="#ffffff" text-anchor="middle">Tea Preparation Guide</text>
+</svg>

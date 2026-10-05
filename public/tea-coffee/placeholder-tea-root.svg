@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d7ccc8"/>
+      <stop offset="100%" stop-color="#6d4c41"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <!-- Root shapes -->
+  <path d="M180,420 Q260,320 340,380 Q420,440 500,340 Q580,240 660,300" stroke="#795548" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.6"/>
+  <path d="M200,460 Q280,380 360,420 Q440,460 520,380" stroke="#8d6e63" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <rect x="150" y="200" width="500" height="130" rx="12" fill="rgba(80,40,20,0.4)"/>
+  <text x="400" y="248" font-family="Georgia,serif" font-size="13" fill="#efebe9" text-anchor="middle" letter-spacing="4">RAY'S HEALTHY LIVING</text>
+  <text x="400" y="282" font-family="Georgia,serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">Valerian Root Cut &amp; Sifted</text>
+  <text x="400" y="312" font-family="Arial,sans-serif" font-size="13" fill="#efebe9" text-anchor="middle" letter-spacing="2">SAMPLE PLACEHOLDER</text>
+</svg>

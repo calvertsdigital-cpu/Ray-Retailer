@@ -17,6 +17,15 @@ const columns = [
     ],
   },
   {
+    title: "Tea & Coffee",
+    links: [
+      { label: "Tea collection", to: "/tea-coffee/tea" as const },
+      { label: "Coffee collection", to: "/tea-coffee/coffee" as const },
+      { label: "Preparation guides", to: "/tea-coffee/articles" as const },
+      { label: "Articles", to: "/tea-coffee/articles" as const },
+    ],
+  },
+  {
     title: "Company",
     links: [
       { label: "About Ray's", to: "/about" as const },

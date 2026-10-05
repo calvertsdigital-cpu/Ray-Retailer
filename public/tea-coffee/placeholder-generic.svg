@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#e8f5e9"/>
+  <rect x="150" y="220" width="500" height="160" rx="12" fill="rgba(46,125,50,0.12)" stroke="#a5d6a7" stroke-width="2"/>
+  <text x="400" y="282" font-family="Georgia,serif" font-size="13" fill="#388e3c" text-anchor="middle" letter-spacing="4">RAY'S HEALTHY LIVING</text>
+  <text x="400" y="318" font-family="Georgia,serif" font-size="22" font-weight="bold" fill="#1b5e20" text-anchor="middle">Tea &amp; Coffee</text>
+  <text x="400" y="352" font-family="Arial,sans-serif" font-size="13" fill="#388e3c" text-anchor="middle" letter-spacing="2">SAMPLE PLACEHOLDER</text>
+</svg>

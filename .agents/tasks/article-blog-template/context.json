@@ -1,0 +1,29 @@
+{
+  "project_type": "TanStack Start + Vite + Tailwind v4 React app (SSR-ready retail site)",
+  "language": "TypeScript / TSX",
+  "build_system": "Vite 8 with @tailwindcss/vite plugin. NO tailwind.config.js — all tokens are in src/styles.css via @theme inline and @utility. Path alias @/ maps to src/ via vite-tsconfig-paths.",
+  "test_framework": "None configured — verification is bun run build (zero TS/build errors).",
+  "build_command": "bun run build",
+  "test_command": "bun run build",
+  "verification_instructions": "Run `bun run build` from /Users/suddhajitchowdhury/Documents/Ray Full System/Ray-Retailer. A clean exit (exit code 0) with no TypeScript errors is the pass condition. Also run `bun run dev` and load /blog/improve-blood-circulation-naturally in a browser to confirm the page renders.",
+  "snapshot_or_generated_files": null,
+  "environment_constraints": "Package manager is bun (bun.lock present). Use `<img loading='lazy'>` NOT next/image. Never modify Header.tsx or Footer.tsx. __root.tsx already wraps every page in <Header>/<main>/<Footer> — the route component must NOT re-render them. Import styles only through styles.css; never add a new CSS file.",
+  "contribution_requirements": "No AGENTS.md found. Follow the coding conventions below. Commit locally on the feature branch; never push.",
+  "key_patterns": "Routes: createFileRoute('/blog/$slug') pattern with loader + head + component. Data: typed TS files in src/data/ (blog.ts, catalog.ts, types.ts). UI primitives: shadcn-style wrappers in src/components/ui/ — Accordion, Breadcrumb, Card, Input, Button all exist and must be reused. Design tokens: use var(--primary), var(--u20x-navy), var(--u20x-blue), etc. — never hardcode colors. Layout: container-rhl + section-y utility classes. Newsletter subscribe: Footer already does this inline with sonner toast — the new NewsletterSubscribe component should follow the same form + toast pattern but with idle/loading/success/error state machine. Accordion: src/components/ui/accordion.tsx wraps @radix-ui/react-accordion — use it directly. Breadcrumbs: src/components/ui/breadcrumb.tsx has BreadcrumbList/Item/Link/Page/Separator — use it. Products: Product type and slugs are in src/data/catalog.ts + src/data/wholesale.ts; the article seed data references product slugs from that catalog (e.g. 'organic-beet-root', 'full-spectrum-cayenne', 'anthocyanin-bilberry'). date-fns is installed (^4.1.0).",
+  "relevant_files": [
+    "src/data/blog.ts",
+    "src/data/types.ts",
+    "src/data/catalog.ts",
+    "src/routes/blog.$slug.tsx",
+    "src/routes/blog.index.tsx",
+    "src/routes/__root.tsx",
+    "src/styles.css",
+    "src/components/ui/accordion.tsx",
+    "src/components/ui/breadcrumb.tsx",
+    "src/components/ui/card.tsx",
+    "src/components/ui/button.tsx",
+    "src/components/ui/input.tsx",
+    "src/components/site/Footer.tsx"
+  ],
+  "directory_structure": "src/routes/ — TanStack file routes; src/components/ui/ — shadcn primitive wrappers; src/components/site/ — Header + Footer (do NOT modify); src/components/blog/ — NEW blog components go here (directory does not exist yet, must be created); src/data/ — typed TS data files; src/styles.css — ALL design tokens and utility classes; src/assets/ — static images (capsules.jpg, cat-*.jpg etc.); public/ — favicons and SVGs."
+}

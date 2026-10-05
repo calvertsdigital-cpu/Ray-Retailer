@@ -1,0 +1,7 @@
+{
+  "task_id": "task-article-blog-template",
+  "task_description": "Build a single reusable Article/Blog Post page template for the Ray's Healthy Living retail site. The template is a rich two-column layout (main ~70% + sidebar ~30%) matching the mockup. It must be fully data-driven (no hard-coded copy), seed the 'How to Improve Blood Circulation Naturally' article, and extend the existing blog route without touching Header or Footer.",
+  "status": "pending",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003"],
+  "blocked_reason": null
+}

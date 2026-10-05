@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
-import { blogPosts, getPost, GLOBAL_DISCLAIMER, ARTICLE_CATEGORIES } from "@/data/blog";
+import { getPost, getAllPosts, GLOBAL_DISCLAIMER, ARTICLE_CATEGORIES } from "@/data/blog";
 
 import { Breadcrumbs }          from "@/components/blog/Breadcrumbs";
 import { ArticleHeader }         from "@/components/blog/ArticleHeader";
@@ -79,7 +79,7 @@ export const Route = createFileRoute("/blog/$slug")({
 
 function PostPage() {
   const { post } = Route.useLoaderData();
-
+  const allPosts = getAllPosts();
   const relatedSlugs = post.relatedArticleSlugs ?? post.relatedSlugs ?? [];
 
   return (
@@ -139,7 +139,7 @@ function PostPage() {
             </div>
 
             {/* Related Articles */}
-            <RelatedArticles slugs={relatedSlugs} allPosts={blogPosts} />
+            <RelatedArticles slugs={relatedSlugs} allPosts={allPosts} />
 
             {/* Copyright notice */}
             <ArticleCopyrightNotice />
@@ -153,7 +153,7 @@ function PostPage() {
             aria-label="Article sidebar"
           >
             <div className="sticky top-28">
-              <ArticleSidebar post={post} allPosts={blogPosts} />
+              <ArticleSidebar post={post} allPosts={allPosts} />
             </div>
           </aside>
         </div>
@@ -162,7 +162,7 @@ function PostPage() {
         <div className="mt-10 flex flex-col gap-6 lg:hidden">
           <U20XPromo ctaPath={post.u20xChallengePath ?? "/health-concerns"} />
           <NewsletterSubscribe />
-          <RecentArticles currentSlug={post.slug} posts={blogPosts} />
+          <RecentArticles currentSlug={post.slug} posts={allPosts} />
           <TopicExplorer categories={ARTICLE_CATEGORIES} />
         </div>
       </div>

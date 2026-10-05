@@ -405,4 +405,64 @@ export const blogPosts: BlogPost[] = [
 ];
 
 export const getPost = (slug: string) =>
-  blogPosts.find((p) => p.slug === slug && p.published);
+  getAllPosts().find((p) => p.slug === slug && p.published);
+
+/**
+ * Returns the merged list of static posts + any admin-created/edited posts
+ * saved in localStorage. Admin posts override static ones with the same slug.
+ * Safe to call server-side (returns static list when window is unavailable).
+ */
+export function getAllPosts(): BlogPost[] {
+  // SSR / build-time: return static list only
+  if (typeof window === "undefined") return blogPosts;
+
+  try {
+    const raw = window.localStorage.getItem("rhl.blog.v1");
+    if (!raw) return blogPosts;
+
+    const drafts = JSON.parse(raw) as Record<string, {
+      slug: string; title: string; excerpt: string; category: string;
+      categorySlug?: string; author: string; authorBrandLine?: string;
+      date: string; readTime: string; featureImageUrl: string;
+      featureImageAlt: string; featureOverlayText?: string; subtitle?: string;
+      body: string[]; bottomLine?: string; published: boolean;
+      seoTitle?: string; metaDescription?: string; relatedSlugs?: string[];
+      tags?: string[];
+    }>;
+
+    const adminPosts: BlogPost[] = Object.values(drafts).map((d) => ({
+      slug: d.slug,
+      title: d.title,
+      excerpt: d.excerpt,
+      category: d.category,
+      categorySlug: d.categorySlug,
+      author: d.author,
+      authorBrandLine: d.authorBrandLine,
+      date: d.date,
+      readTime: d.readTime,
+      featureImageUrl: d.featureImageUrl,
+      featureImageAlt: d.featureImageAlt,
+      featureOverlayText: d.featureOverlayText,
+      subtitle: d.subtitle,
+      body: d.body ?? [],
+      bottomLine: d.bottomLine,
+      published: d.published,
+      seoTitle: d.seoTitle ?? d.title,
+      metaDescription: d.metaDescription ?? d.excerpt,
+      relatedSlugs: d.relatedSlugs ?? [],
+      relatedArticleSlugs: d.relatedSlugs ?? [],
+      tags: d.tags ?? [],
+    }));
+
+    // Admin posts with matching slugs replace static posts; new slugs are appended
+    const staticFiltered = blogPosts.filter(
+      (p) => !adminPosts.some((a) => a.slug === p.slug),
+    );
+
+    return [...staticFiltered, ...adminPosts].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    );
+  } catch {
+    return blogPosts;
+  }
+}

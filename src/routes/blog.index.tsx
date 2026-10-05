@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-
-import { blogPosts } from "@/data/blog";
+import { getAllPosts } from "@/data/blog";
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
@@ -21,7 +20,7 @@ export const Route = createFileRoute("/blog/")({
 });
 
 function BlogPage() {
-  const posts = blogPosts.filter((p) => p.published);
+  const posts = getAllPosts().filter((p) => p.published);
 
   return (
     <div className="container-rhl section-y">

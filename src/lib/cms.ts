@@ -79,3 +79,83 @@ export function isAdmin() {
   if (typeof window === "undefined") return false;
   return window.localStorage.getItem(ADMIN_FLAG_KEY) === "granted";
 }
+
+// ---------------------------------------------------------------------------
+// Blog CMS — same localStorage pattern as product overrides
+// ---------------------------------------------------------------------------
+
+export const BLOG_CMS_KEY = "rhl.blog.v1";
+
+/**
+ * A blog post record as stored/edited in the admin.
+ * All fields are optional so the admin can save partial drafts.
+ * Merged with the static blogPosts array at runtime.
+ */
+export interface BlogPostDraft {
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  categorySlug?: string;
+  author: string;
+  authorBrandLine?: string;
+  date: string;          // ISO YYYY-MM-DD
+  readTime: string;
+  featureImageUrl: string;
+  featureImageAlt: string;
+  featureOverlayText?: string;
+  subtitle?: string;
+  body: string[];        // one paragraph per item
+  bottomLine?: string;
+  published: boolean;
+  // SEO
+  seoTitle?: string;
+  metaDescription?: string;
+  // relationships
+  relatedSlugs?: string[];
+  tags?: string[];
+  // CMS meta
+  _source: "admin";      // marks as admin-created vs static
+  _createdAt: string;    // ISO timestamp
+  _updatedAt: string;
+}
+
+export type BlogDraftMap = Record<string, BlogPostDraft>;
+
+export function readBlogDrafts(): BlogDraftMap {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = window.localStorage.getItem(BLOG_CMS_KEY);
+    return raw ? (JSON.parse(raw) as BlogDraftMap) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function writeBlogDrafts(map: BlogDraftMap) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(BLOG_CMS_KEY, JSON.stringify(map));
+}
+
+export function saveBlogPost(post: BlogPostDraft) {
+  const map = readBlogDrafts();
+  map[post.slug] = { ...post, _updatedAt: new Date().toISOString() };
+  writeBlogDrafts(map);
+}
+
+export function deleteBlogPost(slug: string) {
+  const map = readBlogDrafts();
+  delete map[slug];
+  writeBlogDrafts(map);
+}
+
+/** Generate a URL-safe slug from a title */
+export function slugify(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 80);
+}

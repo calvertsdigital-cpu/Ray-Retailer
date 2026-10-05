@@ -86,7 +86,7 @@ const subnavItems: SubnavItem[] = [
     type: "menu",
     actions: [
       { label: "Shop Now", to: "/tea-coffee/tea", style: "primary" },
-      { label: "Know More", to: "/tea-coffee/coffee", style: "outline" },
+      { label: "Know More", to: "/tea-coffee/", style: "outline" },
     ],
   },
   {

@@ -83,11 +83,8 @@ const subnavItems: SubnavItem[] = [
   },
   {
     label: "Tea & Coffee",
-    type: "menu",
-    actions: [
-      { label: "Shop Now", to: "/tea-coffee/tea", style: "primary" },
-      { label: "Know More", to: "/tea-coffee/", style: "outline" },
-    ],
+    type: "direct",
+    to: "/tea-coffee/",
   },
   {
     label: "Ray's Vitality",
@@ -226,17 +223,22 @@ export function Header() {
                     </Link>
                   ))}
                   
-                  {/* Tea & Coffee Mobile Accordion */}
+                  {/* Tea & Coffee Mobile — direct link + expandable sub-items */}
                   <div className="mt-3 border-t border-border pt-3">
+                    {/* Primary link — navigates to landing page */}
+                    <Link
+                      to="/tea-coffee/"
+                      onClick={() => setOpen(false)}
+                      className="block rounded-md px-4 py-3 text-base font-medium text-foreground hover:bg-accent hover:text-primary-dark"
+                    >
+                      Tea &amp; Coffee
+                    </Link>
+                    {/* Expand sub-items */}
                     <button
                       onClick={() => setTcMegaOpen(!tcMegaOpen)}
-                      className={`w-full flex items-center justify-between px-4 py-3 text-base font-medium rounded-md transition-colors ${
-                        tcMegaOpen
-                          ? "text-primary bg-primary/10"
-                          : "text-foreground hover:bg-accent"
-                      }`}
+                      className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-accent rounded-md"
                     >
-                      <span>Tea & Coffee</span>
+                      <span>Browse Tea &amp; Coffee</span>
                       <ChevronDown
                         className={`h-4 w-4 transition-transform ${tcMegaOpen ? "rotate-180" : ""}`}
                       />
@@ -408,21 +410,22 @@ export function Header() {
             onMouseEnter={openMega}
             onMouseLeave={scheduleMegaClose}
           >
-            <button
-              onClick={() => setTcMegaOpen((v) => !v)}
+            <Link
+              to="/tea-coffee/"
+              onClick={() => setTcMegaOpen(false)}
+              onMouseEnter={openMega}
               className={`flex items-center gap-1 text-sm font-medium transition-colors px-3 py-1.5 rounded-md border-b-2 ${
                 tcMegaOpen
                   ? "text-green-600 border-green-600 bg-green-50"
                   : "text-gray-700 hover:text-green-600 border-transparent hover:border-green-600 hover:bg-green-50"
               }`}
               aria-haspopup="true"
-              aria-expanded={tcMegaOpen}
             >
               Tea &amp; Coffee
               <ChevronDown
                 className={`h-3.5 w-3.5 transition-transform duration-150 ${tcMegaOpen ? "rotate-180" : ""}`}
               />
-            </button>
+            </Link>
 
             {/* Mega menu panel — uses design tokens for Tea & Coffee colors */}
             {tcMegaOpen && (

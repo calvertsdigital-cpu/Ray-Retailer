@@ -75,11 +75,8 @@ const subnavItems: SubnavItem[] = [
   },
   {
     label: "Essential Oil",
-    type: "menu",
-    actions: [
-      { label: "Shop Now", to: "/shop", style: "primary" },
-      { label: "Know More", to: "/essential-oil", style: "outline" },
-    ],
+    type: "direct",
+    to: "/essential-oil",
   },
   {
     label: "Tea & Coffee",

@@ -135,7 +135,7 @@ function EssentialOilPage() {
       >
         {/* Background hero image */}
         <img
-          src="/eseproducte.png"
+          src="/h.png"
           alt="Ray's essential oil bottles with a diffuser and botanicals on a natural wood surface"
           className="absolute inset-0 w-full h-full object-cover"
           style={{ opacity: 0.85 }}

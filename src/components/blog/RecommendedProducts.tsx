@@ -1,82 +1,109 @@
+/**
+ * RecommendedProducts — full-width product strip below the article body.
+ * Uses self-contained RecommendedProductEntry[] from the article data so
+ * images and benefit copy are always article-specific (no catalog fallback).
+ *
+ * Matches the mockup: light grey background band, 3-column cards, each with
+ * a square product image, name, benefit line, and "Learn More →" link.
+ */
 import { Link } from "@tanstack/react-router";
+import { ShoppingCart } from "lucide-react";
 
-import { getProducts } from "@/data/catalog";
+import type { RecommendedProductEntry } from "@/data/blog";
 
 interface RecommendedProductsProps {
-  productSlugs: string[];
+  products: RecommendedProductEntry[];
   categoryLabel?: string;
 }
 
-export function RecommendedProducts({ productSlugs, categoryLabel }: RecommendedProductsProps) {
-  const products = getProducts(productSlugs);
-
-  if (products.length === 0) return null;
+export function RecommendedProducts({ products, categoryLabel }: RecommendedProductsProps) {
+  if (!products || products.length === 0) return null;
 
   return (
-    <section className="mt-12" aria-labelledby="recommended-products-heading">
-      <div className="flex items-center justify-between mb-4">
-        <h2 id="recommended-products-heading" className="heading-2">
-          Recommended Products
-        </h2>
+    <section
+      className="mt-12 -mx-4 px-4 py-8 md:-mx-8 md:px-8"
+      style={{ backgroundColor: "var(--secondary)" }}
+      aria-labelledby="recommended-products-heading"
+    >
+      {/* Header row */}
+      <div className="flex items-center justify-between mb-6 container-rhl px-0">
+        <div className="flex items-center gap-2">
+          <ShoppingCart className="h-5 w-5" style={{ color: "var(--primary)" }} aria-hidden="true" />
+          <h2
+            id="recommended-products-heading"
+            className="heading-2"
+            style={{ color: "var(--foreground)" }}
+          >
+            Recommended Products
+          </h2>
+        </div>
         {categoryLabel && (
-          <Link to="/products" className="text-sm text-primary hover:underline font-semibold">
+          <Link
+            to="/shop"
+            className="text-sm font-semibold hover:underline hidden sm:inline"
+            style={{ color: "var(--primary)" }}
+          >
             View All {categoryLabel} Products →
           </Link>
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 overflow-x-auto">
-        {products.map((product) => (
+      {/* Product cards */}
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3">
+        {products.map((p) => (
           <div
-            key={product.slug}
-            className="rounded-xl border border-border bg-card p-4 flex flex-col"
+            key={p.name}
+            className="flex flex-col rounded-xl border bg-white overflow-hidden"
+            style={{ borderColor: "var(--border)" }}
           >
             {/* Product image */}
-            <div className="mb-3 h-20 w-20 mx-auto overflow-hidden rounded-lg bg-secondary">
-              {product.media && product.media.length > 0 ? (
-                <img
-                  loading="lazy"
-                  src={typeof product.media[0].src === "string" ? product.media[0].src : ""}
-                  alt={product.media[0].alt}
-                  className="h-full w-full object-cover"
-                  width={80}
-                  height={80}
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-                  {product.name[0]}
-                </div>
-              )}
+            <div className="aspect-square w-full overflow-hidden bg-gray-50">
+              <img
+                loading="lazy"
+                src={p.imageUrl}
+                alt={p.imageAlt}
+                className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                width={240}
+                height={240}
+              />
             </div>
 
-            {/* Product name */}
-            <p className="text-sm font-semibold text-foreground line-clamp-2 leading-snug">
-              {product.name}
-            </p>
-
-            {/* Support statement */}
-            {product.supportStatement && (
-              <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-                {product.supportStatement}
-              </p>
-            )}
-
-            <div className="mt-auto pt-3">
-              <Link
-                to="/products/$slug"
-                params={{ slug: product.slug }}
-                className="text-sm font-semibold text-primary hover:underline"
+            {/* Card body */}
+            <div className="p-4 flex flex-col flex-1">
+              <p
+                className="text-sm font-semibold leading-snug"
+                style={{ color: "var(--foreground)" }}
               >
-                Learn More →
-              </Link>
+                {p.name}
+              </p>
+              <p
+                className="mt-1 text-xs leading-relaxed"
+                style={{ color: "var(--muted-foreground)" }}
+              >
+                {p.benefit}
+              </p>
+              <div className="mt-auto pt-3">
+                <Link
+                  to={p.linkTo as "/shop"}
+                  className="text-sm font-semibold hover:underline"
+                  style={{ color: "var(--primary)" }}
+                >
+                  Learn More →
+                </Link>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
+      {/* Mobile "View All" */}
       {categoryLabel && (
-        <div className="mt-4 lg:hidden">
-          <Link to="/products" className="text-sm text-primary hover:underline font-semibold">
+        <div className="mt-4 sm:hidden text-center">
+          <Link
+            to="/shop"
+            className="text-sm font-semibold hover:underline"
+            style={{ color: "var(--primary)" }}
+          >
             View All {categoryLabel} Products →
           </Link>
         </div>

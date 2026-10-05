@@ -1,3 +1,8 @@
+/**
+ * RelatedArticles — 4-column grid of article cards below the article body.
+ * Each card: thumbnail, category eyebrow, title, date, link.
+ * Matches the mockup "Related Articles" section.
+ */
 import { Link } from "@tanstack/react-router";
 import { format, parseISO } from "date-fns";
 
@@ -9,25 +14,36 @@ interface RelatedArticlesProps {
 }
 
 export function RelatedArticles({ slugs, allPosts }: RelatedArticlesProps) {
-  const related = slugs
+  const posts = slugs
     .map((s) => allPosts.find((p) => p.slug === s && p.published))
-    .filter((p): p is BlogPost => Boolean(p));
+    .filter((p): p is BlogPost => Boolean(p))
+    .slice(0, 4);
 
-  if (related.length === 0) return null;
+  if (posts.length === 0) return null;
 
   return (
     <section className="mt-12" aria-labelledby="related-articles-heading">
-      <div className="flex items-center justify-between mb-4">
-        <h2 id="related-articles-heading" className="heading-2">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-5">
+        <h2
+          id="related-articles-heading"
+          className="heading-2"
+          style={{ color: "var(--foreground)" }}
+        >
           Related Articles
         </h2>
-        <Link to="/blog" className="text-sm text-primary hover:underline font-semibold">
+        <Link
+          to="/blog"
+          className="text-sm font-semibold hover:underline hidden sm:inline"
+          style={{ color: "var(--primary)" }}
+        >
           View All Articles →
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {related.map((post) => {
+      {/* Grid */}
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        {posts.map((post) => {
           const displayDate = (() => {
             try {
               return format(parseISO(post.date), "MMM d, yyyy");
@@ -39,37 +55,59 @@ export function RelatedArticles({ slugs, allPosts }: RelatedArticlesProps) {
           return (
             <article
               key={post.slug}
-              className="rounded-xl border border-border bg-card overflow-hidden flex flex-col"
+              className="flex flex-col overflow-hidden rounded-xl border bg-white"
+              style={{ borderColor: "var(--border)" }}
             >
-              {/* Feature image */}
-              {post.featureImageUrl ? (
-                <img
-                  loading="lazy"
-                  src={post.featureImageUrl}
-                  alt={post.featureImageAlt ?? post.title}
-                  className="w-full aspect-[16/9] object-cover"
-                  width={400}
-                  height={225}
-                />
-              ) : (
-                <div className="w-full aspect-[16/9] bg-accent flex items-center justify-center">
-                  <span className="text-2xl font-bold text-primary/40">{post.title[0]}</span>
-                </div>
-              )}
+              {/* Thumbnail */}
+              <div className="aspect-[4/3] w-full overflow-hidden bg-gray-100">
+                {post.featureImageUrl ? (
+                  <img
+                    loading="lazy"
+                    src={post.featureImageUrl}
+                    alt={post.featureImageAlt ?? post.title}
+                    className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                    width={200}
+                    height={150}
+                  />
+                ) : (
+                  <div
+                    className="flex h-full w-full items-center justify-center text-2xl font-bold"
+                    style={{ background: "var(--accent)", color: "var(--primary)" }}
+                    aria-hidden="true"
+                  >
+                    {post.title[0]}
+                  </div>
+                )}
+              </div>
 
-              <div className="p-4 flex flex-col flex-1">
+              {/* Card body */}
+              <div className="p-3 flex flex-col flex-1">
                 <Link
                   to="/blog/$slug"
                   params={{ slug: post.slug }}
-                  className="text-sm font-semibold hover:text-primary line-clamp-2 leading-snug"
+                  className="text-sm font-semibold leading-snug hover:underline line-clamp-2"
+                  style={{ color: "var(--foreground)" }}
                 >
                   {post.title}
                 </Link>
-                <p className="mt-1 text-xs text-muted-foreground">{displayDate}</p>
+                <p className="mt-1.5 text-xs" style={{ color: "var(--muted-foreground)" }}>
+                  {displayDate}
+                </p>
               </div>
             </article>
           );
         })}
+      </div>
+
+      {/* Mobile view all */}
+      <div className="mt-4 sm:hidden text-center">
+        <Link
+          to="/blog"
+          className="text-sm font-semibold hover:underline"
+          style={{ color: "var(--primary)" }}
+        >
+          View All Articles →
+        </Link>
       </div>
     </section>
   );

@@ -1,9 +1,10 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+/**
+ * ReferencesAccordion — collapsible references list.
+ * Uses Radix accordion. Closed by default. Hidden when empty.
+ */
+import * as Accordion from "@radix-ui/react-accordion";
+import { Plus, BookOpen } from "lucide-react";
+
 import type { ArticleReference } from "@/data/blog";
 
 interface ReferencesAccordionProps {
@@ -11,43 +12,61 @@ interface ReferencesAccordionProps {
 }
 
 export function ReferencesAccordion({ references }: ReferencesAccordionProps) {
-  if (references.length === 0) return null;
+  if (!references || references.length === 0) return null;
 
   return (
-    <Accordion type="single" collapsible className="mt-8 rounded-xl border border-border px-5">
-      <AccordionItem value="references" className="border-b-0">
-        <AccordionTrigger className="text-sm font-semibold">
-          References &amp; Sources ({references.length})
-        </AccordionTrigger>
-        <AccordionContent>
-          <ol className="space-y-3 text-sm">
-            {references.map((ref, idx) => (
-              <li key={ref.id} className="flex gap-2">
-                <span className="shrink-0 text-muted-foreground">{idx + 1}.</span>
-                <div>
-                  {ref.url ? (
+    <div className="mt-8">
+      <Accordion.Root type="single" collapsible>
+        <Accordion.Item
+          value="references"
+          className="rounded-xl border overflow-hidden"
+          style={{ borderColor: "var(--border)" }}
+        >
+          <Accordion.Header>
+            <Accordion.Trigger
+              className="flex w-full items-center justify-between px-5 py-4 text-left font-semibold text-sm transition-colors hover:bg-gray-50 group"
+              style={{ color: "var(--foreground)" }}
+            >
+              <span className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4" style={{ color: "var(--primary)" }} aria-hidden="true" />
+                References &amp; Sources
+              </span>
+              <Plus
+                className="h-5 w-5 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-45"
+                style={{ color: "var(--muted-foreground)" }}
+                aria-hidden="true"
+              />
+            </Accordion.Trigger>
+          </Accordion.Header>
+
+          <Accordion.Content className="overflow-hidden data-[state=open]:animate-none data-[state=closed]:animate-none">
+            <ol className="px-5 pb-5 space-y-3">
+              {references.map((ref, idx) => (
+                <li key={ref.id} className="text-sm" style={{ color: "var(--muted-foreground)" }}>
+                  <span className="font-semibold" style={{ color: "var(--foreground)" }}>
+                    {idx + 1}.{" "}
+                  </span>
+                  {ref.authors && <span>{ref.authors}. </span>}
+                  <span className="italic">{ref.title}. </span>
+                  {ref.publisher && <span>{ref.publisher}. </span>}
+                  {ref.year && <span>{ref.year}. </span>}
+                  {ref.url && (
                     <a
                       href={ref.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-medium hover:text-primary underline"
+                      className="hover:underline break-all"
+                      style={{ color: "var(--primary)" }}
                     >
-                      {ref.title}
+                      {ref.url}
                     </a>
-                  ) : (
-                    <span className="font-medium">{ref.title}</span>
                   )}
-                  {(ref.authors || ref.publisher || ref.year) && (
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {[ref.authors, ref.publisher, ref.year].filter(Boolean).join(". ")}
-                    </p>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ol>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+                </li>
+              ))}
+            </ol>
+          </Accordion.Content>
+        </Accordion.Item>
+      </Accordion.Root>
+    </div>
   );
 }

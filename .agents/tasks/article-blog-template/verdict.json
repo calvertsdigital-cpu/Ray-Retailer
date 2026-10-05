@@ -1,0 +1,8 @@
+{
+  "verdict": "APPROVED",
+  "findings": [
+    "Non-functional category breadcrumb: Breadcrumbs.tsx accepts categorySlug but discards it (_categorySlug); the category segment links to /blog instead of a filtered URL. A reader clicking the third breadcrumb level gets the full unfiltered listing. Fix by wiring the slug to a filtered URL when category filtering ships, or render the category as plain non-linked text until then.",
+    "Generic product benefit copy on circulation article: the 4 recommended products (organic-beet-root, full-spectrum-cayenne, anthocyanin-bilberry, adaptogen-vitality-complex) are wholesale-only entries without curated records, so they display the wholesale fallback supportStatement ('Everyday wellness support in a vcap.') rather than circulation-specific benefit copy. Add curated catalog entries for these slugs or add a per-article productBenefits override field to BlogPost."
+  ],
+  "reviewDoc": ".agents/tasks/article-blog-template/2026-10-06-000511-review.md"
+}

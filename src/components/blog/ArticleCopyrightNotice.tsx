@@ -1,3 +1,7 @@
+/**
+ * ArticleCopyrightNotice — renders the global copyright/reuse notice with
+ * the current year injected dynamically. Always separate from the disclaimer.
+ */
 import { GLOBAL_COPYRIGHT_NOTICE } from "@/data/blog";
 
 export function ArticleCopyrightNotice() {
@@ -5,8 +9,11 @@ export function ArticleCopyrightNotice() {
   const text = GLOBAL_COPYRIGHT_NOTICE.replace("{year}", String(year));
 
   return (
-    <aside className="mt-6 rounded-xl border border-border bg-secondary p-4">
-      <p className="text-xs text-muted-foreground leading-relaxed">{text}</p>
-    </aside>
+    <p
+      className="mt-6 text-xs leading-relaxed text-center border-t pt-6"
+      style={{ color: "var(--muted-foreground)", borderColor: "var(--border)" }}
+    >
+      {text}
+    </p>
   );
 }

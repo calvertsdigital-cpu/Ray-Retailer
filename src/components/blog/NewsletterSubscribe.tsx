@@ -1,8 +1,13 @@
+/**
+ * NewsletterSubscribe — sidebar card with email input, green Subscribe
+ * button, and full idle / loading / success / error state machine.
+ * Globally reusable. Matches mockup styling.
+ */
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, Mail } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,7 +17,6 @@ type SubscribeState = "idle" | "loading" | "success" | "error";
 const schema = z.object({
   email: z.string().email("Please enter a valid email address."),
 });
-
 type FormValues = z.infer<typeof schema>;
 
 interface NewsletterSubscribeProps {
@@ -23,38 +27,59 @@ interface NewsletterSubscribeProps {
 
 export function NewsletterSubscribe({
   heading = "Stay Informed",
-  subtext = "Get trusted wellness education delivered to your inbox.",
-  consentText = "No spam. Unsubscribe any time. See Privacy Policy.",
+  subtext = "Get the latest health articles, tips, and updates from Ray's Healthy Living delivered to your inbox.",
+  consentText = "We respect your privacy. No spam. You can unsubscribe at any time.",
 }: NewsletterSubscribeProps) {
-  const [state, setState] = useState<SubscribeState>("idle");
+  const [subscribeState, setSubscribeState] = useState<SubscribeState>("idle");
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(schema),
-  });
+  } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
   const onSubmit = async (_data: FormValues) => {
-    setState("loading");
+    setSubscribeState("loading");
     try {
       await new Promise<void>((resolve) => setTimeout(resolve, 1500));
-      setState("success");
+      setSubscribeState("success");
     } catch {
-      setState("error");
+      setSubscribeState("error");
     }
   };
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <h2 className="font-semibold text-sm text-foreground mb-1">{heading}</h2>
-      <p className="text-xs text-muted-foreground mb-3">{subtext}</p>
+    <div
+      className="rounded-xl border bg-white p-5"
+      style={{ borderColor: "var(--border)" }}
+    >
+      {/* Header row with envelope icon */}
+      <div className="flex items-center gap-2 mb-2">
+        <div
+          className="flex h-7 w-7 items-center justify-center rounded"
+          style={{ backgroundColor: "var(--primary)", color: "white" }}
+          aria-hidden="true"
+        >
+          <Mail className="h-4 w-4" />
+        </div>
+        <h2 className="font-bold text-base" style={{ color: "var(--foreground)" }}>
+          {heading}
+        </h2>
+      </div>
 
-      {state === "success" ? (
-        <div className="rounded-lg bg-accent border border-primary/30 p-4 text-center">
-          <p className="text-sm font-semibold text-primary">You're on the list!</p>
-          <p className="mt-1 text-xs text-muted-foreground">
+      <p className="text-sm leading-relaxed mb-4" style={{ color: "var(--muted-foreground)" }}>
+        {subtext}
+      </p>
+
+      {subscribeState === "success" ? (
+        <div
+          className="rounded-lg border p-4 text-center"
+          style={{ background: "var(--accent)", borderColor: "oklch(0.52 0.132 150.5 / 0.3)" }}
+        >
+          <p className="text-sm font-bold" style={{ color: "var(--primary)" }}>
+            You're on the list! ✓
+          </p>
+          <p className="mt-1 text-xs" style={{ color: "var(--muted-foreground)" }}>
             We'll send you wellness education you can trust.
           </p>
         </div>
@@ -67,15 +92,17 @@ export function NewsletterSubscribe({
             <Input
               id="subscribe-email"
               type="email"
-              placeholder="your@email.com"
+              placeholder="Your email address"
               aria-describedby={errors.email ? "subscribe-error" : undefined}
-              disabled={state === "loading"}
+              disabled={subscribeState === "loading"}
+              className="w-full"
               {...register("email")}
             />
             {errors.email && (
               <p
                 id="subscribe-error"
-                className="text-xs text-destructive"
+                className="text-xs"
+                style={{ color: "var(--destructive)" }}
                 role="alert"
                 aria-live="polite"
               >
@@ -84,25 +111,31 @@ export function NewsletterSubscribe({
             )}
             <Button
               type="submit"
-              disabled={state === "loading"}
-              className="w-full"
+              disabled={subscribeState === "loading"}
+              className="w-full font-semibold"
             >
-              {state === "loading" ? (
+              {subscribeState === "loading" ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
                   Subscribing…
                 </>
               ) : (
                 "Subscribe"
               )}
             </Button>
-            {state === "error" && (
-              <p className="text-xs text-destructive text-center" role="alert">
+            {subscribeState === "error" && (
+              <p
+                className="text-xs text-center"
+                style={{ color: "var(--destructive)" }}
+                role="alert"
+              >
                 Something went wrong. Please try again.
               </p>
             )}
           </div>
-          <p className="mt-2 text-xs text-muted-foreground text-center">{consentText}</p>
+          <p className="mt-3 text-xs text-center" style={{ color: "var(--muted-foreground)" }}>
+            {consentText}
+          </p>
         </form>
       )}
     </div>

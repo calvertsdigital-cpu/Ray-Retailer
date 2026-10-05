@@ -1,3 +1,7 @@
+/**
+ * BottomLineCallout — light green tinted box with leaf icon.
+ * Matches the mockup "The Bottom Line" section.
+ */
 import { Leaf } from "lucide-react";
 
 interface BottomLineCalloutProps {
@@ -5,18 +9,29 @@ interface BottomLineCalloutProps {
 }
 
 export function BottomLineCallout({ text }: BottomLineCalloutProps) {
-  if (!text) return null;
-
   return (
-    <aside
-      className="mt-10 rounded-xl border border-primary/30 bg-accent p-6"
-      aria-label="The Bottom Line"
+    <div
+      className="mt-10 flex gap-4 rounded-xl border p-5"
+      style={{
+        backgroundColor: "oklch(0.955 0.021 150)",   /* --accent */
+        borderColor: "oklch(0.52 0.132 150.5 / 0.3)", /* primary/30 */
+      }}
     >
-      <div className="flex items-center gap-2 mb-2">
-        <Leaf className="h-5 w-5 text-primary shrink-0" aria-hidden="true" />
-        <h2 className="font-semibold text-primary text-base">The Bottom Line</h2>
+      <div
+        className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+        style={{ backgroundColor: "var(--primary)", color: "white" }}
+        aria-hidden="true"
+      >
+        <Leaf className="h-4 w-4" />
       </div>
-      <p className="text-base leading-relaxed text-muted-foreground">{text}</p>
-    </aside>
+      <div>
+        <p className="font-bold text-sm" style={{ color: "var(--primary)" }}>
+          The Bottom Line
+        </p>
+        <p className="mt-1 text-sm leading-relaxed" style={{ color: "var(--foreground)" }}>
+          {text}
+        </p>
+      </div>
+    </div>
   );
 }

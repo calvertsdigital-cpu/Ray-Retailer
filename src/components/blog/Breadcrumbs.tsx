@@ -1,55 +1,52 @@
+/**
+ * Breadcrumbs — semantic nav with ol/li list.
+ * Home › Articles & Blog › {Category} › {Article title}
+ */
 import { Link } from "@tanstack/react-router";
-
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { ChevronRight } from "lucide-react";
 
 interface BreadcrumbsProps {
   category: string;
-  categorySlug: string;
   articleTitle: string;
 }
 
-export function Breadcrumbs({ category, categorySlug: _categorySlug, articleTitle }: BreadcrumbsProps) {
+export function Breadcrumbs({ category, articleTitle }: BreadcrumbsProps) {
+  const crumbs = [
+    { label: "Home", to: "/" as const },
+    { label: "Articles & Blog", to: "/blog" as const },
+    { label: category, to: "/blog" as const },
+  ];
+
   return (
-    <nav aria-label="Breadcrumb" className="bg-cream border-b border-border">
+    <nav
+      aria-label="Breadcrumb"
+      className="border-b"
+      style={{ backgroundColor: "var(--cream)", borderColor: "var(--border)" }}
+    >
       <div className="container-rhl py-3">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/" className="text-sm">
-                  Home
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/blog" className="text-sm">
-                  Articles &amp; Blog
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/blog" className="text-sm">
-                  {category}
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage className="text-sm line-clamp-1">{articleTitle}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+        <ol className="flex flex-wrap items-center gap-1 text-sm" style={{ color: "var(--muted-foreground)" }}>
+          {crumbs.map((crumb) => (
+            <li key={crumb.label} className="flex items-center gap-1">
+              <Link
+                to={crumb.to}
+                className="hover:underline transition-colors"
+                style={{ color: "var(--muted-foreground)" }}
+              >
+                {crumb.label}
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            </li>
+          ))}
+          <li>
+            <span
+              className="line-clamp-1 font-medium"
+              style={{ color: "var(--foreground)" }}
+              aria-current="page"
+            >
+              {articleTitle}
+            </span>
+          </li>
+        </ol>
       </div>
     </nav>
   );

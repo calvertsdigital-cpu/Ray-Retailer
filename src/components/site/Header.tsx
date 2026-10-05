@@ -441,7 +441,7 @@ export function Header() {
                     {/* ── TEA COLUMN ─────────────────────────── */}
                     <div className="p-6">
                       <div className="flex items-center gap-3 mb-5">
-                        <img src="/tea-coffee/chamomile.svg" alt="Tea" className="h-12 w-12 rounded-sm" />
+                        <img src="/chay.png" alt="Tea" className="h-12 w-12 rounded-sm object-cover" />
                         <h3 className="text-tc-heading-md text-primary">TEA</h3>
                       </div>
 
@@ -479,7 +479,7 @@ export function Header() {
                     {/* ── COFFEE COLUMN ──────────────────────── */}
                     <div className="p-6 bg-tc-cream">
                       <div className="flex items-center gap-3 mb-5">
-                        <img src="/tea-coffee/coffee-beans.svg" alt="Coffee" className="h-12 w-12 rounded-sm" />
+                        <img src="/cofee.png" alt="Coffee" className="h-12 w-12 rounded-sm object-cover" />
                         <h3 className="text-tc-heading-md" style={{ color: "var(--tc-coffee-charcoal)" }}>COFFEE</h3>
                       </div>
 

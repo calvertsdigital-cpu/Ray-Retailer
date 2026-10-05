@@ -47,9 +47,6 @@ import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as TeaCoffeeIndexRouteImport } from './routes/tea-coffee/index'
 import { Route as TeaCoffeeCoffeeRouteImport } from './routes/tea-coffee/coffee'
 import { Route as TeaCoffeeTeaRouteImport } from './routes/tea-coffee/tea'
-import { Route as U20xSlugRouteImport } from './routes/u20x./$slug'
-import { Route as TeaCoffeeArticlesSlugRouteImport } from './routes/tea-coffee/articles./$slug'
-import { Route as TeaCoffeeLearnGuideRouteImport } from './routes/tea-coffee/learn./$guide'
 import { Route as TeaCoffeeProductsSlugRouteImport } from './routes/tea-coffee/products/$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -242,21 +239,6 @@ const TeaCoffeeTeaRoute = TeaCoffeeTeaRouteImport.update({
   path: '/tea-coffee/tea',
   getParentRoute: () => rootRouteImport,
 } as any)
-const U20xSlugRoute = U20xSlugRouteImport.update({
-  id: '/u20x/$slug',
-  path: '/u20x/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TeaCoffeeArticlesSlugRoute = TeaCoffeeArticlesSlugRouteImport.update({
-  id: '/tea-coffee/articles/$slug',
-  path: '/tea-coffee/articles/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TeaCoffeeLearnGuideRoute = TeaCoffeeLearnGuideRouteImport.update({
-  id: '/tea-coffee/learn/$guide',
-  path: '/tea-coffee/learn/$guide',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TeaCoffeeProductsSlugRoute = TeaCoffeeProductsSlugRouteImport.update({
   id: '/tea-coffee/products/$slug',
   path: '/tea-coffee/products/$slug',
@@ -297,14 +279,11 @@ export interface FileRoutesByFullPath {
   '/products/$slug': typeof ProductsSlugRoute
   '/tea-coffee/coffee': typeof TeaCoffeeCoffeeRoute
   '/tea-coffee/tea': typeof TeaCoffeeTeaRoute
-  '/u20x/$slug': typeof U20xSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/brands/': typeof BrandsIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/health-concerns/': typeof HealthConcernsIndexRoute
   '/tea-coffee/': typeof TeaCoffeeIndexRoute
-  '/tea-coffee/articles/$slug': typeof TeaCoffeeArticlesSlugRoute
-  '/tea-coffee/learn/$guide': typeof TeaCoffeeLearnGuideRoute
   '/tea-coffee/products/$slug': typeof TeaCoffeeProductsSlugRoute
 }
 export interface FileRoutesByTo {
@@ -341,14 +320,11 @@ export interface FileRoutesByTo {
   '/products/$slug': typeof ProductsSlugRoute
   '/tea-coffee/coffee': typeof TeaCoffeeCoffeeRoute
   '/tea-coffee/tea': typeof TeaCoffeeTeaRoute
-  '/u20x/$slug': typeof U20xSlugRoute
   '/blog': typeof BlogIndexRoute
   '/brands': typeof BrandsIndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/health-concerns': typeof HealthConcernsIndexRoute
   '/tea-coffee': typeof TeaCoffeeIndexRoute
-  '/tea-coffee/articles/$slug': typeof TeaCoffeeArticlesSlugRoute
-  '/tea-coffee/learn/$guide': typeof TeaCoffeeLearnGuideRoute
   '/tea-coffee/products/$slug': typeof TeaCoffeeProductsSlugRoute
 }
 export interface FileRoutesById {
@@ -386,14 +362,11 @@ export interface FileRoutesById {
   '/products/$slug': typeof ProductsSlugRoute
   '/tea-coffee/coffee': typeof TeaCoffeeCoffeeRoute
   '/tea-coffee/tea': typeof TeaCoffeeTeaRoute
-  '/u20x/$slug': typeof U20xSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/brands/': typeof BrandsIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/health-concerns/': typeof HealthConcernsIndexRoute
   '/tea-coffee/': typeof TeaCoffeeIndexRoute
-  '/tea-coffee/articles/$slug': typeof TeaCoffeeArticlesSlugRoute
-  '/tea-coffee/learn/$guide': typeof TeaCoffeeLearnGuideRoute
   '/tea-coffee/products/$slug': typeof TeaCoffeeProductsSlugRoute
 }
 export interface FileRouteTypes {
@@ -432,14 +405,11 @@ export interface FileRouteTypes {
     | '/products/$slug'
     | '/tea-coffee/coffee'
     | '/tea-coffee/tea'
-    | '/u20x/$slug'
     | '/blog/'
     | '/brands/'
     | '/categories/'
     | '/health-concerns/'
     | '/tea-coffee/'
-    | '/tea-coffee/articles/$slug'
-    | '/tea-coffee/learn/$guide'
     | '/tea-coffee/products/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -476,14 +446,11 @@ export interface FileRouteTypes {
     | '/products/$slug'
     | '/tea-coffee/coffee'
     | '/tea-coffee/tea'
-    | '/u20x/$slug'
     | '/blog'
     | '/brands'
     | '/categories'
     | '/health-concerns'
     | '/tea-coffee'
-    | '/tea-coffee/articles/$slug'
-    | '/tea-coffee/learn/$guide'
     | '/tea-coffee/products/$slug'
   id:
     | '__root__'
@@ -520,14 +487,11 @@ export interface FileRouteTypes {
     | '/products/$slug'
     | '/tea-coffee/coffee'
     | '/tea-coffee/tea'
-    | '/u20x/$slug'
     | '/blog/'
     | '/brands/'
     | '/categories/'
     | '/health-concerns/'
     | '/tea-coffee/'
-    | '/tea-coffee/articles/$slug'
-    | '/tea-coffee/learn/$guide'
     | '/tea-coffee/products/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -565,14 +529,11 @@ export interface RootRouteChildren {
   ProductsSlugRoute: typeof ProductsSlugRoute
   TeaCoffeeCoffeeRoute: typeof TeaCoffeeCoffeeRoute
   TeaCoffeeTeaRoute: typeof TeaCoffeeTeaRoute
-  U20xSlugRoute: typeof U20xSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
   BrandsIndexRoute: typeof BrandsIndexRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
   HealthConcernsIndexRoute: typeof HealthConcernsIndexRoute
   TeaCoffeeIndexRoute: typeof TeaCoffeeIndexRoute
-  TeaCoffeeArticlesSlugRoute: typeof TeaCoffeeArticlesSlugRoute
-  TeaCoffeeLearnGuideRoute: typeof TeaCoffeeLearnGuideRoute
   TeaCoffeeProductsSlugRoute: typeof TeaCoffeeProductsSlugRoute
 }
 
@@ -844,27 +805,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeaCoffeeTeaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/u20x/$slug': {
-      id: '/u20x/$slug'
-      path: '/u20x/$slug'
-      fullPath: '/u20x/$slug'
-      preLoaderRoute: typeof U20xSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tea-coffee/articles/$slug': {
-      id: '/tea-coffee/articles/$slug'
-      path: '/tea-coffee/articles/$slug'
-      fullPath: '/tea-coffee/articles/$slug'
-      preLoaderRoute: typeof TeaCoffeeArticlesSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tea-coffee/learn/$guide': {
-      id: '/tea-coffee/learn/$guide'
-      path: '/tea-coffee/learn/$guide'
-      fullPath: '/tea-coffee/learn/$guide'
-      preLoaderRoute: typeof TeaCoffeeLearnGuideRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/tea-coffee/products/$slug': {
       id: '/tea-coffee/products/$slug'
       path: '/tea-coffee/products/$slug'
@@ -909,14 +849,11 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsSlugRoute: ProductsSlugRoute,
   TeaCoffeeCoffeeRoute: TeaCoffeeCoffeeRoute,
   TeaCoffeeTeaRoute: TeaCoffeeTeaRoute,
-  U20xSlugRoute: U20xSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
   BrandsIndexRoute: BrandsIndexRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
   HealthConcernsIndexRoute: HealthConcernsIndexRoute,
   TeaCoffeeIndexRoute: TeaCoffeeIndexRoute,
-  TeaCoffeeArticlesSlugRoute: TeaCoffeeArticlesSlugRoute,
-  TeaCoffeeLearnGuideRoute: TeaCoffeeLearnGuideRoute,
   TeaCoffeeProductsSlugRoute: TeaCoffeeProductsSlugRoute,
 }
 export const routeTree = rootRouteImport

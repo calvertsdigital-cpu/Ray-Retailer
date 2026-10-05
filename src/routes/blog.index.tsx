@@ -33,23 +33,35 @@ function BlogPage() {
 
       <div className="mt-8 grid gap-5 md:grid-cols-2">
         {posts.map((post) => (
-          <article key={post.slug} className="flex flex-col rounded-xl border border-border bg-card p-6 shadow-card">
-            <p className="eyebrow">
-              {post.category} · {post.readTime}
-            </p>
-            <h2 className="mt-2 text-lg font-semibold">
-              <Link to="/blog/$slug" params={{ slug: post.slug }} className="hover:text-primary">
-                {post.title}
+          <article key={post.slug} className="flex flex-col rounded-xl border border-border bg-card shadow-card overflow-hidden">
+            {post.featureImageUrl && (
+              <img
+                loading="lazy"
+                src={post.featureImageUrl}
+                alt={post.featureImageAlt ?? post.title}
+                className="w-full aspect-[16/9] object-cover"
+                width={600}
+                height={338}
+              />
+            )}
+            <div className="p-6 flex flex-col flex-1">
+              <p className="eyebrow">
+                {post.category} · {post.readTime}
+              </p>
+              <h2 className="mt-2 text-lg font-semibold">
+                <Link to="/blog/$slug" params={{ slug: post.slug }} className="hover:text-primary">
+                  {post.title}
+                </Link>
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">{post.excerpt}</p>
+              <Link
+                to="/blog/$slug"
+                params={{ slug: post.slug }}
+                className="mt-4 text-sm font-semibold text-primary hover:underline"
+              >
+                Read article →
               </Link>
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">{post.excerpt}</p>
-            <Link
-              to="/blog/$slug"
-              params={{ slug: post.slug }}
-              className="mt-4 text-sm font-semibold text-primary hover:underline"
-            >
-              Read article →
-            </Link>
+            </div>
           </article>
         ))}
       </div>

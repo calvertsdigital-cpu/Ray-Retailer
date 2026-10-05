@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-003",
+  "type": "chore",
+  "description": "Final polish, accessibility pass, and SEO metadata completeness. Fix any visual issues found during integration. Independent of FEAT-001/FEAT-002 in scope, but must run after both are complete since it reviews the rendered output.",
+  "status": "completed",
+  "steps": [
+    "1. Read all 15 blog components and the updated blog.$slug.tsx to do a final review pass.",
+
+    "2. Accessibility checklist — fix any issues found:\n   - All interactive elements must have discernible text (aria-label or visible text).\n   - Accordion trigger buttons: AccordionTrigger already uses button semantics via Radix — verify no role conflicts.\n   - Newsletter form: ensure Input has associated <label> (use htmlFor + id pattern matching Footer.tsx). The react-hook-form error message must have role='alert' or aria-live='polite'.\n   - Feature image: alt text must always be non-empty (enforce in ArticleHeader if post.featureImageAlt is absent, use post.title as fallback alt in FeatureMedia).\n   - RelatedArticles and RecentArticles: each Link must have accessible text (post title is fine).\n   - Breadcrumb nav: already aria-labelled by the shadcn breadcrumb primitive.\n   - Touch targets: verify all buttons/links in sidebar components are min 44px tall (add min-h-[44px] where needed).\n   - Color contrast: the U20XPromo uses white text on navy/blue — this passes WCAG AA. No changes needed.",
+
+    "3. SEO completeness in blog.$slug.tsx head():\n   - Ensure og:image is set to post.featureImageUrl when present.\n   - Ensure article:published_time and article:author meta tags are added:\n     { property: 'article:published_time', content: post.date }\n     { property: 'article:author', content: post.author }\n   - Ensure canonical link is NOT added here (the framework handles it).",
+
+    "4. Verify the RecommendedProducts component gracefully handles zero matching products (all productSlugs are unrecognized). When the filtered list is empty, the component must render nothing (return null) rather than an empty section heading.",
+
+    "5. Verify the mobile sidebar order is exactly: U20XPromo → NewsletterSubscribe → RecentArticles → TopicExplorer. The 'Related Articles' section is already inside the main article column below the accordions — confirm this on mobile too (it does not move).",
+
+    "6. Ensure the copyright notice renders the current year dynamically. The GLOBAL_COPYRIGHT_NOTICE constant in blog.ts must NOT hardcode a year — if it does, fix ArticleCopyrightNotice.tsx to inject new Date().getFullYear() via string replace or a template literal.",
+
+    "7. Check that all existing routes still build and the existing 4 blog posts render correctly on /blog/$slug (they now have an empty sections array, so ArticleBody must fall back to legacyBody gracefully).",
+
+    "8. Run the full build one final time and record the outcome in this FEAT's findings field."
+  ],
+  "acceptance_criteria": [
+    "bun run build exits 0 with no warnings about missing props or undefined access",
+    "All interactive elements in the new components have accessible labels",
+    "Newsletter form has proper label association and error state uses aria-live",
+    "RecommendedProducts returns null when no products match",
+    "Copyright notice shows the correct current year",
+    "Existing 4 blog posts render without errors (legacyBody fallback works)"
+  ],
+  "verification": [
+    "cd '/Users/suddhajitchowdhury/Documents/Ray Full System/Ray-Retailer' && bun run build"
+  ],
+  "blocked_reason": null,
+  "findings": "Build passed (exit 0). Two issues fixed: (1) NewsletterSubscribe — replaced aria-label on Input with proper <label htmlFor='subscribe-email'> + id='subscribe-email' association, and added aria-live='polite' alongside role='alert' on the error message. (2) blog.$slug.tsx head() — added article:published_time and article:author Open Graph meta tags. All other acceptance criteria were already satisfied: RecommendedProducts already returned null on empty, GLOBAL_COPYRIGHT_NOTICE uses {year} placeholder and ArticleCopyrightNotice.tsx injects new Date().getFullYear() correctly, ArticleBody already falls back to legacyBody for the 4 legacy posts, mobile sidebar order (U20XPromo → NewsletterSubscribe → RecentArticles → TopicExplorer) was already correct, all interactive elements had accessible labels, touch targets ≥44px were already present. Final build: clean exit code 0, no TypeScript errors."
+}

@@ -61,16 +61,24 @@ export function NewsletterSubscribe({
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="flex flex-col gap-2">
+            <label htmlFor="subscribe-email" className="sr-only">
+              Email address
+            </label>
             <Input
+              id="subscribe-email"
               type="email"
               placeholder="your@email.com"
-              aria-label="Email address"
               aria-describedby={errors.email ? "subscribe-error" : undefined}
               disabled={state === "loading"}
               {...register("email")}
             />
             {errors.email && (
-              <p id="subscribe-error" className="text-xs text-destructive" role="alert">
+              <p
+                id="subscribe-error"
+                className="text-xs text-destructive"
+                role="alert"
+                aria-live="polite"
+              >
                 {errors.email.message}
               </p>
             )}

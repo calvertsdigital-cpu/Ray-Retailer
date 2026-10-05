@@ -44,6 +44,8 @@ export const Route = createFileRoute("/blog/$slug")({
         ...(p.featureImageUrl
           ? [{ property: "og:image", content: p.featureImageUrl }]
           : []),
+        { property: "article:published_time", content: p.date },
+        { property: "article:author", content: p.author },
         { name: "twitter:card", content: "summary_large_image" },
       ],
     };

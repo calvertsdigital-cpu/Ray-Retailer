@@ -82,6 +82,14 @@ const subnavItems: SubnavItem[] = [
     ],
   },
   {
+    label: "Tea & Coffee",
+    type: "menu",
+    actions: [
+      { label: "Shop Now", to: "/tea-coffee/tea", style: "primary" },
+      { label: "Know More", to: "/tea-coffee/coffee", style: "outline" },
+    ],
+  },
+  {
     label: "Ray's Vitality",
     type: "menu",
     actions: [{ label: "Shop Now", to: "/shop", style: "primary" }],
@@ -131,7 +139,7 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-background">
+    <header className="sticky top-0 bg-background" style={{ zIndex: 9999, isolation: "isolate" }}>
       {/* ── Tier 1: Green top bar ── */}
       <div className="bg-gradient-to-r from-green-700 to-green-600 text-white">
         <div className="container-rhl flex h-12 items-center justify-between text-sm">
@@ -286,8 +294,8 @@ export function Header() {
       </div>
 
       {/* ── Tier 3: Sub-navbar — desktop only ── */}
-      <div className="hidden border-b border-gray-200 bg-gray-50 lg:block overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-50">
-        <div className="flex items-center justify-center gap-0.5 py-2 flex-nowrap whitespace-nowrap px-4 min-w-fit mx-auto">
+      <div className="hidden border-b border-gray-200 bg-gray-50 lg:block" style={{ position: "relative", zIndex: 9999 }}>
+        <div className="flex items-center justify-center flex-wrap gap-0.5 py-2 px-4 mx-auto" style={{ maxWidth: "1164px" }}>
           {subnavItems.map((item) => {
             if (item.type === "direct") {
               // Brands / Categories — plain link, no dropdown at all
@@ -295,7 +303,7 @@ export function Header() {
                 <Link
                   key={item.label}
                   to={item.to}
-                  className="whitespace-nowrap text-sm font-medium text-gray-700 hover:text-green-600 transition-colors px-3 py-1.5 rounded-md hover:bg-green-50 border-b-2 border-transparent hover:border-green-600"
+                  className="text-sm font-medium text-gray-700 hover:text-green-600 transition-colors px-3 py-1.5 rounded-md hover:bg-green-50 border-b-2 border-transparent hover:border-green-600"
                 >
                   {item.label}
                 </Link>
@@ -314,7 +322,7 @@ export function Header() {
                 onMouseLeave={scheduleClose}
               >
                 <button
-                  className={`flex items-center gap-1 whitespace-nowrap text-sm font-medium transition-colors px-3 py-1.5 rounded-md border-b-2 ${isOpen
+                  className={`flex items-center gap-1 text-sm font-medium transition-colors px-3 py-1.5 rounded-md border-b-2 ${isOpen
                       ? "text-green-600 border-green-600 bg-green-50"
                       : "text-gray-700 hover:text-green-600 border-transparent hover:border-green-600 hover:bg-green-50"
                     }`}
@@ -341,8 +349,8 @@ export function Header() {
                 {/* Dropdown panel */}
                 {hasMultipleActions && (
                   <div
-                    className={`absolute left-0 top-full pt-1 z-50 transition-all duration-150 ${isOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-1 pointer-events-none"
-                      }`}
+                    className={`absolute left-0 top-full pt-1 transition-all duration-150 ${isOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-1 pointer-events-none"}`}
+                    style={{ zIndex: 9999 }}
                     onMouseEnter={cancelClose}
                     onMouseLeave={scheduleClose}
                     role="menu"
@@ -402,7 +410,7 @@ export function Header() {
           >
             <button
               onClick={() => setTcMegaOpen((v) => !v)}
-              className={`flex items-center gap-1 whitespace-nowrap text-sm font-medium transition-colors px-3 py-1.5 rounded-md border-b-2 ${
+              className={`flex items-center gap-1 text-sm font-medium transition-colors px-3 py-1.5 rounded-md border-b-2 ${
                 tcMegaOpen
                   ? "text-green-600 border-green-600 bg-green-50"
                   : "text-gray-700 hover:text-green-600 border-transparent hover:border-green-600 hover:bg-green-50"
@@ -419,7 +427,8 @@ export function Header() {
             {/* Mega menu panel — uses design tokens for Tea & Coffee colors */}
             {tcMegaOpen && (
               <div
-                className="absolute left-1/2 -translate-x-1/2 top-full pt-2 z-50"
+                className="absolute left-1/2 -translate-x-1/2 top-full pt-2"
+                style={{ zIndex: 9999 }}
                 onMouseEnter={cancelMegaClose}
                 onMouseLeave={scheduleMegaClose}
               >

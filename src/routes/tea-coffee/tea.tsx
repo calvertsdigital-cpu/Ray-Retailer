@@ -215,19 +215,28 @@ function TeaCollection() {
                         )}
                       </div>
 
-                      {/* Actions */}
-                      <button
-                        className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-opacity hover:opacity-90 disabled:opacity-40"
-                        style={{ backgroundColor: "var(--primary)", color: "white" }}
-                        disabled={!product.inStock}
-                        onClick={() => {
-                          add(product.slug, 1);
-                          toast.success(`${product.name} added to cart`);
-                        }}
-                      >
-                        <ShoppingCart className="h-4 w-4" />
-                        {product.inStock ? "Add to Cart" : "Out of Stock"}
-                      </button>
+                    {/* Actions */}
+                      <div className="flex gap-2">
+                        <Link
+                          to="/tea-coffee/products/$slug"
+                          params={{ slug: product.slug }}
+                          className="flex-1 flex items-center justify-center py-2 rounded-lg text-sm font-bold border-2 transition-colors hover:bg-stone-50"
+                          style={{ borderColor: "var(--primary)", color: "var(--primary)" }}
+                        >
+                          View Details
+                        </Link>
+                        <button
+                          className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-sm font-bold transition-opacity hover:opacity-90 disabled:opacity-40"
+                          style={{ backgroundColor: "var(--primary)", color: "white" }}
+                          disabled={!product.inStock}
+                          onClick={() => {
+                            add(product.slug, 1);
+                            toast.success(`${product.name} added to cart`);
+                          }}
+                        >
+                          <ShoppingCart className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
                   </article>
                 ))}

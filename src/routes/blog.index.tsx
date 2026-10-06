@@ -1,7 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { getAllPosts } from "@/data/blog";
+import { fetchAllBlogPosts } from "@/lib/blog-api";
+import { blogPosts } from "@/data/blog";
 
 export const Route = createFileRoute("/blog/")({
+  // Loader runs on both server and client — fetches from backend + merges static
+  loader: async () => {
+    const posts = await fetchAllBlogPosts();
+    return { posts: posts.filter((p) => p.published) };
+  },
+
   head: () => ({
     meta: [
       { title: "Wellness Education & Blog | Ray's Healthy Living" },
@@ -16,11 +23,12 @@ export const Route = createFileRoute("/blog/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+
   component: BlogPage,
 });
 
 function BlogPage() {
-  const posts = getAllPosts().filter((p) => p.published);
+  const { posts } = Route.useLoaderData();
 
   return (
     <div className="container-rhl section-y">
@@ -37,7 +45,7 @@ function BlogPage() {
             className="flex flex-col overflow-hidden rounded-xl border bg-white shadow-card"
             style={{ borderColor: "var(--border)" }}
           >
-            {/* Feature image thumbnail */}
+            {/* Feature image */}
             {post.featureImageUrl ? (
               <div className="aspect-[16/9] w-full overflow-hidden bg-gray-100">
                 <img

@@ -1,5 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
+import { fetchAllBlogPosts, fetchBlogPost } from "@/lib/blog-api";
 import { getPost, getAllPosts, GLOBAL_DISCLAIMER, ARTICLE_CATEGORIES } from "@/data/blog";
 
 import { Breadcrumbs }          from "@/components/blog/Breadcrumbs";
@@ -19,10 +20,13 @@ import { U20XPromo }             from "@/components/blog/U20XPromo";
 import { TopicExplorer }         from "@/components/blog/TopicExplorer";
 
 export const Route = createFileRoute("/blog/$slug")({
-  loader: ({ params }) => {
-    const post = getPost(params.slug);
+  loader: async ({ params }) => {
+    // Try API first (includes admin-created posts), fall back to static
+    const post = await fetchBlogPost(params.slug);
     if (!post) throw notFound();
-    return { post };
+    // Fetch all posts for sidebar/related (merge API + static)
+    const allPosts = await fetchAllBlogPosts();
+    return { post, allPosts };
   },
 
   head: ({ loaderData }) => {
@@ -78,8 +82,7 @@ export const Route = createFileRoute("/blog/$slug")({
 });
 
 function PostPage() {
-  const { post } = Route.useLoaderData();
-  const allPosts = getAllPosts();
+  const { post, allPosts } = Route.useLoaderData();
   const relatedSlugs = post.relatedArticleSlugs ?? post.relatedSlugs ?? [];
 
   return (
@@ -100,12 +103,12 @@ function PostPage() {
               category={post.category}
               categoryIcon={post.categoryIcon}
               title={post.title}
-              subtitle={post.subtitle}
+              {...(post.subtitle !== undefined ? { subtitle: post.subtitle } : {})}
               author={post.author}
-              authorAvatar={post.authorAvatar}
-              authorBrandLine={post.authorBrandLine}
+              {...(post.authorAvatar !== undefined ? { authorAvatar: post.authorAvatar } : {})}
+              {...(post.authorBrandLine !== undefined ? { authorBrandLine: post.authorBrandLine } : {})}
               date={post.date}
-              updatedDate={post.updatedDate}
+              {...(post.updatedDate !== undefined ? { updatedDate: post.updatedDate } : {})}
               readTime={post.readTime}
             />
 

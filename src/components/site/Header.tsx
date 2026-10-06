@@ -42,19 +42,6 @@ const subnavItems: SubnavItem[] = [
     ],
   },
   {
-    label: "CBD",
-    type: "menu",
-    actions: [
-      { label: "Shop Now", to: "/shop", style: "primary" },
-      { label: "Know More", to: "/cbd", style: "outline" },
-    ],
-  },
-  {
-    label: "Health Concern",
-    type: "menu",
-    actions: [{ label: "Shop Now", to: "/shop", style: "primary" }],
-  },
-  {
     label: "Brands",
     type: "direct",
     to: "/brands",
@@ -70,18 +57,12 @@ const subnavItems: SubnavItem[] = [
     actions: [
       { label: "Shop Now", to: "https://maximumcardio.com/", style: "primary", external: true },
       { label: "Know More", to: "/maximum-cardio", style: "outline" },
-      { label: "Videos", to: "/maximum-cardio-video", style: "ghost" },
     ],
   },
   {
     label: "Essential Oil",
     type: "direct",
     to: "/essential-oil",
-  },
-  {
-    label: "Tea & Coffee",
-    type: "direct",
-    to: "/tea-coffee/",
   },
   {
     label: "Ray's Vitality",
@@ -92,6 +73,11 @@ const subnavItems: SubnavItem[] = [
     label: "Loose Herbs",
     type: "menu",
     actions: [{ label: "Shop Now", to: "/shop", style: "primary" }],
+  },
+  {
+    label: "Tea & Coffee",
+    type: "direct",
+    to: "/tea-coffee/",
   },
 ];
 

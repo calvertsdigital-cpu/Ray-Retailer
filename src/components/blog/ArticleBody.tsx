@@ -182,10 +182,25 @@ export function ArticleBody({ sections, legacyBody }: ArticleBodyProps) {
     );
   }
 
-  /* Legacy flat paragraphs fallback */
+  /* Legacy flat paragraphs — or HTML from the rich editor */
+  const bodyItems = legacyBody ?? [];
+
+  // If the first item looks like HTML (starts with <), render as innerHTML
+  const isHtml = bodyItems.length > 0 && bodyItems[0].trimStart().startsWith("<");
+  if (isHtml) {
+    const htmlContent = bodyItems.join("\n");
+    return (
+      <div
+        className="mt-8 prose-rhl"
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
+        style={{ color: "var(--muted-foreground)" }}
+      />
+    );
+  }
+
   return (
     <div className="mt-8 space-y-5 text-base leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
-      {(legacyBody ?? []).map((para, idx) => (
+      {bodyItems.map((para, idx) => (
         <p key={idx}>{para}</p>
       ))}
     </div>

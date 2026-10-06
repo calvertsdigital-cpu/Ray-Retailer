@@ -64,21 +64,6 @@ const subnavItems: SubnavItem[] = [
     type: "direct",
     to: "/essential-oil",
   },
-  {
-    label: "Ray's Vitality",
-    type: "menu",
-    actions: [{ label: "Shop Now", to: "/shop", style: "primary" }],
-  },
-  {
-    label: "Loose Herbs",
-    type: "menu",
-    actions: [{ label: "Shop Now", to: "/shop", style: "primary" }],
-  },
-  {
-    label: "Tea & Coffee",
-    type: "direct",
-    to: "/tea-coffee/",
-  },
 ];
 
 export function Header() {

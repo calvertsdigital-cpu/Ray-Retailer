@@ -120,9 +120,6 @@ export function Header() {
             ))}
           </div>
           <div className="flex items-center gap-3 ml-auto lg:ml-0">
-            <button className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded text-sm font-semibold transition-colors">
-              🛒 Wholesale
-            </button>
           </div>
         </div>
       </div>

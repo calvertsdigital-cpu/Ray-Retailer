@@ -33,6 +33,47 @@ export const Route = createFileRoute("/irish-moss")({
       },
       { property: "og:type", content: "article" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Article",
+              headline:
+                "Irish Moss (Chondrus Crispus) — Benefits & Guide",
+              author: {
+                "@type": "Organization",
+                name: "Ray's Healthy Living",
+              },
+              publisher: {
+                "@type": "Organization",
+                name: "Ray's Healthy Living",
+                url: "https://rayshealthyliving.com",
+              },
+            },
+            {
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                {
+                  "@type": "ListItem",
+                  position: 1,
+                  name: "Home",
+                  item: "https://rayshealthyliving.com/",
+                },
+                {
+                  "@type": "ListItem",
+                  position: 2,
+                  name: "Irish Moss",
+                  item: "https://rayshealthyliving.com/irish-moss",
+                },
+              ],
+            },
+          ],
+        }),
+      },
+    ],
   }),
 });
 
@@ -359,7 +400,7 @@ function IrishMossPage() {
                 className="text-3xl font-bold mb-4"
                 style={{ color: "var(--im-green)" }}
               >
-                Irish Sea Moss
+                What is Irish Sea Moss
               </h2>
               <p
                 style={{
@@ -796,7 +837,12 @@ function IrishMossPage() {
       </section>
 
       {/* ── 10. DISCLAIMER BOX ─────────────────────────────────────────── */}
-      <section className="py-12" style={{ background: "var(--im-bg)" }}>
+      <aside
+        role="note"
+        aria-label="Shellfish allergy warning"
+        className="py-12"
+        style={{ background: "var(--im-bg)" }}
+      >
         <div
           className="border rounded-lg p-6 my-8 max-w-4xl mx-auto"
           style={{ borderColor: "#d1d5db" }}
@@ -811,7 +857,7 @@ function IrishMossPage() {
             topically to relieve shingles and other skin conditions.
           </p>
           <div
-            className="border rounded-md p-4"
+            className="border rounded-md p-4 mb-5"
             style={{
               background: "oklch(0.93 0.08 75)",
               borderColor: "oklch(0.75 0.12 75)",
@@ -826,8 +872,18 @@ function IrishMossPage() {
               SENSITIVE/ALLERGIC TO SHELLFISH.
             </p>
           </div>
+          <p
+            className="text-sm leading-relaxed"
+            style={{ color: "#6b7280" }}
+          >
+            This product is not intended to diagnose, treat, cure or prevent
+            any disease. These statements have not been evaluated by the Food
+            and Drug Administration. Always consult your physician or other
+            qualified health provider before beginning any new supplement or
+            health program.
+          </p>
         </div>
-      </section>
+      </aside>
     </article>
   );
 }

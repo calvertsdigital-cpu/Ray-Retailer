@@ -11,8 +11,6 @@ const nav = [
   { label: "Home", to: "/" },
   { label: "Products", to: "/shop" },
   { label: "Health Concerns", to: "/health-concerns" },
-  { label: "Categories", to: "/categories" },
-  { label: "Brands", to: "/brands" },
   { label: "About", to: "/about" },
   { label: "Blog", to: "/blog" },
   { label: "Contact", to: "/contact" },

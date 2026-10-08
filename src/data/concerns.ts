@@ -95,7 +95,7 @@ export const healthConcerns: HealthConcern[] = [
     cta: {
       title: "20-Day Alcohol Reset Challenge",
       text: "Ready to take control of your routine? Our structured 20-day system can help reduce dependency, rebuild habits, and restore balance\u2014one day at a time.",
-      buttonLabel: "Inquire / Join Waitlist",
+      buttonLabel: "Take the Leap →",
     },
     disclaimer:
       "This content is for educational and wellness awareness purposes only and is not medical advice. Statements have not been evaluated by the U.S. Food and Drug Administration and are not intended to diagnose, treat, cure or prevent any disease.",

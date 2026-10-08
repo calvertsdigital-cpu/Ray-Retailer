@@ -156,6 +156,46 @@ function Home() {
           </div>
         </div>
 
+        {/* ── RayOneSystem badge — bottom-left ── */}
+        <a
+          href="https://rayonesystem.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="RayOneSystem — The Power Behind Every Successful Vitamin Store"
+          className="absolute bottom-6 left-4 z-10 flex items-center gap-3 rounded-full px-4 py-2.5 transition-opacity hover:opacity-90 active:opacity-80"
+          style={{
+            background: "rgba(0,0,0,0.72)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            maxWidth: "calc(100vw - 2rem)",
+          }}
+        >
+          {/* Icon circle */}
+          <div
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-black"
+            style={{ background: "linear-gradient(135deg,#f97316,#ea580c)", color: "white" }}
+            aria-hidden="true"
+          >
+            R
+          </div>
+          {/* Text block */}
+          <div className="min-w-0">
+            <p className="text-[10px] font-black uppercase tracking-widest leading-tight" style={{ color: "#f97316" }}>
+              RayOneSystem — Create Your Own Successful Vitamin Store
+            </p>
+            <p className="text-[10px] leading-tight" style={{ color: "rgba(255,255,255,0.75)" }}>
+              The Power Behind Every Successful Vitamin Store
+            </p>
+          </div>
+          {/* Authorized Retail badge */}
+          <span
+            className="shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider whitespace-nowrap"
+            style={{ background: "#f97316", color: "white" }}
+          >
+            Authorized Retail
+          </span>
+        </a>
+
         {/* Slider Dots */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
           {heroSlides.map((_, idx) => (

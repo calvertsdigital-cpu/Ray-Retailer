@@ -63,6 +63,7 @@ const subnavItems: SubnavItem[] = [
     actions: [
       { label: "Shop Now", to: "https://maximumcardio.com/", style: "primary", external: true },
       { label: "Know More", to: "/maximum-cardio", style: "outline" },
+      { label: "Videos", to: "/maximum-cardio-video", style: "ghost" },
     ],
   },
   {

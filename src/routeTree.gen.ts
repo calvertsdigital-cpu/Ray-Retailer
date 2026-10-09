@@ -30,6 +30,7 @@ import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as RaysVitalityRouteImport } from './routes/rays-vitality'
+import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as ShippingReturnsRouteImport } from './routes/shipping-returns'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -154,6 +155,11 @@ const RaysVitalityRoute = RaysVitalityRouteImport.update({
   path: '/rays-vitality',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReviewsRoute = ReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShippingReturnsRoute = ShippingReturnsRouteImport.update({
   id: '/shipping-returns',
   path: '/shipping-returns',
@@ -267,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/rays-vitality': typeof RaysVitalityRoute
+  '/reviews': typeof ReviewsRoute
   '/shipping-returns': typeof ShippingReturnsRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -308,6 +315,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/rays-vitality': typeof RaysVitalityRoute
+  '/reviews': typeof ReviewsRoute
   '/shipping-returns': typeof ShippingReturnsRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -350,6 +358,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/rays-vitality': typeof RaysVitalityRoute
+  '/reviews': typeof ReviewsRoute
   '/shipping-returns': typeof ShippingReturnsRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -393,6 +402,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/privacy-policy'
     | '/rays-vitality'
+    | '/reviews'
     | '/shipping-returns'
     | '/shop'
     | '/terms'
@@ -434,6 +444,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/privacy-policy'
     | '/rays-vitality'
+    | '/reviews'
     | '/shipping-returns'
     | '/shop'
     | '/terms'
@@ -475,6 +486,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/privacy-policy'
     | '/rays-vitality'
+    | '/reviews'
     | '/shipping-returns'
     | '/shop'
     | '/terms'
@@ -517,6 +529,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   RaysVitalityRoute: typeof RaysVitalityRoute
+  ReviewsRoute: typeof ReviewsRoute
   ShippingReturnsRoute: typeof ShippingReturnsRoute
   ShopRoute: typeof ShopRoute
   TermsRoute: typeof TermsRoute
@@ -686,6 +699,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RaysVitalityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reviews': {
+      id: '/reviews'
+      path: '/reviews'
+      fullPath: '/reviews'
+      preLoaderRoute: typeof ReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shipping-returns': {
       id: '/shipping-returns'
       path: '/shipping-returns'
@@ -837,6 +857,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   RaysVitalityRoute: RaysVitalityRoute,
+  ReviewsRoute: ReviewsRoute,
   ShippingReturnsRoute: ShippingReturnsRoute,
   ShopRoute: ShopRoute,
   TermsRoute: TermsRoute,

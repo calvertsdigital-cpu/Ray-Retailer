@@ -1,10 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowRight, BookOpen, FlaskConical, HeartHandshake, Leaf, Quote, Sparkles, Stethoscope } from "lucide-react";
+import { ArrowRight, BookOpen, ChevronLeft, ChevronRight, FlaskConical, HeartHandshake, Leaf, Sparkles, Star, Stethoscope } from "lucide-react";
 
 import { ProductCard } from "@/components/site/ProductCard";
 import { SectionHeading } from "@/components/site/SectionHeading";
-import { StarRating } from "@/components/site/StarRating";
 import { TrustBar } from "@/components/site/TrustBar";
 import { Button } from "@/components/ui/button";
 import { categories, products } from "@/data/catalog";
@@ -42,26 +41,53 @@ const education = [
   { icon: Leaf, title: "Product Education", text: "How to use what you buy, properly and safely." },
 ];
 
-const testimonials = [
+const reviews = [
   {
-    quote: "The staff took twenty minutes to explain what I actually needed instead of selling me five things.",
-    name: "Denise M.",
-    place: "Prince Frederick, MD",
+    rating: 5,
+    date: "Apr 28th, 2024",
+    text: "Rays Maximum Cardio is by far the best dietary supplement I have come across. You immediately feel the difference and the shift within once you begin to apply use.\n\nThis product lives up to everything it states from energy, strength, mental clarity, stamina, immunity & muscle growth!\n\nRays Maximum Cardio has truly helped to make me feel 10-15 yrs younger and even surpass physical limitations that were once a barrier for myself.",
+    name: "James Mbah",
+    source: "Google",
+    verified: true,
   },
   {
-    quote: "I've bought sea moss from a lot of places. This is the only one my whole family will take.",
-    name: "Ola B.",
-    place: "Waldorf, MD",
+    rating: 5,
+    date: "Jun 7th, 2024",
+    text: "Ray is the best and so are his products!",
+    name: "Holly Grimes",
+    source: "Google",
+    verified: true,
   },
   {
-    quote: "Honest labels and honest advice. That's rare in supplements.",
-    name: "Tomas L.",
-    place: "Annapolis, MD",
+    rating: 5,
+    date: "May 7th, 2024",
+    text: "Ray is so kind and helpful. He knows just what I need. He actually takes time to understand what you are actually looking for!",
+    name: "Piggy and Sam Yett",
+    source: "Google",
+    verified: true,
+  },
+  {
+    rating: 5,
+    date: "Sep 24th, 2023",
+    text: "I have been seeing Ray and his healthy healing plan….. visited his store today September 24th 2023, he took his time with my girlfriend and I. He has so many samples, so much knowledge. I purchased the best Seamoss I ever taste and I been taking Seamoss for years. I STRONGLY RECOMMEND ESP WATER, that water healed my girlfriend's sore throat on the spot!",
+    name: "Monique Washington",
+    source: "Google",
+    verified: true,
+  },
+  {
+    rating: 5,
+    date: "Jan 1st, 2024",
+    text: "I LOVE going into Ray's - Healthy Living, its always time well spent. I am learning how to care for myself and my family. My health is wealth goes without saying. If you haven't been to his store (Located in Prince Frederick) Run don't walk, you won't be disappointed. Trust me!",
+    name: "Rana Latin",
+    source: "Google",
+    verified: true,
   },
 ];
 
 function Home() {
   const [heroIndex, setHeroIndex] = useState(0);
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const [showReviewCarousel, setShowReviewCarousel] = useState(false);
   const [backendProducts, setBackendProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -345,12 +371,11 @@ function Home() {
       {/* WHY RAY'S */}
       <section className="section-y">
         <div className="container-rhl grid items-center gap-10 lg:grid-cols-2">
-          <div className="w-full rounded-2xl object-cover shadow-card bg-gradient-to-br from-green-100 to-green-50 h-80 flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-green-700">✓</div>
-              <p className="mt-2 font-semibold text-green-700">30-Day Guarantee</p>
-            </div>
-          </div>
+          <img
+            src="/Organic and ethical sourcing, kept honest.png"
+            alt="Organic and ethical sourcing, kept honest"
+            className="w-full rounded-2xl object-cover shadow-card"
+          />
           <div>
             <p className="eyebrow">Why Ray's Healthy Living</p>
             <h2 className="heading-2 mt-2">Organic and ethical sourcing, kept honest</h2>
@@ -443,60 +468,208 @@ function Home() {
             <p className="eyebrow text-primary">About Our Firm</p>
             <h2 className="heading-2 mt-2">Ray's <span className="text-primary">Healthy Living</span></h2>
             <div className="w-20 h-1 bg-gradient-to-r from-primary to-orange-500 mt-4 mb-6 rounded-full"></div>
+            <h3 className="text-xl font-bold text-foreground mb-4">Your Health. Our Priority.</h3>
             <p className="text-muted-foreground mb-4">
-              We serve the community through a trusted network of physical retail locations and our comprehensive online platform. 
-              Ray's Healthy Living specializes in premium natural vitamins, minerals, and herbal supplements formulated to the highest quality standards.
+              At Ray's Healthy Living, we believe true wellness comes from nature. We are passionate about providing
+              high-quality, natural health and wellness products that support your body, mind and everyday life.
+            </p>
+            <p className="text-muted-foreground mb-4">
+              Our carefully curated range includes vitamins, minerals, supplements and natural remedies — designed to
+              help you feel stronger, healthier and more energized.
             </p>
             <p className="text-muted-foreground mb-6">
-              <strong className="text-foreground">Our Commitment:</strong> We prioritize customer satisfaction and safety above all else. 
-              At Ray's Healthy Living, we believe our customers are family—and family deserves the very best care and attention.
+              Whether you're looking to boost your immunity, improve digestion, support heart health or simply live a
+              healthier lifestyle, we're here to help.
             </p>
-            <div className="flex gap-8 mb-6">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">100%</div>
-                <div className="text-sm text-muted-foreground">Natural Quality</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">20+</div>
-                <div className="text-sm text-muted-foreground">Years Experience</div>
-              </div>
-            </div>
             <Button asChild variant="outline">
               <Link to="/about">Learn more about us</Link>
             </Button>
           </div>
           <div className="order-1 lg:order-2">
-            <div className="rounded-2xl overflow-hidden shadow-card bg-gradient-to-br from-green-100 to-green-50 h-80 flex items-center justify-center relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-orange-500/10"></div>
-              <div className="text-center relative z-10">
-                <div className="text-4xl font-bold text-primary mb-2">🌿</div>
-                <p className="font-semibold text-primary">Natural Wellness</p>
-                <p className="text-sm text-muted-foreground">Since 2004</p>
-              </div>
-            </div>
+            <img
+              src="/About Our Firm  Ray's Healthy Living.png"
+              alt="About Our Firm — Ray's Healthy Living"
+              className="w-full rounded-2xl object-cover shadow-card"
+            />
           </div>
         </div>
       </section>
 
-      {/* REVIEWS */}
-      <section className="section-y">
+      {/* REVIEWS — Customer trust */}
+      <section className="section-y" style={{ background: "#1a2235" }}>
+        <style>{`
+          @keyframes reviewFadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
         <div className="container-rhl">
-          <SectionHeading eyebrow="Customer trust" title="Five stars, in person and online" />
-          <div className="grid gap-5 md:grid-cols-3">
-            {testimonials.map((t) => (
-              <figure key={t.name} className="rounded-xl border border-border bg-card p-6 shadow-card">
-                <Quote className="h-6 w-6 text-primary" />
-                <blockquote className="mt-3 text-sm leading-relaxed">{t.quote}</blockquote>
-                <figcaption className="mt-4 flex items-center justify-between text-sm">
-                  <span>
-                    <span className="font-semibold">{t.name}</span>
-                    <span className="block text-muted-foreground">{t.place}</span>
-                  </span>
-                  <StarRating rating={5} showValue={false} />
-                </figcaption>
-              </figure>
-            ))}
+
+          {/* ── Highlight card (same shape as Chamber of Commerce card) ── */}
+          <div
+            className="mx-auto max-w-3xl rounded-2xl px-8 py-10 text-center"
+            style={{ background: "#0f172a" }}
+          >
+            {/* Badge pill */}
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold"
+              style={{ background: "#2563eb", color: "#fff" }}
+            >
+              <Star className="h-3.5 w-3.5 fill-white" />
+              Customer Reviews
+            </span>
+
+            <h2 className="mt-5 text-3xl font-bold text-white md:text-4xl">
+              Five Stars, In Person and Online
+            </h2>
+            <p className="mt-3 text-sm text-white/60">
+              Real feedback from our local Maryland customers — verified reviews.
+            </p>
+
+            <hr className="my-6 border-white/10" />
+
+            {/* Star row */}
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <span className="text-sm font-semibold text-white">Customer Reviews</span>
+              <div className="flex gap-0.5">
+                {[1,2,3,4,5].map((s) => (
+                  <Star key={s} className="h-6 w-6 fill-yellow-400 text-yellow-400" />
+                ))}
+              </div>
+              <span className="text-2xl font-bold text-white">5.0</span>
+              <span className="text-sm text-white/50">{reviews.length} Verified Reviews</span>
+            </div>
+
+            <button
+              onClick={() => setShowReviewCarousel(true)}
+              className="mt-6 inline-flex items-center justify-center rounded-lg px-6 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              style={{ background: "#2563eb" }}
+            >
+              View All Reviews
+            </button>
           </div>
+
+          {/* ── Carousel — shown only after button click ── */}
+          {showReviewCarousel && (
+          <div className="mx-auto mt-10 max-w-3xl" style={{ animation: "reviewFadeIn 0.4s ease-out" }}>
+            <div className="flex items-center gap-3">
+              <span
+                className="flex h-7 w-7 items-center justify-center rounded-full text-white"
+                style={{ background: "#16a34a" }}
+              >
+                ✓
+              </span>
+              <h3 className="text-lg font-bold text-white">
+                Top {reviews.length} Reviews{" "}
+                <span className="ml-1 text-sm font-normal text-white/50">
+                  ({reviewIndex + 1}/{reviews.length})
+                </span>
+              </h3>
+            </div>
+            <div className="mt-3 h-0.5 w-full rounded-full" style={{ background: "#f59e0b" }} />
+
+            {/* ── Card + arrows ── */}
+            {(() => {
+              const review = reviews[reviewIndex] ?? reviews[0]!;
+              return (
+              <div className="relative mt-4 flex items-center gap-2">
+              {/* Prev */}
+              <button
+                onClick={() => setReviewIndex((i) => (i - 1 + reviews.length) % reviews.length)}
+                aria-label="Previous review"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:bg-white/10"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+
+              {/* Review card */}
+              <div
+                className="flex-1 rounded-2xl p-6"
+                style={{ background: "#263150" }}
+              >
+                {/* Stars + date */}
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-0.5">
+                    {Array.from({ length: review.rating }).map((_, i) => (
+                      <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <span className="rounded-md border border-white/20 px-3 py-1 text-xs text-white/60">
+                    {review.date}
+                  </span>
+                </div>
+
+                {/* Review text */}
+                <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-white/80">
+                  {review.text}
+                </p>
+
+                {/* Reviewer */}
+                <div className="mt-6 flex items-center gap-3">
+                  <div
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+                    style={{ background: "#2563eb" }}
+                  >
+                    {review.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-white">{review.name}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs text-white/50">{review.source}</span>
+                      {review.verified && (
+                        <span
+                          className="rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                          style={{ background: "#14532d", color: "#86efac" }}
+                        >
+                          ✓ VERIFIED
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Next */}
+              <button
+                onClick={() => setReviewIndex((i) => (i + 1) % reviews.length)}
+                aria-label="Next review"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:bg-white/10"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
+              );
+            })()}
+
+            {/* Dots */}
+            <div className="mt-5 flex justify-center gap-2">
+              {reviews.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setReviewIndex(i)}
+                  aria-label={`Go to review ${i + 1}`}
+                  className={`h-2.5 rounded-full transition-all ${
+                    i === reviewIndex
+                      ? "w-6 bg-blue-500"
+                      : "w-2.5 bg-white/30 hover:bg-white/50"
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* View All button */}
+            <div className="mt-8 flex justify-center">
+              <Link
+                to="/reviews"
+                className="inline-flex items-center justify-center rounded-lg px-10 py-3 text-sm font-bold uppercase tracking-wider text-white transition-opacity hover:opacity-90"
+                style={{ background: "#2563eb" }}
+              >
+                VIEW ALL REVIEWS
+              </Link>
+            </div>
+          </div>
+          )}
+
         </div>
       </section>
     </>

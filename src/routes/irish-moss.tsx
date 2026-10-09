@@ -346,24 +346,21 @@ function IrishMossPage() {
               </Link>
             </div>
 
-            {/* Right: blob placeholder */}
+            {/* Right: hero image */}
             <div className="flex-shrink-0 flex justify-center">
-              <div
-                aria-hidden="true"
+              <img
+                src="/Irish Moss/moss1-CgRRFIIl.png"
+                alt="Ray's Healthy Living Irish Sea Moss — Chondrus Crispus"
+                width={300}
+                height={300}
+                loading="eager"
                 style={{
-                  background:
-                    "linear-gradient(135deg, var(--im-leaf), var(--im-green))",
                   borderRadius: "60% 40% 70% 30% / 50% 60% 40% 50%",
+                  objectFit: "cover",
                   width: "280px",
                   height: "280px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "6rem",
                 }}
-              >
-                🌿
-              </div>
+              />
             </div>
           </div>
         </div>
@@ -373,25 +370,22 @@ function IrishMossPage() {
       <section className="py-16">
         <div className="container-rhl">
           <div className="flex flex-col lg:flex-row items-start gap-12">
-            {/* Left: blob image placeholder */}
+            {/* Left: Irish Moss image */}
             <div className="flex-shrink-0 flex justify-center lg:justify-start w-full lg:w-auto">
-              <div
-                aria-hidden="true"
+              <img
+                src="/Irish Moss/moss2-fWAVVoKx.png"
+                alt="Fresh Irish Sea Moss (Chondrus Crispus) harvested from the Atlantic coast"
+                width={260}
+                height={260}
+                loading="lazy"
                 style={{
-                  background:
-                    "linear-gradient(135deg, var(--im-leaf), var(--im-green))",
                   borderRadius: "55% 45% 65% 35% / 45% 55% 45% 55%",
+                  objectFit: "cover",
                   width: "260px",
                   height: "260px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "5rem",
                   flexShrink: 0,
                 }}
-              >
-                🍃
-              </div>
+              />
             </div>
 
             {/* Right: text */}
@@ -685,24 +679,21 @@ function IrishMossPage() {
       <section className="py-16" style={{ background: "var(--im-bg)" }}>
         <div className="container-rhl">
           <div className="flex flex-col lg:flex-row items-center gap-12">
-            {/* Left: blob */}
+            {/* Left: supplement image */}
             <div className="flex-shrink-0 flex justify-center">
-              <div
-                aria-hidden="true"
+              <img
+                src="/Irish Moss/moss5-DPGUeClq.png"
+                alt="Irish Sea Moss supplement capsules and powder forms"
+                width={240}
+                height={240}
+                loading="lazy"
                 style={{
-                  background:
-                    "linear-gradient(135deg, var(--im-leaf), var(--im-green))",
                   borderRadius: "60% 40% 70% 30% / 50% 60% 40% 50%",
+                  objectFit: "cover",
                   width: "240px",
                   height: "240px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "5rem",
                 }}
-              >
-                💊
-              </div>
+              />
             </div>
 
             {/* Right */}
@@ -764,24 +755,25 @@ function IrishMossPage() {
             Irish Sea Moss &amp; Bladderwrack Give Best Effects
           </h2>
           <div className="flex flex-col md:flex-row justify-center gap-8 mb-8">
-            {["🌊", "🌿"].map((emoji, i) => (
-              <div
+            {[
+              { src: "/Irish Moss/moss6-BLyp_a8R.png", alt: "Irish Sea Moss seaweed" },
+              { src: "/Irish Moss/moss7-CLnjwD-8.png", alt: "Bladderwrack seaweed" },
+            ].map(({ src, alt }, i) => (
+              <img
                 key={i}
-                aria-hidden="true"
+                src={src}
+                alt={alt}
+                width={160}
+                height={160}
+                loading="lazy"
                 style={{
-                  background: "rgba(255,255,255,0.15)",
                   borderRadius: "55% 45% 65% 35% / 45% 55% 45% 55%",
+                  objectFit: "cover",
                   width: "160px",
                   height: "160px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "4rem",
                   margin: "0 auto",
                 }}
-              >
-                {emoji}
-              </div>
+              />
             ))}
           </div>
           <p

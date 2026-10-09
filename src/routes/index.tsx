@@ -211,7 +211,12 @@ function Home() {
         </div>
       </section>
 
-      <TrustBar />
+      <img
+        src="/under-herobar.png"
+        alt="Free Shipping on orders over $99 · 30-Day Guarantee · Safe Payment · Online Support"
+        className="w-full"
+        style={{ display: "block" }}
+      />
 
       {/* SHOP BY CATEGORY */}
       <section className="section-y">

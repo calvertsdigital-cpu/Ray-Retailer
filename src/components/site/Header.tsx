@@ -40,6 +40,14 @@ const subnavItems: SubnavItem[] = [
     ],
   },
   {
+    label: "CBD",
+    type: "menu",
+    actions: [
+      { label: "Shop Now", to: "/shop", style: "primary" },
+      { label: "Know More", to: "/cbd", style: "outline" },
+    ],
+  },
+  {
     label: "Brands",
     type: "direct",
     to: "/brands",

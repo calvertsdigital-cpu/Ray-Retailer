@@ -87,7 +87,7 @@ const reviews = [
 function Home() {
   const [heroIndex, setHeroIndex] = useState(0);
   const [reviewIndex, setReviewIndex] = useState(0);
-  const [showReviewCarousel, setShowReviewCarousel] = useState(false);
+  const [showReviewCarousel, setShowReviewCarousel] = useState(true);
   const [backendProducts, setBackendProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -540,13 +540,13 @@ function Home() {
               <span className="text-sm text-white/50">{reviews.length} Verified Reviews</span>
             </div>
 
-            <button
-              onClick={() => setShowReviewCarousel(true)}
+            <Link
+              to="/reviews"
               className="mt-6 inline-flex items-center justify-center rounded-lg px-6 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
               style={{ background: "#2563eb" }}
             >
               View All Reviews
-            </button>
+            </Link>
           </div>
 
           {/* ── Carousel — shown only after button click ── */}

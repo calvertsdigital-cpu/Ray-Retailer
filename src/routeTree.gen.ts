@@ -24,6 +24,7 @@ import { Route as EssentialOilRouteImport } from './routes/essential-oil'
 import { Route as IrishMossRouteImport } from './routes/irish-moss'
 import { Route as LooseHerbsRouteImport } from './routes/loose-herbs'
 import { Route as MaximumCardioRouteImport } from './routes/maximum-cardio'
+import { Route as MaximumCardioInfoRouteImport } from './routes/maximum-cardio-info'
 import { Route as MaximumCardioVideoRouteImport } from './routes/maximum-cardio-video'
 import { Route as MyOrdersRouteImport } from './routes/my-orders'
 import { Route as PaymentRouteImport } from './routes/payment'
@@ -123,6 +124,11 @@ const LooseHerbsRoute = LooseHerbsRouteImport.update({
 const MaximumCardioRoute = MaximumCardioRouteImport.update({
   id: '/maximum-cardio',
   path: '/maximum-cardio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MaximumCardioInfoRoute = MaximumCardioInfoRouteImport.update({
+  id: '/maximum-cardio-info',
+  path: '/maximum-cardio-info',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MaximumCardioVideoRoute = MaximumCardioVideoRouteImport.update({
@@ -267,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/irish-moss': typeof IrishMossRoute
   '/loose-herbs': typeof LooseHerbsRoute
   '/maximum-cardio': typeof MaximumCardioRoute
+  '/maximum-cardio-info': typeof MaximumCardioInfoRoute
   '/maximum-cardio-video': typeof MaximumCardioVideoRoute
   '/my-orders': typeof MyOrdersRoute
   '/payment': typeof PaymentRoute
@@ -309,6 +316,7 @@ export interface FileRoutesByTo {
   '/irish-moss': typeof IrishMossRoute
   '/loose-herbs': typeof LooseHerbsRoute
   '/maximum-cardio': typeof MaximumCardioRoute
+  '/maximum-cardio-info': typeof MaximumCardioInfoRoute
   '/maximum-cardio-video': typeof MaximumCardioVideoRoute
   '/my-orders': typeof MyOrdersRoute
   '/payment': typeof PaymentRoute
@@ -352,6 +360,7 @@ export interface FileRoutesById {
   '/irish-moss': typeof IrishMossRoute
   '/loose-herbs': typeof LooseHerbsRoute
   '/maximum-cardio': typeof MaximumCardioRoute
+  '/maximum-cardio-info': typeof MaximumCardioInfoRoute
   '/maximum-cardio-video': typeof MaximumCardioVideoRoute
   '/my-orders': typeof MyOrdersRoute
   '/payment': typeof PaymentRoute
@@ -396,6 +405,7 @@ export interface FileRouteTypes {
     | '/irish-moss'
     | '/loose-herbs'
     | '/maximum-cardio'
+    | '/maximum-cardio-info'
     | '/maximum-cardio-video'
     | '/my-orders'
     | '/payment'
@@ -438,6 +448,7 @@ export interface FileRouteTypes {
     | '/irish-moss'
     | '/loose-herbs'
     | '/maximum-cardio'
+    | '/maximum-cardio-info'
     | '/maximum-cardio-video'
     | '/my-orders'
     | '/payment'
@@ -480,6 +491,7 @@ export interface FileRouteTypes {
     | '/irish-moss'
     | '/loose-herbs'
     | '/maximum-cardio'
+    | '/maximum-cardio-info'
     | '/maximum-cardio-video'
     | '/my-orders'
     | '/payment'
@@ -523,6 +535,7 @@ export interface RootRouteChildren {
   IrishMossRoute: typeof IrishMossRoute
   LooseHerbsRoute: typeof LooseHerbsRoute
   MaximumCardioRoute: typeof MaximumCardioRoute
+  MaximumCardioInfoRoute: typeof MaximumCardioInfoRoute
   MaximumCardioVideoRoute: typeof MaximumCardioVideoRoute
   MyOrdersRoute: typeof MyOrdersRoute
   PaymentRoute: typeof PaymentRoute
@@ -655,6 +668,13 @@ declare module '@tanstack/react-router' {
       path: '/maximum-cardio'
       fullPath: '/maximum-cardio'
       preLoaderRoute: typeof MaximumCardioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/maximum-cardio-info': {
+      id: '/maximum-cardio-info'
+      path: '/maximum-cardio-info'
+      fullPath: '/maximum-cardio-info'
+      preLoaderRoute: typeof MaximumCardioInfoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/maximum-cardio-video': {
@@ -851,6 +871,7 @@ const rootRouteChildren: RootRouteChildren = {
   IrishMossRoute: IrishMossRoute,
   LooseHerbsRoute: LooseHerbsRoute,
   MaximumCardioRoute: MaximumCardioRoute,
+  MaximumCardioInfoRoute: MaximumCardioInfoRoute,
   MaximumCardioVideoRoute: MaximumCardioVideoRoute,
   MyOrdersRoute: MyOrdersRoute,
   PaymentRoute: PaymentRoute,

@@ -62,20 +62,28 @@ function SplitSection({
           width: "300px",
           height: "300px",
           flexShrink: 0,
-          background: "linear-gradient(135deg, #d4f7b7 0%, #a5f3a0 100%)",
         }}
       >
-        <img
-          src={imageSrc}
-          alt={imageAlt}
-          loading="lazy"
-          width={300}
-          height={300}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          onError={(e) => {
-            (e.target as HTMLImageElement).style.display = "none";
-          }}
-        />
+        {imageSrc ? (
+          <img
+            src={imageSrc}
+            alt={imageAlt}
+            loading="lazy"
+            width={300}
+            height={300}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        ) : (
+          <div
+            style={{
+              width: "100%", height: "100%",
+              background: "linear-gradient(135deg, #d1fae5, #6ee7b7)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "5rem",
+            }}
+            aria-hidden="true"
+          >🌿</div>
+        )}
       </div>
     </div>
   );
@@ -190,16 +198,17 @@ function CBDPage() {
                   overflow: "hidden",
                   width: "300px",
                   height: "300px",
-                  background: "linear-gradient(135deg, #bbf7d0, #86efac)",
+                  flexShrink: 0,
                 }}
               >
-                <div
-                  className="w-full h-full flex items-center justify-center text-8xl"
-                  style={{ background: "linear-gradient(135deg, #d1fae5 0%, #6ee7b7 100%)" }}
-                  aria-hidden="true"
-                >
-                  🌿
-                </div>
+                <img
+                  src="/CBD/d1-CSwZ8y1K.jpg.jpeg"
+                  alt="Ray's Healthy Living CBD Hemp Oil product"
+                  loading="eager"
+                  width={300}
+                  height={300}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
               </div>
             </div>
           </div>
@@ -220,14 +229,17 @@ function CBDPage() {
                   overflow: "hidden",
                   width: "280px",
                   height: "280px",
-                  background: "linear-gradient(135deg, #d1fae5, #a7f3d0)",
                   flexShrink: 0,
                 }}
-                aria-hidden="true"
               >
-                <div className="w-full h-full flex items-center justify-center text-7xl">
-                  💧
-                </div>
+                <img
+                  src="/CBD/med1-new-BEvZYZVw.png"
+                  alt="Hemp Oil for skin care and skin disease treatment"
+                  loading="lazy"
+                  width={280}
+                  height={280}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
               </div>
             </div>
             {/* Right: text + skin grid */}
@@ -288,24 +300,32 @@ function CBDPage() {
               </p>
               {/* Video placeholder */}
               <div
-                className="rounded-2xl overflow-hidden flex items-center justify-center"
+                className="rounded-2xl overflow-hidden relative"
                 style={{
-                  backgroundColor: "#1f2937",
                   aspectRatio: "16/9",
                   maxWidth: "420px",
                   border: "1px solid #e5e7eb",
                 }}
                 aria-label="CBD Hemp Oil educational video"
               >
-                <div className="flex flex-col items-center gap-3 text-white">
+                <img
+                  src="/CBD/vid-img-DFHWmJsL.png"
+                  alt="CBD Hemp Oil educational video thumbnail"
+                  loading="lazy"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+                <div
+                  className="absolute inset-0 flex flex-col items-center justify-center gap-3"
+                  style={{ background: "rgba(0,0,0,0.35)" }}
+                >
                   <div
                     className="h-14 w-14 rounded-full flex items-center justify-center"
                     style={{ backgroundColor: GL }}
                     aria-hidden="true"
                   >
-                    <span style={{ fontSize: "1.5rem" }}>▶</span>
+                    <span style={{ fontSize: "1.5rem", color: "white" }}>▶</span>
                   </div>
-                  <span className="text-sm opacity-70">Play Video</span>
+                  <span className="text-sm text-white opacity-90">Play Video</span>
                 </div>
               </div>
             </div>
@@ -317,13 +337,17 @@ function CBDPage() {
                   overflow: "hidden",
                   width: "300px",
                   height: "300px",
-                  background: "linear-gradient(135deg, #d1fae5, #6ee7b7)",
+                  flexShrink: 0,
                 }}
-                aria-hidden="true"
               >
-                <div className="w-full h-full flex items-center justify-center text-7xl">
-                  🧠
-                </div>
+                <img
+                  src="/CBD/med2n-Cnx202mW.png"
+                  alt="Hemp Oil supporting brain health"
+                  loading="lazy"
+                  width={300}
+                  height={300}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
               </div>
             </div>
           </div>
@@ -341,8 +365,8 @@ function CBDPage() {
           "Regular consumption of Hemp Oil may help lower blood pressure, reduce inflammation in the cardiovascular system, and improve overall heart health.",
           "The anti-inflammatory properties of Hemp Oil can help prevent arterial blockage and support healthy blood circulation throughout the body.",
         ]}
-        imageSrc=""
-        imageAlt="Hemp oil supporting heart health"
+        imageSrc="/CBD/med3n-DJLb-thH.png"
+        imageAlt="Hemp Oil supporting heart health and cardiovascular function"
         accent={true}
       />
 
@@ -367,13 +391,16 @@ function CBDPage() {
                   overflow: "hidden",
                   width: "300px",
                   height: "300px",
-                  background: "linear-gradient(135deg, #d1fae5, #6ee7b7)",
                 }}
-                aria-hidden="true"
               >
-                <div className="w-full h-full flex items-center justify-center text-7xl">
-                  🌱
-                </div>
+                <img
+                  src="/CBD/med4n-iakpwBJ_.png"
+                  alt="Full spectrum Hemp Oil with CBD"
+                  loading="lazy"
+                  width={300}
+                  height={300}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
               </div>
             </div>
           </div>
@@ -394,14 +421,17 @@ function CBDPage() {
                   overflow: "hidden",
                   width: "280px",
                   height: "280px",
-                  background: "linear-gradient(135deg, #d1fae5, #a7f3d0)",
                   flexShrink: 0,
                 }}
-                aria-hidden="true"
               >
-                <div className="w-full h-full flex items-center justify-center text-7xl">
-                  💊
-                </div>
+                <img
+                  src="/CBD/med5n-C8AdRKme.png"
+                  alt="CBD Hemp Oil for pain relief"
+                  loading="lazy"
+                  width={280}
+                  height={280}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
               </div>
             </div>
             <div className="flex-1">
@@ -434,24 +464,32 @@ function CBDPage() {
               </p>
               {/* Video placeholder */}
               <div
-                className="rounded-2xl overflow-hidden flex items-center justify-center"
+                className="rounded-2xl overflow-hidden relative"
                 style={{
-                  backgroundColor: "#1f2937",
                   aspectRatio: "16/9",
                   maxWidth: "380px",
                   border: "1px solid #e5e7eb",
                 }}
                 aria-label="Hemp Oil Acne Treatment video"
               >
-                <div className="flex flex-col items-center gap-3 text-white">
+                <img
+                  src="/CBD/vid-img-DFHWmJsL.png"
+                  alt="Hemp Oil Acne Treatment video thumbnail"
+                  loading="lazy"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+                <div
+                  className="absolute inset-0 flex flex-col items-center justify-center gap-3"
+                  style={{ background: "rgba(0,0,0,0.35)" }}
+                >
                   <div
                     className="h-14 w-14 rounded-full flex items-center justify-center"
                     style={{ backgroundColor: GL }}
                     aria-hidden="true"
                   >
-                    <span style={{ fontSize: "1.5rem" }}>▶</span>
+                    <span style={{ fontSize: "1.5rem", color: "white" }}>▶</span>
                   </div>
-                  <span className="text-sm opacity-70">Play Video</span>
+                  <span className="text-sm text-white opacity-90">Play Video</span>
                 </div>
               </div>
             </div>
@@ -462,13 +500,16 @@ function CBDPage() {
                   overflow: "hidden",
                   width: "300px",
                   height: "300px",
-                  background: "linear-gradient(135deg, #d1fae5, #6ee7b7)",
                 }}
-                aria-hidden="true"
               >
-                <div className="w-full h-full flex items-center justify-center text-7xl">
-                  ✨
-                </div>
+                <img
+                  src="/CBD/med6n-BCzqa7Zv.png"
+                  alt="Hemp Oil for acne and skin inflammation treatment"
+                  loading="lazy"
+                  width={300}
+                  height={300}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
               </div>
             </div>
           </div>
@@ -489,14 +530,17 @@ function CBDPage() {
                   overflow: "hidden",
                   width: "280px",
                   height: "280px",
-                  background: "linear-gradient(135deg, #d1fae5, #a7f3d0)",
                   flexShrink: 0,
                 }}
-                aria-hidden="true"
               >
-                <div className="w-full h-full flex items-center justify-center text-7xl">
-                  💪
-                </div>
+                <img
+                  src="/CBD/med7n-CHFMQ6DC.png"
+                  alt="Hemp Oil for muscle pain and recovery"
+                  loading="lazy"
+                  width={280}
+                  height={280}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
               </div>
             </div>
             <div className="flex-1">
